@@ -1,4 +1,5 @@
 import 'package:romlinks_frontend/logic/services/http_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {
   // service url
@@ -11,6 +12,7 @@ class UserService {
     required String password,
     required String image,
   }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     // make the request
     Map<String, dynamic> response =
         await HttpHandler.post(url + "/user", body: {
@@ -19,6 +21,12 @@ class UserService {
       "password": password,
       "image": image,
     });
+
+    if (response["token"] != "") {
+      prefs.setString("token", response["token"]);
+      prefs.setString("username", username);
+      prefs.setString("password", password);
+    }
     // return the token
     return response["token"] ?? "";
   }
@@ -58,10 +66,16 @@ class UserService {
 
   // log in
   static Future<String> logIn(String username, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> response = await HttpHandler.get(
       url + "/user",
       header: {"username": username, "password": password},
     );
+    if (response["token"] != "") {
+      prefs.setString("token", response["token"]);
+      prefs.setString("username", username);
+      prefs.setString("password", password);
+    }
     return response["token"] ?? "";
   }
 
@@ -72,6 +86,13 @@ class UserService {
       header: {"token": token},
     );
     return response;
+  }
+
+  static void logOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("username");
+    prefs.remove("password");
+    prefs.remove("token");
   }
 }
 

@@ -27,7 +27,7 @@ class RomService extends GetxController {
     return response["id"] ?? "";
   }
 
-  static Future<Map<String, dynamic>> getRomList({
+  static Future<List<dynamic>> getRomList({
     required String codename,
     required double androidVersion,
     required OrderBy orderBy,
@@ -59,16 +59,16 @@ class RomService extends GetxController {
           "/" +
           orderByString,
     );
-    return response;
+    return response["list"];
   }
 
-  static Future<Map<String, dynamic>> getVersionList({
+  static Future<List<dynamic>> getVersionList({
     required String codename,
     required String romId,
   }) async {
     Map<String, dynamic> response =
         await HttpHandler.get(url + "/versionList/" + codename + "/" + romId);
-    return response;
+    return response["list"];
   }
 
   Future<String> verifyRom(String token, String romId) async {
@@ -79,10 +79,10 @@ class RomService extends GetxController {
     return response["res"] ?? "";
   }
 
-  static Future<Map<String, dynamic>> getUnverifiedRom(String token) async {
+  static Future<List<dynamic>> getUnverifiedRom(String token) async {
     Map<String, dynamic> response =
         await HttpHandler.get(url + "/verifyrom", header: {"token": token});
-    return response;
+    return response["list"];
   }
 
   static Future<Map<String, dynamic>> getRom({

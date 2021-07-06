@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
 class FileStorageService extends GetxController {
@@ -13,6 +12,7 @@ class FileStorageService extends GetxController {
     required PhotoCategory category,
     required String romName,
     required double androidVersion,
+    required Uint8List image,
   }) async {
     // get the image category
     String categoryString;
@@ -30,6 +30,8 @@ class FileStorageService extends GetxController {
         categoryString = "";
     }
 
+    romName = romName + ".png";
+
     // create the uri
     Uri uri = Uri.parse(
       url +
@@ -41,24 +43,7 @@ class FileStorageService extends GetxController {
           romName,
     );
 
-    // get the image
-    final picker = ImagePicker();
-    PickedFile? pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedFile == null) {
-      Get.snackbar(
-        "Error",
-        "Unable to get the image",
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      );
-      return "";
-    }
-
-    // convert the image
-    Uint8List fileToByte = await pickedFile.readAsBytes();
-    List<int> byteToIntList = fileToByte.cast();
+    List<int> byteToIntList = image.cast();
 
     // create the request
     var request = http.MultipartRequest('POST', uri);
@@ -95,28 +80,14 @@ class FileStorageService extends GetxController {
     return data["imgLink"] ?? "";
   }
 
-  Future<String> postProfilePicture(String username) async {
+  static Future<String> postProfilePicture(
+    String username,
+    Uint8List image,
+  ) async {
     // create the uri
     Uri uri = Uri.parse(url + "/profile/" + username);
 
-    // get the image
-    final picker = ImagePicker();
-    PickedFile? pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedFile == null) {
-      Get.snackbar(
-        "Error",
-        "Unable to get the image",
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      );
-      return "";
-    }
-
-    // convert the image
-    Uint8List fileToByte = await pickedFile.readAsBytes();
-    List<int> byteToIntList = fileToByte.cast();
+    List<int> byteToIntList = image.cast();
 
     // create the request
     var request = http.MultipartRequest('POST', uri);
@@ -171,7 +142,7 @@ class FileStorageService extends GetxController {
         categoryString = "";
     }
 
-    return url + "/" + categoryString + "/" + name;
+    return url + "/image/" + categoryString + "/" + name;
   }
 }
 

@@ -6,6 +6,7 @@ class ThemeApp {
     canvasColor: secondaryColor,
     scaffoldBackgroundColor: primaryColor,
     primaryColor: primaryColor,
+    colorScheme: ThemeData.dark().colorScheme.copyWith(primary: accentColor),
     accentColor: secondaryColor,
     appBarTheme: AppBarTheme(
       color: primaryColor,
@@ -21,7 +22,7 @@ class ThemeApp {
 
   //! TextField border
   static OutlineInputBorder _textFieldBorder = OutlineInputBorder(
-    borderSide: BorderSide(color: secondaryColor, width: 5.0),
+    borderSide: BorderSide(color: secondaryColor, width: 4.0),
     borderRadius: BorderRadius.all(Radius.circular(10)),
   );
 
@@ -40,9 +41,9 @@ class ThemeApp {
   );
 
   //! Color
-  static const Color primaryColor = Color(0xFF273043);
-  static const Color secondaryColor = Color(0xFF3DDC84);
-  static const Color accentColor = Color(0xFFA5ABBD);
+  static const Color primaryColor = Color(0xFF181C2D);
+  static const Color secondaryColor = Color(0xFF1D2335);
+  static const Color accentColor = Color(0xFFFF3B30);
 }
 
 //! Base widget
@@ -97,8 +98,8 @@ class ButtonW extends StatelessWidget {
     required this.onTap,
     this.color = ThemeApp.accentColor,
     this.white = false,
-    this.padding = const EdgeInsets.all(20),
-    this.margin = const EdgeInsets.all(20),
+    this.padding = const EdgeInsets.all(13),
+    this.margin = const EdgeInsets.all(10),
   });
   final String text;
   final double height;
@@ -112,7 +113,7 @@ class ButtonW extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap(),
+      onTap: () => onTap(),
       child: ContainerW(
         FittedBox(
           child: TextW(
@@ -152,7 +153,7 @@ class TextW extends StatelessWidget {
       text,
       style: TextStyle(
         fontSize: size,
-        color: white ? ThemeApp.primaryColor : ThemeApp.secondaryColor,
+        color: white ? Colors.white : ThemeApp.primaryColor,
         fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       ),
       textAlign: centerText ? TextAlign.center : TextAlign.left,
