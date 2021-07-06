@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
-import 'package:romlinks_frontend/views/theme.dart';
+import 'package:romlinks_frontend/logic/services/device_service.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+var devices = [];
+
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: GestureDetector(
-          onTap: () =>
-              FileStorageService.postImage(PhotoCategory.logo, "test.jpg", 11),
-          child: ContainerW(
-            SizedBox.shrink(),
-            height: 100,
-            width: 200,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 400,
+              child: TextField(
+                onChanged: (text) async {
+                  devices = await DeviceService.searchDeviceName(text);
+                  setState(() {
+                    devices = devices;
+                  });
+                },
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(devices.toString()),
+          ],
         ),
       ),
     );

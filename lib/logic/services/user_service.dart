@@ -2,7 +2,7 @@ import 'package:romlinks_frontend/logic/services/http_handler.dart';
 
 class UserService {
   // service url
-  static final String url = "http://mp281x.xyz:9093";
+  static final String url = "http://localhost:9093";
 
   // create a new user
   static Future<String> signUp({
@@ -20,16 +20,16 @@ class UserService {
       "image": image,
     });
     // return the token
-    return response["token"];
+    return response["token"] ?? "";
   }
 
   // edit user perm
-  static Future<String> editUserPerm(
-    String username,
-    PermType perm,
-    bool value,
-    String token,
-  ) async {
+  static Future<String> editUserPerm({
+    required String username,
+    required PermType perm,
+    required bool value,
+    required String token,
+  }) async {
     // select the perm to edit
     String permString;
     switch (perm) {
@@ -53,7 +53,7 @@ class UserService {
     );
 
     // return the username of the edited user
-    return response["username"];
+    return response["username"] ?? "";
   }
 
   // log in
@@ -62,7 +62,7 @@ class UserService {
       url + "/user",
       header: {"username": username, "password": password},
     );
-    return response["token"];
+    return response["token"] ?? "";
   }
 
   // return the user data

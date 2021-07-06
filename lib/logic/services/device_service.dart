@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'http_handler.dart';
 
 class DeviceService extends GetxController {
-  static final String url = "http://mp281x.xyz:9090";
+  static final String url = "http://localhost:9090";
 
   //TODO: da fare
   void editDeviceInfo() {}
@@ -34,6 +34,10 @@ class DeviceService extends GetxController {
     return response;
   }
 
-  //TODO: da fare
-  void searchDeviceName(String codename) {}
+  // search device by name
+  static Future<List<dynamic>> searchDeviceName(String codename) async {
+    Map<String, dynamic> response =
+        await HttpHandler.get(url + "/deviceName/" + codename);
+    return response["list"] ?? [];
+  }
 }

@@ -7,13 +7,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
 class FileStorageService extends GetxController {
-  static final String url = "http://mp281x.xyz:9091";
+  static final String url = "http://localhost:9091";
 
-  static Future<String> postImage(
-    PhotoCategory category,
-    String romName,
-    double androidVersion,
-  ) async {
+  static Future<String> postImage({
+    required PhotoCategory category,
+    required String romName,
+    required double androidVersion,
+  }) async {
     // get the image category
     String categoryString;
     switch (category) {
@@ -92,7 +92,7 @@ class FileStorageService extends GetxController {
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     );
     // return the image link
-    return data["imgLink"];
+    return data["imgLink"] ?? "";
   }
 
   Future<String> postProfilePicture(String username) async {
@@ -150,7 +150,7 @@ class FileStorageService extends GetxController {
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     );
     // return the image link
-    return data["imgLink"];
+    return data["imgLink"] ?? "";
   }
 
   // build the image url
