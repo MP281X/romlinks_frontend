@@ -59,8 +59,10 @@ class SaveImageScreen extends StatelessWidget {
                                   androidVersion: androidVersion,
                                   image: croppedImg,
                                 );
-                                links.addLink(link);
-                                _controller.isSaved();
+                                if (link != "") {
+                                  links.addLink(link);
+                                  _controller.isSaved();
+                                }
                               } catch (e) {
                                 print(e);
                               }

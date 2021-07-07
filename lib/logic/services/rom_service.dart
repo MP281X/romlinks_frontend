@@ -3,18 +3,15 @@ import 'package:get/get.dart';
 import 'http_handler.dart';
 
 class RomService extends GetxController {
+  //! rom service base url
   static final String url = "http://localhost:9092";
 
-  static Future<String> addVersion({
-    required String romId,
-    required String codename,
-    required String changelog,
-    required String token,
-    required String gappsLink,
-    required String vanillaLink,
-  }) async {
-    Map<String, dynamic> response = await HttpHandler.post(
+  //! add a rom version to the db
+  static Future<void> addVersion({required String romId, required String codename, required String changelog, required String token, required String gappsLink, required String vanillaLink}) async {
+    // make the request
+    await HttpHandler.req(
       url + "/version",
+      RequestType.post,
       header: {"token": token},
       body: {
         "romid": romId,
@@ -24,15 +21,11 @@ class RomService extends GetxController {
         "vanillalink": vanillaLink,
       },
     );
-    return response["id"] ?? "";
   }
 
-  static Future<List<dynamic>> getRomList({
-    required String codename,
-    required double androidVersion,
-    required OrderBy orderBy,
-  }) async {
-    // get the image category
+  //! get a list of rom
+  static Future<List<dynamic>> getRomList({required String codename, required double androidVersion, required OrderBy orderBy}) async {
+    // convert the order by to a string
     String orderByString;
     switch (orderBy) {
       case OrderBy.performance:
@@ -50,67 +43,61 @@ class RomService extends GetxController {
       default:
         orderByString = "";
     }
-    Map<String, dynamic> response = await HttpHandler.get(
-      url +
-          "/romlist/" +
-          codename +
-          "/" +
-          androidVersion.toString() +
-          "/" +
-          orderByString,
-    );
-    return response["list"];
+
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/romlist/" + codename + "/" + androidVersion.toString() + "/" + orderByString, RequestType.get);
+
+    // return the rom list or an empty list
+    return response["list"] ?? [];
   }
 
-  static Future<List<dynamic>> getVersionList({
-    required String codename,
-    required String romId,
-  }) async {
-    Map<String, dynamic> response =
-        await HttpHandler.get(url + "/versionList/" + codename + "/" + romId);
-    return response["list"];
+  //! get a list of rom version
+  static Future<List<dynamic>> getVersionList({required String codename, required String romId}) async {
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/versionList/" + codename + "/" + romId, RequestType.get);
+
+    // return the list of version or an empty list
+    return response["list"] ?? [];
   }
 
-  Future<String> verifyRom(String token, String romId) async {
-    Map<String, dynamic> response = await HttpHandler.put(
-      url + "/verifyrom/" + romId,
-      header: {"token": token},
-    );
-    return response["res"] ?? "";
+  //! verify a rom
+  static Future<void> verifyRom(String token, String romId) async {
+    // make the request
+    await HttpHandler.req(url + "/verifyrom/" + romId, RequestType.put, header: {"token": token});
   }
 
+  //! get a list of unverified rom
   static Future<List<dynamic>> getUnverifiedRom(String token) async {
-    Map<String, dynamic> response =
-        await HttpHandler.get(url + "/verifyrom", header: {"token": token});
-    return response["list"];
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/verifyrom", RequestType.get, header: {"token": token});
+
+    // return a list of rom or an empty list
+    return response["list"] ?? [];
   }
 
-  static Future<Map<String, dynamic>> getRom({
-    required String codename,
-    required double androidVersion,
-    required String romName,
-  }) async {
+  //! get a single rom from the rom data
+  static Future<Map<String, dynamic>> getRom({required String codename, required double androidVersion, required String romName}) async {
+    // replace the space in the rom name with %
     romName = romName.replaceAll(" ", "%");
-    Map<String, dynamic> response = await HttpHandler.get(
-      url +
-          "/rom/" +
-          codename +
-          "/" +
-          androidVersion.toString() +
-          "/" +
-          romName,
-    );
+
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/rom/" + codename + "/" + androidVersion.toString() + "/" + romName, RequestType.get);
+
+    // return the rom
     return response;
   }
 
+  //! get a single rom from the id
   static Future<Map<String, dynamic>> getRomById(String id) async {
-    Map<String, dynamic> response = await HttpHandler.get(
-      url + "/romid/" + id,
-    );
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/romid/" + id, RequestType.get);
+
+    // return the rom data
     return response;
   }
 
-  static Future<String> addRom({
+  //! add a rom to the db
+  static Future<void> addRom({
     required String romName,
     required double androidVersion,
     required List<String> screenshot,
@@ -119,25 +106,21 @@ class RomService extends GetxController {
     required List<String> codename,
     required String token,
   }) async {
-    Map<String, dynamic> response = await HttpHandler.post(
+    // make the request
+    await HttpHandler.req(
       url + "/rom",
+      RequestType.post,
       header: {"token": token},
-      body: {
-        "romname": romName,
-        "androidversion": androidVersion,
-        "screenshot": screenshot,
-        "logo": logo,
-        "description": description,
-        "codename": codename
-      },
+      body: {"romname": romName, "androidversion": androidVersion, "screenshot": screenshot, "logo": logo, "description": description, "codename": codename},
     );
-    return response["id"] ?? "";
   }
 
-  // search rom by name
+  //! search rom by name
   static Future<List<dynamic>> searchRomName(String romName) async {
-    Map<String, dynamic> response =
-        await HttpHandler.get(url + "/romName/" + romName);
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/romName/" + romName, RequestType.get);
+
+    // return a list of rom name
     return response["list"] ?? [];
   }
 }

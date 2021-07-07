@@ -3,26 +3,24 @@ import 'package:get/get.dart';
 import 'http_handler.dart';
 
 class DeviceService extends GetxController {
+  //! device service base url
   static final String url = "http://localhost:9090";
 
-  //TODO: da fare
-  void editDeviceInfo() {}
-
+  //! get the info of a device
   static Future<Map<String, dynamic>> getDeviceInfo(String codename) async {
-    Map<String, dynamic> response =
-        await HttpHandler.post(url + "/devices/" + codename);
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/devices/" + codename, RequestType.post);
+
+    // return the device info
     return response;
   }
 
-  static Future<Map<String, dynamic>> addDevice(
-    String codename,
-    String name,
-    List<String> photo,
-    String brand,
-    String token,
-  ) async {
-    Map<String, dynamic> response = await HttpHandler.post(
+  //! add a device to the db
+  static Future<void> addDevice(String codename, String name, List<String> photo, String brand, String token) async {
+    // make the request
+    await HttpHandler.req(
       url + "/devices",
+      RequestType.post,
       header: {"token": token},
       body: {
         "codename": codename,
@@ -31,13 +29,17 @@ class DeviceService extends GetxController {
         "brand": brand,
       },
     );
-    return response;
   }
 
-  // search device by name
+  //! search device by name
   static Future<List<dynamic>> searchDeviceName(String codename) async {
-    Map<String, dynamic> response =
-        await HttpHandler.get(url + "/deviceName/" + codename);
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/deviceName/" + codename, RequestType.get);
+
+    // return a device name list or an empty list
     return response["list"] ?? [];
   }
+
+  //TODO: da fare
+  void editDeviceInfo() {}
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:romlinks_frontend/logic/services/user_controller.dart';
 import 'package:romlinks_frontend/logic/services/user_service.dart';
 
 import '../theme.dart';
@@ -53,8 +54,9 @@ class LoginScreen extends StatelessWidget {
               white: true,
               onTap: () async {
                 if (username != "" && password != "") {
-                  String token = await UserService.logIn(username, password);
-                  if (token.isNotEmpty) {
+                  await UserService.logIn(username, password);
+                  UserController _userController = Get.find();
+                  if (_userController.isLogged.value) {
                     Get.toNamed("/");
                   }
                 }

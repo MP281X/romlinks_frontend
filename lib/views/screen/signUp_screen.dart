@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:romlinks_frontend/logic/services/user_controller.dart';
 import 'package:romlinks_frontend/logic/services/user_service.dart';
 
 import '../theme.dart';
@@ -68,13 +69,14 @@ class SignUpScreen extends StatelessWidget {
               white: true,
               onTap: () async {
                 if (username != "" && password != "") {
-                  String token = await UserService.signUp(
+                  await UserService.signUp(
                     username: username,
                     email: email,
                     password: password,
                     image: "",
                   );
-                  if (token.isNotEmpty) {
+                  UserController _userController = Get.find();
+                  if (_userController.isLogged.value) {
                     Get.toNamed("/");
                   }
                 }
