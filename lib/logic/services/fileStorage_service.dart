@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:romlinks_frontend/logic/controller/user_controller.dart';
 
 class FileStorageService extends GetxController {
   //! file storage service base url
@@ -101,14 +102,15 @@ class FileStorageService extends GetxController {
     // try and catch error
     try {
       // create the uri
-      Uri uri = Uri.parse(url + "/profile/" + username);
+      Uri uri = Uri.parse(url + "/profile/" + username + ".png");
 
       // convert the image to a int list
       List<int> byteToIntList = image.cast();
 
       // create the request
       var request = http.MultipartRequest('POST', uri);
-
+      UserController _userController = Get.find();
+      request.headers.assign("token", _userController.token);
       // add the file to the request
       request.files.add(http.MultipartFile.fromBytes("file", byteToIntList, filename: "ciao"));
 
@@ -174,13 +176,19 @@ class FileStorageService extends GetxController {
       case PhotoCategory.screenshot:
         categoryString = "screenshot";
         break;
+      case PhotoCategory.profile:
+        categoryString = "profile";
+        break;
       default:
         categoryString = "";
     }
 
+    if (category == PhotoCategory.profile) {
+      return url + "/image/" + categoryString + "/" + name + ".png";
+    }
     // return the image url
     return url + "/image/" + categoryString + "/" + name;
   }
 }
 
-enum PhotoCategory { logo, devicePhoto, screenshot }
+enum PhotoCategory { logo, devicePhoto, screenshot, profile }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/services/user_controller.dart';
+import 'package:romlinks_frontend/logic/controller/user_controller.dart';
 import 'package:romlinks_frontend/views/screen/auth_screen.dart';
-import 'package:romlinks_frontend/views/screen/test_screen.dart';
+import 'package:romlinks_frontend/views/screen/home_screen.dart';
 import 'package:romlinks_frontend/views/screen/login_screen.dart';
+import 'package:romlinks_frontend/views/screen/profile_screen.dart';
 import 'package:romlinks_frontend/views/screen/signUp_screen.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 
@@ -20,11 +21,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeApp.themeData,
       darkTheme: ThemeApp.themeData,
       debugShowCheckedModeBanner: false,
-      home: TestScreen(),
+      home: HomeScreen(),
       getPages: [
         GetPage(name: "/logIn", page: () => LoginScreen()),
         GetPage(name: "/signUp", page: () => SignUpScreen()),
         GetPage(name: "/auth", page: () => AuthScreen()),
+        GetPage(name: "/profile", page: () => ProfileScreen()),
       ],
     );
   }

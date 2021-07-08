@@ -1,17 +1,12 @@
-import 'package:get/get.dart';
+import 'package:romlinks_frontend/logic/models/user_model.dart';
 import 'package:romlinks_frontend/logic/services/http_handler.dart';
-import 'package:romlinks_frontend/logic/services/user_controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {
   //! user service base url
   static final String url = "http://localhost:9093";
 
   //! create a new user
-  static Future<void> signUp({required String username, required String email, required String password, required String image}) async {
-    // create an instance of the shared
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
+  static Future<String> signUp({required String username, required String email, required String password}) async {
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(
       url + "/user",
@@ -20,27 +15,32 @@ class UserService {
         "username": username,
         "email": email,
         "password": password,
-        "image": image,
       },
     );
 
     // check if the token is null
     if (response["token"] == null || response["token"] == "") {
-      return;
+      return "";
     }
 
-    // get the user controller
-    UserController userController = Get.find();
+    return response["token"] ?? "";
+  }
 
-    // set the logger propriety to false
-    userController.isLogged.value = true;
+  //! log in
+  static Future<String> logIn(String username, String password) async {
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(
+      url + "/user",
+      RequestType.get,
+      header: {"username": username, "password": password},
+    );
 
-    // save the token and the user info
-    prefs.setString("token", response["token"]);
-    prefs.setString("username", username);
-    prefs.setString("password", password);
+    // check if the token is null
+    if (response["token"] == null || response["token"] == "") {
+      return "";
+    }
 
-    // return true
+    return response["token"] ?? "";
   }
 
   //! edit user perm
@@ -69,62 +69,17 @@ class UserService {
     );
   }
 
-  //! log in
-  static Future<void> logIn(String username, String password) async {
-    // create an instance of the shared preference
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // make the request
-    Map<String, dynamic> response = await HttpHandler.req(
-      url + "/user",
-      RequestType.get,
-      header: {"username": username, "password": password},
-    );
-
-    // check if the token is null
-    if (response["token"] == null || response["token"] == "") {
-      return;
-    }
-    // get the user controller
-    UserController userController = Get.find();
-
-    // set the logger propriety to true
-    userController.isLogged.value = true;
-
-    // save the user info and the token
-    prefs.setString("token", response["token"]);
-    prefs.setString("username", username);
-    prefs.setString("password", password);
-  }
-
   //! return the user data
-  static Future<Map<String, dynamic>> userData(String token) async {
+  static Future<UserModel> userData(String token) async {
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(
-      url + "/user",
+      url + "/userData",
       RequestType.get,
       header: {"token": token},
     );
 
     // return the user data
-    return response;
-  }
-
-  //! log out a user
-  static Future<void> logOut() async {
-    // create an instance of the shared preference
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // get the user controller
-    UserController userController = Get.find();
-
-    // set the logger propriety to false
-    userController.isLogged.value = false;
-
-    // remove the user info and the token
-    prefs.remove("username");
-    prefs.remove("password");
-    prefs.remove("token");
+    return UserModel.fromMap(response);
   }
 }
 

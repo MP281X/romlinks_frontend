@@ -16,7 +16,7 @@ class DeviceService extends GetxController {
   }
 
   //! add a device to the db
-  static Future<void> addDevice(String codename, String name, List<String> photo, String brand, String token) async {
+  static Future<void> addDevice({required String codename, required String name, required List<String> photo, required String brand, required String token}) async {
     // make the request
     await HttpHandler.req(
       url + "/devices",
