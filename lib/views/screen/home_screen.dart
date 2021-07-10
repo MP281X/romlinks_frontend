@@ -1,38 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/controller/user_controller.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
-import 'package:romlinks_frontend/logic/services/saveImage_service.dart';
-import 'package:romlinks_frontend/views/screen/saveImage_screen.dart';
+import 'package:romlinks_frontend/logic/models/device_model.dart';
+import 'package:romlinks_frontend/logic/services/device_service.dart';
+import 'package:romlinks_frontend/logic/services/rom_service.dart';
+import 'package:romlinks_frontend/logic/controller/image_controller.dart';
 import 'package:romlinks_frontend/views/widget/accountButton_widget.dart';
 import 'package:romlinks_frontend/views/widget/custom_widget.dart';
+import 'package:romlinks_frontend/views/widget/futureBuilder_widget.dart';
+import 'package:romlinks_frontend/views/widget/romList_widget.dart';
 import 'package:romlinks_frontend/views/widget/scaffold_widget.dart';
 
+//! main screen, display list of rom ordered by the review
 class HomeScreen extends StatelessWidget {
-  final UserController _userController = Get.find();
-  final SaveImageLink links = Get.put(SaveImageLink());
+  final ImageLinkController links = Get.put(ImageLinkController());
   @override
   Widget build(BuildContext context) {
+    //TODO: renderli dinamici
+    String codename = "ginkgo";
+    double androidVersion = 12;
     return ScaffoldW(
       Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextW("RomLinks", big: true),
-              AccountButtonW(),
-            ],
+            children: [TextW("RomLinks", big: true), AccountButtonW()],
           ),
-          ButtonW(
-            "image crop",
-            onTap: () => Get.to(
-              SaveImageScreen(
-                category: PhotoCategory.profile,
-                fileName: _userController.userData.value.username,
-                aspectRatio: 1,
-              ),
-            ),
+          SpaceW(),
+          FutureBuilderW<DeviceModel>(
+            future: DeviceService.getDeviceInfo(codename),
+            builder: (data) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [TextW(data.name), TextW("Android " + androidVersion.toString())],
+              );
+            },
           ),
+          SpaceW(),
+          RomListW(codename: codename, androidVersion: androidVersion, orderBy: OrderBy.battery),
+          RomListW(codename: codename, androidVersion: androidVersion, orderBy: OrderBy.customization),
+          RomListW(codename: codename, androidVersion: androidVersion, orderBy: OrderBy.performance),
+          RomListW(codename: codename, androidVersion: androidVersion, orderBy: OrderBy.stability),
         ],
       ),
     );

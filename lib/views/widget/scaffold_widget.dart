@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+//! custom scaffold with padding
 class ScaffoldW extends StatelessWidget {
   const ScaffoldW(this.child);
 

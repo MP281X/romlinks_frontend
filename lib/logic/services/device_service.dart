@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:romlinks_frontend/logic/models/device_model.dart';
 
 import 'http_handler.dart';
 
@@ -7,12 +8,14 @@ class DeviceService extends GetxController {
   static final String url = "http://localhost:9090";
 
   //! get the info of a device
-  static Future<Map<String, dynamic>> getDeviceInfo(String codename) async {
+  static Future<DeviceModel> getDeviceInfo(String codename) async {
     // make the request
-    Map<String, dynamic> response = await HttpHandler.req(url + "/devices/" + codename, RequestType.post);
+    Map<String, dynamic> response = await HttpHandler.req(url + "/devices/" + codename, RequestType.get);
+
+    DeviceModel deviceInfo = DeviceModel.fromMap(response);
 
     // return the device info
-    return response;
+    return deviceInfo;
   }
 
   //! add a device to the db

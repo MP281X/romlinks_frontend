@@ -4,6 +4,7 @@ import 'package:romlinks_frontend/logic/controller/user_controller.dart';
 import 'package:romlinks_frontend/views/widget/custom_widget.dart';
 import 'package:romlinks_frontend/views/widget/scaffold_widget.dart';
 
+//! screen for the login
 class LoginScreen extends StatelessWidget {
   final UserController _userController = Get.find();
 
@@ -18,28 +19,19 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextW(
-              "Log In",
-              big: true,
-            ),
-            SizedBox(height: 30),
+            TextW("Log In", big: true),
+            SpaceW(big: true),
             TextField(
               onChanged: (text) => username = text,
-              decoration: InputDecoration(
-                hintText: "Username",
-                prefixIcon: Icon(Icons.person),
-              ),
+              decoration: InputDecoration(hintText: "Username", prefixIcon: Icon(Icons.person)),
             ),
-            SizedBox(height: 10),
+            SpaceW(),
             TextField(
               onChanged: (text) => password = text,
-              decoration: InputDecoration(
-                hintText: "Password",
-                prefixIcon: Icon(Icons.lock),
-              ),
+              decoration: InputDecoration(hintText: "Password", prefixIcon: Icon(Icons.lock)),
               obscureText: true,
             ),
-            SizedBox(height: 10),
+            SpaceW(),
             ButtonW(
               "Log in",
               animated: true,

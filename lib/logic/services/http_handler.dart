@@ -60,16 +60,9 @@ class HttpHandler extends GetxController {
       return data;
 
       // catch the error
-    } catch (_) {
+    } catch (e) {
       // open a snackbar with the error message
-      Get.snackbar(
-        "Error",
-        "unable to make the request",
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      );
-
+      print(e);
       // return an empty map
       return {};
     }

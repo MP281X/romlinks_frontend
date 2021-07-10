@@ -1,17 +1,15 @@
-import 'dart:typed_data';
-
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
-import 'package:romlinks_frontend/logic/services/saveImage_service.dart';
+import 'package:romlinks_frontend/logic/controller/image_controller.dart';
 import 'package:romlinks_frontend/views/widget/custom_widget.dart';
 import 'package:romlinks_frontend/views/widget/scaffold_widget.dart';
 
 import '../theme.dart';
 
 //TODO: controllare se ci sono errori durante l'upload
+//! handle the upload of the image and crop to the required aspect ratio
 class SaveImageScreen extends StatelessWidget {
   SaveImageScreen({
     required this.category,
@@ -23,22 +21,19 @@ class SaveImageScreen extends StatelessWidget {
   final String fileName;
   final double aspectRatio;
   final double androidVersion;
-  final SaveImageLink links = Get.find();
+  final ImageLinkController links = Get.find();
   @override
   Widget build(BuildContext context) {
     return ScaffoldW(
-      GetBuilder<ImageSaveController>(
-        init: ImageSaveController(),
+      GetBuilder<SaveImageController>(
+        init: SaveImageController(),
         builder: (_controller) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TextW(
-                "Image cropper",
-                big: true,
-              ),
-              SizedBox(height: 30),
+              TextW("Image cropper", big: true),
+              SpaceW(big: true),
               SizedBox(
                 height: 400,
                 width: 400,
@@ -76,7 +71,7 @@ class SaveImageScreen extends StatelessWidget {
                       : CircularProgressIndicator(),
                 ),
               ),
-              SizedBox(height: 30),
+              SpaceW(big: true),
               if (_controller.saved == 0)
                 ButtonW(
                   "Save image",
@@ -89,53 +84,12 @@ class SaveImageScreen extends StatelessWidget {
                 ),
               if (_controller.saved == 1) CircularProgressIndicator(),
               if (_controller.saved == 2) TextW("Image saved"),
-              SizedBox(height: 10),
+              SpaceW(),
               if (_controller.saved == 2) ButtonW("Go back", onTap: () => Get.back(closeOverlays: true)),
             ],
           );
         },
       ),
     );
-  }
-}
-
-class ImageSaveController extends GetxController {
-  @override
-  void onInit() async {
-    super.onInit();
-    controller = CropController();
-    await loadImage();
-  }
-
-  @override
-  void onClose() {
-    controller = null;
-    img = null;
-    super.onClose();
-  }
-
-  CropController? controller;
-
-  Uint8List? img;
-
-  int saved = 0;
-
-  void isLoading() {
-    saved = 1;
-    update();
-  }
-
-  void isSaved() {
-    saved = 2;
-    update();
-  }
-
-  Future loadImage() async {
-    final picker = ImagePicker();
-    PickedFile? pickedFile = await picker.getImage(source: ImageSource.gallery);
-    img = await pickedFile!.readAsBytes();
-    if (img != null) {
-      update();
-    }
   }
 }

@@ -6,6 +6,7 @@ import 'package:romlinks_frontend/views/theme.dart';
 import 'package:romlinks_frontend/views/widget/custom_widget.dart';
 import 'package:romlinks_frontend/views/widget/scaffold_widget.dart';
 
+//! display the user information
 class ProfileScreen extends StatelessWidget {
   final UserController _userController = Get.find();
   @override
@@ -21,9 +22,7 @@ class ProfileScreen extends StatelessWidget {
           if (userData.link.isNotEmpty) TextW(userData.link.toString()),
           Row(
             children: [
-              TextW(
-                "Verified ",
-              ),
+              TextW("Verified "),
               ButtonW(
                 userData.verified.toString(),
                 height: 40,
@@ -35,9 +34,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           Row(
             children: [
-              TextW(
-                "Moderator  ",
-              ),
+              TextW("Moderator  "),
               ButtonW(
                 userData.moderator.toString(),
                 height: 40,
@@ -47,10 +44,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ],
           ),
-          ButtonW(
-            "Log out",
-            onTap: () async => await _userController.logOut(),
-          ),
+          ButtonW("Log out", onTap: () async => await _userController.logOut()),
         ],
       ),
     );

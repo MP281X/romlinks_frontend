@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:romlinks_frontend/logic/models/rom_model.dart';
+import 'package:romlinks_frontend/logic/models/version_model.dart';
 
 import 'http_handler.dart';
 
@@ -24,7 +26,7 @@ class RomService extends GetxController {
   }
 
   //! get a list of rom
-  static Future<List<dynamic>> getRomList({required String codename, required double androidVersion, required OrderBy orderBy}) async {
+  static Future<List<RomModel>> getRomList({required String codename, required double androidVersion, required OrderBy orderBy}) async {
     // convert the order by to a string
     String orderByString;
     switch (orderBy) {
@@ -47,17 +49,22 @@ class RomService extends GetxController {
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(url + "/romlist/" + codename + "/" + androidVersion.toString() + "/" + orderByString, RequestType.get);
 
+    // convert the response to a list of rom model
+    List<RomModel> romList = List<RomModel>.from(response["list"].map((x) => RomModel.fromMap(x)));
+
     // return the rom list or an empty list
-    return response["list"] ?? [];
+    return romList;
   }
 
   //! get a list of rom version
-  static Future<List<dynamic>> getVersionList({required String codename, required String romId}) async {
+  static Future<List<VersionModel>> getVersionList({required String codename, required String romId}) async {
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(url + "/versionList/" + codename + "/" + romId, RequestType.get);
 
+    // convert the response to a list of versionmodel
+    List<VersionModel> versionList = List<VersionModel>.from(response["list"].map((x) => VersionModel.fromMap(x)));
     // return the list of version or an empty list
-    return response["list"] ?? [];
+    return versionList;
   }
 
   //! verify a rom
@@ -67,16 +74,19 @@ class RomService extends GetxController {
   }
 
   //! get a list of unverified rom
-  static Future<List<dynamic>> getUnverifiedRom(String token) async {
+  static Future<List<RomModel>> getUnverifiedRom(String token) async {
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(url + "/verifyrom", RequestType.get, header: {"token": token});
 
+    // convert the response to a list of rom model
+    List<RomModel> romList = List<RomModel>.from(response["list"].map((x) => RomModel.fromMap(x)));
+
     // return a list of rom or an empty list
-    return response["list"] ?? [];
+    return romList;
   }
 
   //! get a single rom from the rom data
-  static Future<Map<String, dynamic>> getRom({required String codename, required double androidVersion, required String romName}) async {
+  static Future<RomModel> getRom({required String codename, required double androidVersion, required String romName}) async {
     // replace the space in the rom name with %
     romName = romName.replaceAll(" ", "%");
 
@@ -84,16 +94,16 @@ class RomService extends GetxController {
     Map<String, dynamic> response = await HttpHandler.req(url + "/rom/" + codename + "/" + androidVersion.toString() + "/" + romName, RequestType.get);
 
     // return the rom
-    return response;
+    return RomModel.fromMap(response);
   }
 
   //! get a single rom from the id
-  static Future<Map<String, dynamic>> getRomById(String id) async {
+  static Future<RomModel> getRomById(String id) async {
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(url + "/romid/" + id, RequestType.get);
 
     // return the rom data
-    return response;
+    return RomModel.fromMap(response);
   }
 
   //! add a rom to the db

@@ -1,19 +1,20 @@
-//! Base widget
+//! All the custom widget for standardizing the app style
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 
+//! container
 class ContainerW extends StatelessWidget {
-  const ContainerW(
-    this.child, {
-    required this.height,
-    required this.width,
-    this.boxShadow = false,
-    this.padding = const EdgeInsets.all(10),
-    this.margin = const EdgeInsets.all(10),
-    this.color = ThemeApp.secondaryColor,
-  });
+  const ContainerW(this.child,
+      {this.height = 100,
+      this.width = 100,
+      this.boxShadow = false,
+      this.padding = const EdgeInsets.all(10),
+      this.margin = const EdgeInsets.all(10),
+      this.color = ThemeApp.secondaryColor,
+      this.marginLeft = true,
+      this.marginRight = true});
   final Widget child;
   final double height;
   final double width;
@@ -21,31 +22,27 @@ class ContainerW extends StatelessWidget {
   final EdgeInsets padding;
   final EdgeInsets margin;
   final Color color;
+  final bool marginLeft;
+  final bool marginRight;
   @override
   Widget build(BuildContext context) {
+    EdgeInsets customMargin = margin.copyWith(left: (marginLeft) ? margin.left : 0, right: (marginRight) ? margin.right : 0);
     return Container(
       child: child,
       height: height,
       width: width,
       padding: padding,
-      margin: margin,
+      margin: customMargin,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          if (boxShadow)
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 7,
-              offset: Offset(3, 3),
-            ),
-        ],
+        boxShadow: [if (boxShadow) BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 2, blurRadius: 7, offset: Offset(3, 3))],
       ),
     );
   }
 }
 
+//! button
 class ButtonW extends StatelessWidget {
   ButtonW(
     this.text1, {
@@ -81,21 +78,12 @@ class ButtonW extends StatelessWidget {
               controller.animation.value = true;
               await onTap();
               controller.animation.value = false;
-            } else {
+            } else
               onTap();
-            }
           },
           child: ContainerW(
             FittedBox(
-              child: (!controller.animation.value)
-                  ? TextW(
-                      text1,
-                      maxLine: 1,
-                      white: white,
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(color: ThemeApp.primaryColor),
-                    ),
+              child: (!controller.animation.value) ? TextW(text1, maxLine: 1) : Center(child: CircularProgressIndicator(color: ThemeApp.primaryColor)),
             ),
             padding: padding,
             margin: margin,
@@ -109,10 +97,12 @@ class ButtonW extends StatelessWidget {
   }
 }
 
+//! controller for the button animation state
 class ButtonWController extends GetxController {
   var animation = false.obs;
 }
 
+//! text
 class TextW extends StatelessWidget {
   const TextW(
     this.text, {
@@ -143,4 +133,12 @@ class TextW extends StatelessWidget {
       maxLines: maxLine,
     );
   }
+}
+
+//! space
+class SpaceW extends StatelessWidget {
+  const SpaceW({this.big = false});
+  final bool big;
+  @override
+  Widget build(BuildContext context) => SizedBox(height: (big) ? 30 : 10);
 }
