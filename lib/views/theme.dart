@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//! General theme of the app
 class ThemeApp {
   //! ThemeData
   static ThemeData themeData = ThemeData.dark().copyWith(

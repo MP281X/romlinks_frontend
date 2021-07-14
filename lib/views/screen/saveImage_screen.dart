@@ -3,27 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/controller/image_controller.dart';
-import 'package:romlinks_frontend/views/widget/custom_widget.dart';
-import 'package:romlinks_frontend/views/widget/scaffold_widget.dart';
+import 'package:romlinks_frontend/views/custom_widget.dart';
 
 import '../theme.dart';
 
+//TODO: da fixare
 //TODO: controllare se ci sono errori durante l'upload
+//TODO: bottone per cambiare immagine o annullare l'upload
 //! handle the upload of the image and crop to the required aspect ratio
 class SaveImageScreen extends StatelessWidget {
   SaveImageScreen({
     required this.category,
     required this.fileName,
     this.androidVersion = 0,
-    required this.aspectRatio,
   });
   final PhotoCategory category;
   final String fileName;
-  final double aspectRatio;
   final double androidVersion;
-  final ImageLinkController links = Get.find();
+
   @override
   Widget build(BuildContext context) {
+    double aspectRatio = 9 / 19;
+    if (category == PhotoCategory.logo) {
+      aspectRatio = 1;
+    }
     return ScaffoldW(
       GetBuilder<SaveImageController>(
         init: SaveImageController(),
@@ -33,45 +36,27 @@ class SaveImageScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TextW("Image cropper", big: true),
-              SpaceW(big: true),
-              SizedBox(
-                height: 400,
-                width: 400,
-                child: Center(
-                  child: (_controller.img != null)
-                      ? new Crop(
-                          controller: _controller.controller,
-                          baseColor: ThemeApp.primaryColor,
-                          initialSize: .5,
-                          aspectRatio: aspectRatio,
-                          image: _controller.img!,
-                          onCropped: (croppedImg) async {
-                            try {
-                              String link = "";
-                              if (category != PhotoCategory.profile) {
-                                link = await FileStorageService.postImage(
-                                  category: category,
-                                  romName: fileName,
-                                  androidVersion: androidVersion,
-                                  image: croppedImg,
-                                );
-                              } else {
-                                link = await FileStorageService.postProfilePicture(fileName, croppedImg);
-                              }
-                              if (link != "") {
-                                links.addLink(link);
-                                _controller.isSaved();
-                              }
-                            } catch (e) {
-                              print(e);
-                            }
-                          },
-                          cornerDotBuilder: (size, cornerIndex) => const DotControl(color: ThemeApp.accentColor),
-                        )
-                      : CircularProgressIndicator(),
+              Spacer(),
+              AspectRatio(
+                aspectRatio: 1,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: 300, minHeight: 300, maxHeight: 500, maxWidth: 500),
+                  child: Center(
+                    child: (_controller.img != null)
+                        ? Crop(
+                            controller: _controller.controller,
+                            baseColor: ThemeApp.primaryColor,
+                            initialSize: .5,
+                            aspectRatio: aspectRatio,
+                            image: _controller.img!,
+                            onCropped: (croppedImg) async => _controller.saveImage(category: category, fileName: fileName, croppedImg: croppedImg),
+                            cornerDotBuilder: (size, cornerIndex) => const DotControl(color: ThemeApp.accentColor),
+                          )
+                        : const CircularProgressIndicator(),
+                  ),
                 ),
               ),
-              SpaceW(big: true),
+              Spacer(),
               if (_controller.saved == 0)
                 ButtonW(
                   "Save image",

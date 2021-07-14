@@ -67,6 +67,7 @@ class UserController extends GetxController {
   Future<void> logOut() async {
     // set the logger propriety to false
     isLogged.value = false;
+    token = "";
     userData.value = UserModel();
 
     // remove the user info and the token

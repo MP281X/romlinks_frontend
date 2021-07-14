@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/views/theme.dart';
-import 'package:romlinks_frontend/views/widget/custom_widget.dart';
-import 'package:romlinks_frontend/views/widget/scaffold_widget.dart';
+import 'package:romlinks_frontend/views/custom_widget.dart';
 
 //! redirect to the login and sign up screen
 class AuthScreen extends StatelessWidget {

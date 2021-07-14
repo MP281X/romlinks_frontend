@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller/user_controller.dart';
 import 'package:romlinks_frontend/logic/models/user_model.dart';
 import 'package:romlinks_frontend/views/theme.dart';
-import 'package:romlinks_frontend/views/widget/custom_widget.dart';
-import 'package:romlinks_frontend/views/widget/scaffold_widget.dart';
+import 'package:romlinks_frontend/views/custom_widget.dart';
 
+//TODO: da rifare
 //! display the user information
 class ProfileScreen extends StatelessWidget {
   final UserController _userController = Get.find();

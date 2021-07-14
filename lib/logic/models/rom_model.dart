@@ -16,7 +16,7 @@ class RomModel {
 
   final String id;
   final String romname;
-  final int androidversion;
+  final double androidversion;
   final List<String> screenshot;
   final String logo;
   final String description;

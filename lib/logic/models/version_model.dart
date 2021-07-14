@@ -16,7 +16,7 @@ class VersionModel {
   final String romid;
   final String codename;
   final DateTime date;
-  final String changelog;
+  final List<dynamic> changelog;
   final List<dynamic> error;
   final String gappslink;
   final String vanillalink;
@@ -28,7 +28,7 @@ class VersionModel {
         romid: data["romid"],
         codename: data["codename"],
         date: DateTime.parse(data["date"]),
-        changelog: data["changelog"],
+        changelog: List<dynamic>.from(data["changelog"].map((x) => x)),
         error: List<dynamic>.from(data["error"].map((x) => x)),
         gappslink: data["gappslink"],
         vanillalink: data["vanillalink"],

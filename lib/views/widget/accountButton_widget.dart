@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/controller/user_controller.dart';
-import 'package:romlinks_frontend/views/widget/image_widget.dart';
 
-import 'custom_widget.dart';
+import '../custom_widget.dart';
 
 //! button that redirect to the auth or the profile screen depending on the auth state
 class AccountButtonW extends StatelessWidget {
@@ -26,7 +25,7 @@ class AccountButtonW extends StatelessWidget {
         } else {
           return ButtonW(
             "Log in",
-            margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
+            margin: const EdgeInsets.fromLTRB(10, 10, 0, 10),
             width: 40 * 2.2,
             onTap: () => Get.toNamed("/auth"),
           );

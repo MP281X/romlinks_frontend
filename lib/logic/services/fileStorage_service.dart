@@ -1,17 +1,21 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:romlinks_frontend/logic/controller/user_controller.dart';
+import 'package:romlinks_frontend/logic/services/http_handler.dart';
+import 'package:romlinks_frontend/views/custom_widget.dart';
 
 class FileStorageService extends GetxController {
   //! file storage service base url
-  static final String url = "http://localhost:9091";
+  static final bool local = true;
+  static final String url = (local) ? "http://localhost:9091" : "https://romlinks.filestorage.mp281x.xyz";
 
   //! save an image in the backend
   static Future<String> postImage({required PhotoCategory category, required String romName, required double androidVersion, required Uint8List image}) async {
+    String errMsg = "";
     // try and catch error
     try {
       // convert the photo category to a string
@@ -31,13 +35,12 @@ class FileStorageService extends GetxController {
       }
 
       // add the image format to the image name
-      romName = romName + ".png";
+      romName = romName;
 
       // create the uri
       Uri uri = Uri.parse(
         url + "/image/" + categoryString + "/" + androidVersion.toString() + "/" + romName,
       );
-
       // convert the image to a list of int
       List<int> byteToIntList = image.cast();
 
@@ -56,49 +59,33 @@ class FileStorageService extends GetxController {
       // check if the response code isn't 200
       if (response.statusCode != 200) {
         // open a snackbar with the error
-        Get.snackbar(
-          "Error",
-          data["err"],
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        );
-
-        // return an empty string
-        return "";
+        errMsg = data["err"];
+        throw ServerResErr();
       }
-
-      // if the response code is 200 open a snackbar with the image link
-      if (data["imgLink"] != null)
-        Get.snackbar(
-          "Image uploaded",
-          url + "/image/" + data["imgLink"],
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        );
 
       // return the image link or an empty string
       return data["imgLink"] ?? "";
 
       // catch error
-    } catch (_) {
-      // if there is error open a snackbar with an error message
-      Get.snackbar(
-        "Error",
-        "unable to save the image",
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      );
-
-      // return an empty string
+    } on TimeoutException {
+      snackbarW("Error", "No api response");
+      return "";
+    } on SocketException {
+      snackbarW("Error", "No internet connection");
+      return "";
+    } on ServerResErr {
+      print("error");
+      snackbarW("Error", errMsg);
+      return "";
+    } catch (e) {
+      snackbarW("Error", "No server response");
       return "";
     }
   }
 
   //! save a profile picture in the backend
   static Future<String> postProfilePicture(String username, Uint8List image) async {
+    String errMsg = "";
     // try and catch error
     try {
       // create the uri
@@ -123,41 +110,24 @@ class FileStorageService extends GetxController {
       // check the response code
       if (response.statusCode != 200) {
         // open a snackbar with the error
-        Get.snackbar(
-          "Error",
-          data["err"],
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        );
-
-        // return an empty string
-        return "";
+        errMsg = data["err"];
+        throw ServerResErr();
       }
-
-      // open a snackbar with the image link
-      if (data["imgLink"] != null)
-        Get.snackbar(
-          "Image uploaded",
-          url + "/image/" + data["imgLink"],
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        );
 
       // return the image link or an empty string
       return data["imgLink"] ?? "";
-    } catch (_) {
-      // if there is error open a snackbar with the error message
-      Get.snackbar(
-        "Error",
-        "unable to save the image",
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      );
-
-      // return an empty string
+    } on TimeoutException {
+      snackbarW("Error", "No api response");
+      return "";
+    } on SocketException {
+      snackbarW("Error", "No internet connection");
+      return "";
+    } on ServerResErr {
+      print("error");
+      snackbarW("Error", errMsg);
+      return "";
+    } catch (e) {
+      snackbarW("Error", "No server response");
       return "";
     }
   }

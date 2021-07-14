@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:romlinks_frontend/logic/models/romVersion_model.dart';
 import 'package:romlinks_frontend/logic/models/rom_model.dart';
 import 'package:romlinks_frontend/logic/models/version_model.dart';
 
@@ -6,10 +7,20 @@ import 'http_handler.dart';
 
 class RomService extends GetxController {
   //! rom service base url
-  static final String url = "http://localhost:9092";
+  static final bool local = true;
+  static final String url = (local) ? "http://localhost:9092" : "https://romlinks.rom.mp281x.xyz";
 
   //! add a rom version to the db
-  static Future<void> addVersion({required String romId, required String codename, required String changelog, required String token, required String gappsLink, required String vanillaLink}) async {
+  static Future<void> addVersion({
+    required String romId,
+    required String codename,
+    required List<String> changelog,
+    required List<String> error,
+    required String token,
+    required String gappsLink,
+    required String vanillaLink,
+    required String relasetype,
+  }) async {
     // make the request
     await HttpHandler.req(
       url + "/version",
@@ -19,8 +30,10 @@ class RomService extends GetxController {
         "romid": romId,
         "codename": codename,
         "changelog": changelog,
+        "error": error,
         "gappslink": gappsLink,
         "vanillalink": vanillaLink,
+        "relasetype": relasetype,
       },
     );
   }
@@ -113,7 +126,6 @@ class RomService extends GetxController {
     required List<String> screenshot,
     required String logo,
     required String description,
-    required List<String> codename,
     required String token,
   }) async {
     // make the request
@@ -121,7 +133,13 @@ class RomService extends GetxController {
       url + "/rom",
       RequestType.post,
       header: {"token": token},
-      body: {"romname": romName, "androidversion": androidVersion, "screenshot": screenshot, "logo": logo, "description": description, "codename": codename},
+      body: {
+        "romname": romName,
+        "androidversion": androidVersion,
+        "screenshot": screenshot,
+        "logo": logo,
+        "description": description,
+      },
     );
   }
 
@@ -132,6 +150,18 @@ class RomService extends GetxController {
 
     // return a list of rom name
     return response["list"] ?? [];
+  }
+
+  //! get a single rom from the rom data
+  static Future<RomVersionModel> getUploaded({required String token}) async {
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/romVersion", RequestType.get, header: {"token": token});
+
+    if (response["rom"] == null || response["version"] == null) {
+      return RomVersionModel();
+    }
+    // return the rom
+    return RomVersionModel.fromMap(response);
   }
 }
 

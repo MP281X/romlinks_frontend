@@ -5,7 +5,8 @@ import 'http_handler.dart';
 
 class DeviceService extends GetxController {
   //! device service base url
-  static final String url = "http://localhost:9090";
+  static final bool local = true;
+  static final String url = (local) ? "http://localhost:9090" : "https://romlinks.device.mp281x.xyz";
 
   //! get the info of a device
   static Future<DeviceModel> getDeviceInfo(String codename) async {
