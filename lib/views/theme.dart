@@ -6,15 +6,16 @@ class ThemeApp {
   static ThemeData themeData = ThemeData.dark().copyWith(
     canvasColor: secondaryColor,
     scaffoldBackgroundColor: primaryColor,
-    primaryColor: primaryColor,
+    primaryColor: accentColor,
+    dialogBackgroundColor: primaryColor,
     colorScheme: ThemeData.dark().colorScheme.copyWith(primary: accentColor),
-    accentColor: secondaryColor,
+    accentColor: accentColor,
     appBarTheme: AppBarTheme(
       color: primaryColor,
       elevation: 0,
     ),
     scrollbarTheme: _scrollBarTheme,
-    iconTheme: IconThemeData(size: 30, color: secondaryColor),
+    iconTheme: IconThemeData(size: 30, color: accentColor),
     inputDecorationTheme: InputDecorationTheme(
       focusedBorder: _textFieldBorder,
       enabledBorder: _textFieldBorder,
@@ -42,6 +43,7 @@ class ThemeApp {
   );
 
   //! Color
+  // static Color white = (Get.isPlatformDarkMode) ? Colors.white : Colors.black;
   static const Color primaryColor = Color(0xFF181C2D);
   static const Color secondaryColor = Color(0xFF1D2335);
   static const Color accentColor = Color(0xFFFF3B30);

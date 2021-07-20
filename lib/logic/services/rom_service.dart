@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:romlinks_frontend/logic/controller/user_controller.dart';
 import 'package:romlinks_frontend/logic/models/romVersion_model.dart';
 import 'package:romlinks_frontend/logic/models/rom_model.dart';
 import 'package:romlinks_frontend/logic/models/version_model.dart';
@@ -7,7 +8,7 @@ import 'http_handler.dart';
 
 class RomService extends GetxController {
   //! rom service base url
-  static final bool local = true;
+  static final bool local = HttpHandler.local;
   static final String url = (local) ? "http://localhost:9092" : "https://romlinks.rom.mp281x.xyz";
 
   //! add a rom version to the db
@@ -17,9 +18,11 @@ class RomService extends GetxController {
     required List<String> changelog,
     required List<String> error,
     required String token,
-    required String gappsLink,
-    required String vanillaLink,
+    required String? gappsLink,
+    required String? vanillaLink,
     required String relasetype,
+    required bool official,
+    required DateTime date,
   }) async {
     // make the request
     await HttpHandler.req(
@@ -34,6 +37,8 @@ class RomService extends GetxController {
         "gappslink": gappsLink,
         "vanillalink": vanillaLink,
         "relasetype": relasetype,
+        "official": official,
+        // "date": date,
       },
     );
   }
@@ -81,15 +86,20 @@ class RomService extends GetxController {
   }
 
   //! verify a rom
-  static Future<void> verifyRom(String token, String romId) async {
+  static Future<void> verifyRom(String romId) async {
+    // get the user controller
+    UserController _userController = Get.find();
     // make the request
-    await HttpHandler.req(url + "/verifyrom/" + romId, RequestType.put, header: {"token": token});
+    await HttpHandler.req(url + "/verifyrom/" + romId, RequestType.put, header: {"token": _userController.token});
   }
 
   //! get a list of unverified rom
-  static Future<List<RomModel>> getUnverifiedRom(String token) async {
+  static Future<List<RomModel>> getUnverifiedRom() async {
+    // get the user controller
+    UserController _userController = Get.find();
+
     // make the request
-    Map<String, dynamic> response = await HttpHandler.req(url + "/verifyrom", RequestType.get, header: {"token": token});
+    Map<String, dynamic> response = await HttpHandler.req(url + "/verifyrom", RequestType.get, header: {"token": _userController.token});
 
     // convert the response to a list of rom model
     List<RomModel> romList = List<RomModel>.from(response["list"].map((x) => RomModel.fromMap(x)));
@@ -126,13 +136,15 @@ class RomService extends GetxController {
     required List<String> screenshot,
     required String logo,
     required String description,
-    required String token,
   }) async {
+    // get the user controller
+    UserController _userController = Get.find();
+
     // make the request
     await HttpHandler.req(
       url + "/rom",
       RequestType.post,
-      header: {"token": token},
+      header: {"token": _userController.token},
       body: {
         "romname": romName,
         "androidversion": androidVersion,
@@ -147,17 +159,18 @@ class RomService extends GetxController {
   static Future<List<dynamic>> searchRomName(String romName) async {
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(url + "/romName/" + romName, RequestType.get);
-
     // return a list of rom name
     return response["list"] ?? [];
   }
 
   //! get a single rom from the rom data
-  static Future<RomVersionModel> getUploaded({required String token}) async {
+  static Future<RomVersionModel> getUploaded() async {
+    // get the user controller
+    UserController _userController = Get.find();
     // make the request
-    Map<String, dynamic> response = await HttpHandler.req(url + "/romVersion", RequestType.get, header: {"token": token});
+    Map<String, dynamic> response = await HttpHandler.req(url + "/romVersion", RequestType.get, header: {"token": _userController.token});
 
-    if (response["rom"] == null || response["version"] == null) {
+    if (response["rom"] == null && response["version"] == null) {
       return RomVersionModel();
     }
     // return the rom

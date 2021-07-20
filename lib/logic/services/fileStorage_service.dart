@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:romlinks_frontend/logic/controller/user_controller.dart';
@@ -10,22 +10,31 @@ import 'package:romlinks_frontend/views/custom_widget.dart';
 
 class FileStorageService extends GetxController {
   //! file storage service base url
-  static final bool local = true;
+  static final bool local = HttpHandler.local;
   static final String url = (local) ? "http://localhost:9091" : "https://romlinks.filestorage.mp281x.xyz";
 
   //! save an image in the backend
-  static Future<String> postImage({required PhotoCategory category, required String romName, required double androidVersion, required Uint8List image}) async {
+  static Future<String> postImage({
+    required PhotoCategory category,
+    required String romName,
+    required double androidVersion,
+    required List<int> image,
+    required int index,
+    required String format,
+  }) async {
     String errMsg = "";
     // try and catch error
     try {
+      imageCache!.clear();
+      if (index > 5 || index < 0) {
+        snackbarW("Error", "invalid screenshot index");
+      }
       // convert the photo category to a string
       String categoryString;
       switch (category) {
         case PhotoCategory.logo:
+          index = 0;
           categoryString = "logo";
-          break;
-        case PhotoCategory.devicePhoto:
-          categoryString = "devicePhoto";
           break;
         case PhotoCategory.screenshot:
           categoryString = "screenshot";
@@ -38,17 +47,25 @@ class FileStorageService extends GetxController {
       romName = romName;
 
       // create the uri
-      Uri uri = Uri.parse(
-        url + "/image/" + categoryString + "/" + androidVersion.toString() + "/" + romName,
-      );
-      // convert the image to a list of int
-      List<int> byteToIntList = image.cast();
+      Uri uri = Uri.parse(url + "/image/" + categoryString);
 
       // create the request
       var request = http.MultipartRequest('POST', uri);
 
+      // add the image data to the headers
+      UserController _userController = Get.find();
+      request.headers.addAll(
+        {
+          "android": androidVersion.toString(),
+          "index": index.toString(),
+          "format": format,
+          "romName": romName,
+          "token": _userController.token,
+        },
+      );
+
       // add the file to the request
-      request.files.add(http.MultipartFile.fromBytes("file", byteToIntList, filename: "ciao"));
+      request.files.add(http.MultipartFile.fromBytes("file", image, filename: "img"));
 
       // make the request
       var response = await http.Response.fromStream(await request.send());
@@ -74,32 +91,33 @@ class FileStorageService extends GetxController {
       snackbarW("Error", "No internet connection");
       return "";
     } on ServerResErr {
-      print("error");
       snackbarW("Error", errMsg);
       return "";
     } catch (e) {
+      print(e);
       snackbarW("Error", "No server response");
       return "";
     }
   }
 
   //! save a profile picture in the backend
-  static Future<String> postProfilePicture(String username, Uint8List image) async {
+  static Future<String> postProfilePicture(List<int> image) async {
     String errMsg = "";
     // try and catch error
     try {
+      imageCache!.clear();
       // create the uri
-      Uri uri = Uri.parse(url + "/profile/" + username + ".png");
-
-      // convert the image to a int list
-      List<int> byteToIntList = image.cast();
+      Uri uri = Uri.parse(url + "/profile");
 
       // create the request
       var request = http.MultipartRequest('POST', uri);
+
+      // add the token to the request
       UserController _userController = Get.find();
       request.headers.assign("token", _userController.token);
+
       // add the file to the request
-      request.files.add(http.MultipartFile.fromBytes("file", byteToIntList, filename: "ciao"));
+      request.files.add(http.MultipartFile.fromBytes("file", image, filename: "img"));
 
       // make the request
       var response = await http.Response.fromStream(await request.send());
@@ -123,7 +141,6 @@ class FileStorageService extends GetxController {
       snackbarW("Error", "No internet connection");
       return "";
     } on ServerResErr {
-      print("error");
       snackbarW("Error", errMsg);
       return "";
     } catch (e) {
@@ -139,9 +156,6 @@ class FileStorageService extends GetxController {
     switch (category) {
       case PhotoCategory.logo:
         categoryString = "logo";
-        break;
-      case PhotoCategory.devicePhoto:
-        categoryString = "devicePhoto";
         break;
       case PhotoCategory.screenshot:
         categoryString = "screenshot";
@@ -161,4 +175,4 @@ class FileStorageService extends GetxController {
   }
 }
 
-enum PhotoCategory { logo, devicePhoto, screenshot, profile }
+enum PhotoCategory { logo, screenshot, profile }

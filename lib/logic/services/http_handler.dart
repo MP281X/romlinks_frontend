@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:romlinks_frontend/views/custom_widget.dart';
 
 class HttpHandler extends GetxController {
+  static bool local = false;
   //! http get handler
   static Future<Map<String, dynamic>> req(String url, RequestType request, {final Map<String, String>? header, final Map<String, dynamic>? body}) async {
     String errMsg = "";
@@ -16,6 +17,7 @@ class HttpHandler extends GetxController {
       Uri uri = Uri.parse(url);
 
       late http.Response response;
+
       // make the request
       switch (request) {
         case RequestType.get:

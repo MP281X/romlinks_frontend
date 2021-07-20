@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/models/user_model.dart';
 import 'package:romlinks_frontend/logic/services/user_service.dart';
+import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserController extends GetxController {
@@ -34,10 +34,9 @@ class UserController extends GetxController {
     // set the user variable
     this.token = token;
     isLogged.value = true;
-    userData.value = await UserService.userData(token);
+    userData.value = await UserService.userData();
 
     // save the user data for future token generation
-    prefs.setString("token", token);
     prefs.setString("username", username);
     prefs.setString("password", password);
   }
@@ -55,10 +54,9 @@ class UserController extends GetxController {
     // set the user variable
     this.token = token;
     isLogged.value = true;
-    userData.value = await UserService.userData(token);
+    userData.value = await UserService.userData();
 
     // save the user data for future token generation
-    prefs.setString("token", token);
     prefs.setString("username", username);
     prefs.setString("password", password);
   }
@@ -73,15 +71,8 @@ class UserController extends GetxController {
     // remove the user info and the token
     prefs.remove("username");
     prefs.remove("password");
-    prefs.remove("token");
     Get.offAllNamed("/");
-    Get.snackbar(
-      "Auth",
-      "Unable to log in",
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-    );
+    snackbarW("Auth", "Logged out");
   }
 
   //! generate a new token

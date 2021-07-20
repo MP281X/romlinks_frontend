@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   crop_your_image: ^0.5.3
+  device_info_plus: any
   file_picker: ^3.0.3
   get: ^4.1.4
   http: ^0.13.3
@@ -19,8 +20,11 @@ dependencies:
   url_launcher: ^6.0.9
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.9.0
+  flutter_native_splash: ^1.1.8+4
   flutter_test:
     sdk: flutter
+
 
 flutter:
 
@@ -35,3 +39,19 @@ flutter:
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
+
+flutter_native_splash:
+  color: "#181C2D"
+  image: images/logo.png
+  color_dark: "#181C2D"
+  image_dark: images/logo.png
+  android: true
+  ios: false
+  android12: true
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "images/icon_background.png"
+  adaptive_icon_background: "images/icon_background.png"
+  adaptive_icon_foreground: "images/icon.png"
