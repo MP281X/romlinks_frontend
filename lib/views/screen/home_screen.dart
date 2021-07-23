@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,9 +8,9 @@ import 'package:romlinks_frontend/logic/models/rom_model.dart';
 import 'package:romlinks_frontend/logic/services/device_service.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
-import 'package:romlinks_frontend/views/screen/addVersion_screen.dart';
 import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
+import 'package:romlinks_frontend/views/theme.dart';
 
 class HomeScreenController extends GetxController {
   @override
@@ -29,7 +31,7 @@ class HomeScreenController extends GetxController {
       androidVersion = double.parse(androidInfo.version.release ?? "0");
     } else {
       codename = "treble";
-      androidVersion = 12;
+      androidVersion = 11;
     }
     update();
   }
@@ -54,15 +56,23 @@ class HomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextW("RomLinks", big: true),
+                    SizedBox(height: 60, child: Image.asset("images/logo.png")),
+                    Spacer(),
                     AccountButtonW(),
+                    SearchButton(),
                   ],
                 ),
-                SelectedDeviceW(),
                 SpaceW(),
-                SpaceW(),
+                FutureBuilderW<DeviceModel>(
+                    future: DeviceService.getDeviceInfo(roms.codename),
+                    builder: (data) => Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextW(data.name[0].toUpperCase() + data.name.substring(1), size: 25),
+                            TextW("Android ${roms.androidVersion.toInt()}", size: 25),
+                          ],
+                        )),
                 SpaceW(),
                 RomListW(codename: roms.codename, androidVersion: roms.androidVersion, orderBy: OrderBy.battery),
                 RomListW(codename: roms.codename, androidVersion: roms.androidVersion, orderBy: OrderBy.customization),
@@ -80,7 +90,7 @@ class HomeScreen extends StatelessWidget {
 
 //! display a list of rom
 class RomListW extends StatelessWidget {
-  const RomListW({Key? key, required this.codename, required this.androidVersion, required this.orderBy}) : super(key: key);
+  const RomListW({required this.codename, required this.androidVersion, required this.orderBy});
   final String codename;
   final double androidVersion;
   final OrderBy orderBy;
@@ -113,7 +123,7 @@ class RomListW extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SpaceW(),
-        TextW(categoryName(), big: true, maxLine: 1),
+        TextW(categoryName(), big: true, singleLine: true),
         SpaceW(),
         SizedBox(
           height: 200,
@@ -128,11 +138,10 @@ class RomListW extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) => RomPreviewW(
                         codename: codename,
                         data: data[index],
-                        key: Key(data[index].id),
                         first: (index == 0),
                       ),
                     )
-                  : ErrorW("No rom found for this device");
+                  : ErrorW(msg: "No rom found for this device");
             },
           ),
         ),
@@ -144,32 +153,32 @@ class RomListW extends StatelessWidget {
 //! display the rom name, the logo and basic rom info in the romlist widget
 class RomPreviewW extends StatelessWidget {
   const RomPreviewW({
-    Key? key,
     required this.data,
     required this.codename,
     this.first = false,
-  }) : super(key: key);
+  });
   final RomModel data;
   final bool first;
   final String codename;
 
   @override
   Widget build(BuildContext context) {
+    String? heroTag = new Random().nextInt(1000).toString();
     return AspectRatio(
-      aspectRatio: 0.9,
+      aspectRatio: 0.8,
       child: GestureDetector(
-        onTap: () => Get.to(RomScreen(data, codename: codename)),
+        onTap: () => Get.to(RomScreen(data, codename: codename, heroTag: heroTag)),
         child: ContainerW(
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 100,
-                width: 100,
-                child: ImageW(category: PhotoCategory.logo, name: data.logo),
+                height: 120,
+                width: 140,
+                child: ImageW(category: PhotoCategory.logo, name: data.logo, heroTag: heroTag),
               ),
               SpaceW(),
-              TextW(data.romname, maxLine: 1, size: 23),
+              TextW(data.romname, singleLine: true, size: 23),
             ],
           ),
           marginLeft: (!first),
@@ -179,101 +188,70 @@ class RomPreviewW extends StatelessWidget {
   }
 }
 
-//TODO: migliorare
-
-//! display the device and the android version of the current device
-class SelectedDeviceW extends StatelessWidget {
+//! dialog for searchign devices and android version
+class SearchButton extends StatelessWidget {
+  final RxList suggestion = [].obs;
   final HomeScreenController controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: FutureBuilderW<DeviceModel>(
-            future: DeviceService.getDeviceInfo(controller.codename),
-            builder: (data) {
-              return Row(
-                children: [
-                  TextW(data.name, size: 25),
-                  Spacer(),
-                  TextW("Android " + controller.androidVersion.toString(), size: 25),
-                ],
-              );
-            },
-          ),
-        ),
-        RomSelectionW()
-      ],
-    );
-  }
-}
-
-//! controller for the device search
-class RomSelectionController extends GetxController {
-  List suggestion = [];
-
-  TextEditingController codenameController = TextEditingController();
-  double androidVerision = 0;
-
-  // setter method
-  void setCodenameAndSuggestion(String x) async {
-    if (codenameController.text != "") {
-      suggestion = await DeviceService.searchDeviceName(codenameController.text);
-      update();
+    TextEditingController codename = TextEditingController(text: controller.codename);
+    TextEditingController version = TextEditingController(text: controller.androidVersion.toString());
+    void searchDevice(String x) async {
+      if (codename.text != "") suggestion.value = await DeviceService.searchDeviceName(codename.text);
     }
-  }
 
-  void setAndroidVersion(String x) {
-    androidVerision = double.parse(x);
-  }
-
-  void setCodename(String x) {
-    codenameController.text = x;
-    update();
-  }
-
-  @override
-  void onInit() {
-    HomeScreenController controller = Get.find();
-    codenameController.text = controller.codename;
-    update();
-    super.onInit();
-  }
-}
-
-//! widget for searching device
-class RomSelectionW extends StatelessWidget {
-  final HomeScreenController roms = Get.find();
-  final RomSelectionController searchController = Get.put(RomSelectionController());
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => bottomSheetW(
-        child: GetBuilder<RomSelectionController>(builder: (controller) {
-          return Column(
+    return GestureDetector(
+      onTap: () => dialogW(
+        DialogW(
+          alignment: Alignment.center,
+          tag: "searchButton",
+          button1: () {
+            controller.searchDevice(codename.text, double.parse(version.text));
+            Get.close(1);
+          },
+          text1: "Search",
+          child: Column(
             children: [
-              TextFieldW(
-                "codename",
-                onChanged: controller.setCodenameAndSuggestion,
-                controller: controller.codenameController,
+              TextFieldW("codename", controller: codename, onChanged: searchDevice),
+              Center(
+                child: Obx(
+                  () => (suggestion.length > 0)
+                      ? ConstrainedBox(
+                          constraints: BoxConstraints(maxHeight: 45, maxWidth: 800),
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: suggestion.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ButtonW(
+                                suggestion[index],
+                                width: 90,
+                                color: ThemeApp.secondaryColor,
+                                margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                onTap: () => codename.text = suggestion[index],
+                              );
+                            },
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
               ),
-              SuggestionW(suggestion: controller.suggestion, onTap: controller.setCodename),
-              TextFieldW("android version", onChanged: controller.setAndroidVersion, number: true),
+              TextFieldW("Version", controller: version, number: true),
             ],
-          );
-        }),
-        text: "Search rom",
-        onTap: () {
-          roms.searchDevice(searchController.codenameController.text, searchController.androidVerision);
-          Get.close(1);
-        },
-        scrollable: false,
-        text2: "Cancel",
+          ),
+          height: 300,
+          width: 400,
+        ),
       ),
-      icon: Icon(Icons.search, size: 25),
-      color: Colors.white,
-      splashRadius: 25,
+      child: ContainerW(
+        Icon(Icons.search_rounded, color: Colors.white, size: 25),
+        padding: EdgeInsets.zero,
+        marginRight: false,
+        height: 40,
+        width: 40,
+        color: ThemeApp.secondaryColor,
+        tag: "searchButton",
+      ),
     );
   }
 }

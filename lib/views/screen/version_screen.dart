@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/models/version_model.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
-import 'package:romlinks_frontend/views/screen/home_screen.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,7 +37,7 @@ class VersionScreen extends StatelessWidget {
                         ),
                       ],
                     )
-                  : ErrorW("No vanilla build"),
+                  : ErrorW(msg: "No vanilla build"),
               (gapps.length > 0)
                   ? Column(
                       children: [
@@ -52,7 +51,7 @@ class VersionScreen extends StatelessWidget {
                         ),
                       ],
                     )
-                  : ErrorW("No gapps build"),
+                  : ErrorW(msg: "No gapps build"),
             ],
           );
         },
@@ -78,11 +77,33 @@ class VersionW extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [TextW("${version.date.day}/${version.date.month}/${version.date.year}"), TextW(version.relasetype)],
+                children: [
+                  TextW("${version.date.day}/${version.date.month}/${version.date.year}", singleLine: true),
+                  Spacer(),
+                  ChipW(
+                    text: version.relasetype,
+                    color: ThemeApp.secondaryColor,
+                    height: 36,
+                    width: 40 * 2.2,
+                  ),
+                  (width > 400)
+                      ? ChipW(
+                          text: version.official ? "Official" : "Unofficial",
+                          color: ThemeApp.primaryColor,
+                          height: 36,
+                          width: 40 * 2.2,
+                        )
+                      : Icon(
+                          version.official ? Icons.gpp_good_rounded : Icons.gpp_bad_rounded,
+                          color: Colors.white,
+                        )
+                ],
               ),
             ),
-            SpaceW(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+              child: Divider(color: Colors.white, thickness: 1),
+            ),
             TextW("Changelog", big: true),
             SpaceW(),
             ContainerW(
@@ -108,6 +129,7 @@ class VersionW extends StatelessWidget {
               width: Get.width,
               height: 200,
             ),
+            SizedBox(height: 60),
           ],
         ),
         text: "Download",
@@ -115,8 +137,27 @@ class VersionW extends StatelessWidget {
       ),
       child: ContainerW(
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [TextW("${version.date.day}/${version.date.month}/${version.date.year}"), TextW(version.relasetype)],
+          children: [
+            TextW("${version.date.day}/${version.date.month}/${version.date.year}", singleLine: true),
+            Spacer(),
+            ChipW(
+              text: version.relasetype,
+              color: ThemeApp.secondaryColor,
+              height: 36,
+              width: 40 * 2.2,
+            ),
+            (width > 400)
+                ? ChipW(
+                    text: version.official ? "Official" : "Unofficial",
+                    color: ThemeApp.primaryColor,
+                    height: 36,
+                    width: 40 * 2.2,
+                  )
+                : Icon(
+                    version.official ? Icons.gpp_good_rounded : Icons.gpp_bad_rounded,
+                    color: Colors.white,
+                  )
+          ],
         ),
         height: 65,
       ),

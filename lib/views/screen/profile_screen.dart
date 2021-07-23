@@ -5,6 +5,7 @@ import 'package:romlinks_frontend/logic/models/user_model.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/views/screen/saveImage_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
+import 'package:romlinks_frontend/views/theme.dart';
 
 //! display the user information
 class ProfileScreen extends StatelessWidget {
@@ -52,11 +53,17 @@ class ProfileScreen extends StatelessWidget {
               TextW(userData.username.toUpperCase(), big: true),
               if (userData.verified) SizedBox(width: 10),
               if (userData.verified) Icon(Icons.verified),
-              if (userData.moderator) ButtonW("Mod", onTap: () {}, height: 30, width: 50, padding: EdgeInsets.all(5))
+              if (userData.moderator)
+                ChipW(
+                  text: "Mod",
+                  color: ThemeApp.accentColor,
+                  height: 30,
+                  width: 50,
+                ),
             ],
           ),
           SpaceW(),
-          TextW(userData.email, maxLine: 1),
+          TextW(userData.email, singleLine: true),
           if (userData.savedRom.isNotEmpty) TextW(userData.savedRom.toString()),
           if (userData.link.isNotEmpty) TextW(userData.link.toString()),
           SpaceW(),

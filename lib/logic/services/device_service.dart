@@ -12,6 +12,7 @@ class DeviceService extends GetxController {
 
   //! get the info of a device
   static Future<DeviceModel> getDeviceInfo(String codename) async {
+    if (codename == "") return DeviceModel();
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(url + "/devices/" + codename, RequestType.get);
 
@@ -24,12 +25,15 @@ class DeviceService extends GetxController {
       String name = androidInfo.model ?? "";
       String brand = androidInfo.brand ?? "";
 
-      // check the device info and add the device
-      await DeviceService.addDevice(
-        codename: codenameD,
-        name: name,
-        brand: brand,
-      );
+      UserController _userController = Get.find();
+      if (_userController.token != "") {
+        // check the device info and add the device
+        await DeviceService.addDevice(
+          codename: codenameD,
+          name: name,
+          brand: brand,
+        );
+      }
 
       // get the device info again
       response = await HttpHandler.req(url + "/devices/" + codename, RequestType.get);
@@ -42,22 +46,23 @@ class DeviceService extends GetxController {
     return deviceInfo;
   }
 
-  //! add a device to the db
+  // //! add a device to the db
   static Future<void> addDevice({required String codename, required String name, required String brand}) async {
     // get the user controller
     UserController _userController = Get.find();
-
-    // make the request
-    await HttpHandler.req(
-      url + "/devices",
-      RequestType.post,
-      header: {"token": _userController.token},
-      body: {
-        "codename": codename,
-        "name": name,
-        "brand": brand,
-      },
-    );
+    if (_userController.token != "") {
+      // make the request
+      await HttpHandler.req(
+        url + "/devices",
+        RequestType.post,
+        header: {"token": _userController.token},
+        body: {
+          "codename": codename,
+          "name": name,
+          "brand": brand,
+        },
+      );
+    }
   }
 
   //! search device by name
@@ -73,6 +78,8 @@ class DeviceService extends GetxController {
   static Future<void> editDeviceInfo(String codename, {List<String>? gcamLinks, String? camera, double? battery, String? processor}) async {
     // get the user controller
     UserController _userController = Get.find();
+    if (_userController.token == "") return;
+    print("errore 3");
 
     await HttpHandler.req(
       url + "/devices/" + codename,
@@ -93,6 +100,8 @@ class DeviceService extends GetxController {
   static Future<List<DeviceModel>> getUploaded() async {
     // get the user controller
     UserController _userController = Get.find();
+    if (_userController.token == "") return [];
+
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(url + "/devices", RequestType.get, header: {"token": _userController.token});
 

@@ -94,7 +94,6 @@ class FileStorageService extends GetxController {
       snackbarW("Error", errMsg);
       return "";
     } catch (e) {
-      print(e);
       snackbarW("Error", "No server response");
       return "";
     }

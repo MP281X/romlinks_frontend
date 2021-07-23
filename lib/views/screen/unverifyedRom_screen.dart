@@ -22,7 +22,7 @@ class UnverifiedRomScreen extends StatelessWidget {
                       return MaxWidthW(
                         GestureDetector(
                           onTap: () => bottomSheetW(
-                              child: TextW(data[index].romname, big: true, maxLine: 1),
+                              child: TextW(data[index].romname, big: true, singleLine: true),
                               text: "Approve",
                               onTap: () {
                                 RomService.verifyRom(data[index].id);
@@ -46,9 +46,9 @@ class UnverifiedRomScreen extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      TextW(data[index].romname, maxLine: 1),
+                                      TextW(data[index].romname, singleLine: true),
                                       SizedBox(height: 5),
-                                      TextW("Android ${data[index].androidversion}", maxLine: 1),
+                                      TextW("Android ${data[index].androidversion}", singleLine: true),
                                     ],
                                   ),
                                 ),
@@ -60,7 +60,7 @@ class UnverifiedRomScreen extends StatelessWidget {
                     },
                   ),
                 )
-              : ErrorW("All rom are verified");
+              : ErrorW(msg: "All rom are verified");
         },
       ),
       auth: true,

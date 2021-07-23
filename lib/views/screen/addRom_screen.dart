@@ -14,7 +14,7 @@ class AddRomController extends GetxController {
     romName = "";
     androidVersion = 0;
     description = "";
-    screenshot = [];
+    screenshot.value = <String>[];
     logo = "";
     update();
   }
@@ -24,7 +24,7 @@ class AddRomController extends GetxController {
   double androidVersion = 0.0;
   String description = "";
   String logo = "";
-  List<String> screenshot = [];
+  var screenshot = <String>[].obs;
 
   // setter method
   void setRomName(String x) {
@@ -73,6 +73,7 @@ class AddRomController extends GetxController {
   // display a dialog with the preview of the rom
   void romPreview() {
     if (romName != "" && androidVersion != 0.0 && description != "" && logo != "" && screenshot.length > 0)
+      // dialogW(child: RomPreviewW(), height: 500, width: Get.width, text1: "Add rom", button1: () => addRom(), heroTag: "addRom");
       bottomSheetW(child: RomPreviewW(), text: "Add rom", onTap: () => addRom());
     else
       snackbarW("Error", "Enter all the filed");
@@ -95,9 +96,23 @@ class AddRomScreen extends StatelessWidget {
               LogoButtonW(),
               TextFieldW("Rom Name", onChanged: rom.setRomName),
               TextFieldW("Android Version", onChanged: rom.setAndroidVersion, number: true),
-              TextFieldW("Description", onChanged: rom.setDescription),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: SizedBox(
+                  width: 230,
+                  child: TextFormField(
+                    onChanged: rom.setDescription,
+                    maxLines: 7,
+                    decoration: InputDecoration(hintText: "Description"),
+                  ),
+                ),
+              ),
               ScreenshotButtonW(),
-              ButtonW("Preview", onTap: () => rom.romPreview()),
+              ButtonW(
+                "Preview",
+                onTap: () => rom.romPreview(),
+                tag: "addRom",
+              ),
             ],
           );
         },
@@ -186,7 +201,7 @@ class ScreenshotButtonW extends StatelessWidget {
     return Column(
       children: [
         ButtonW("Add screenshot", onTap: onTap),
-        ScreenshotW((rom.screenshot.length > 0) ? rom.screenshot : [""]),
+        ScreenshotW((rom.screenshot.length > 0) ? rom.screenshot : RxList<String>([""])),
       ],
     );
   }
@@ -218,7 +233,7 @@ class RomPreviewW extends StatelessWidget {
         TextW(rom.description),
         SpaceW(big: true),
         TextW("Screenshot", big: true),
-        ScreenshotW((rom.screenshot.length > 0) ? rom.screenshot : [""]),
+        ScreenshotW((rom.screenshot.length > 0) ? rom.screenshot : RxList<String>([""])),
         SizedBox(height: 50),
       ],
     );

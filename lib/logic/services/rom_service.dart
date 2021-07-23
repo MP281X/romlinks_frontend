@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller/user_controller.dart';
+import 'package:romlinks_frontend/logic/models/comment_model.dart';
 import 'package:romlinks_frontend/logic/models/romVersion_model.dart';
 import 'package:romlinks_frontend/logic/models/rom_model.dart';
 import 'package:romlinks_frontend/logic/models/version_model.dart';
@@ -24,6 +25,7 @@ class RomService extends GetxController {
     required bool official,
     required DateTime date,
   }) async {
+    print(date.toIso8601String());
     // make the request
     await HttpHandler.req(
       url + "/version",
@@ -38,7 +40,7 @@ class RomService extends GetxController {
         "vanillalink": vanillaLink,
         "relasetype": relasetype,
         "official": official,
-        // "date": date,
+        "date": date.toIso8601String() + "+00:00",
       },
     );
   }
@@ -175,6 +177,48 @@ class RomService extends GetxController {
     }
     // return the rom
     return RomVersionModel.fromMap(response);
+  }
+
+  //! get a list comment
+  static Future<List<CommentModel>> getComment(String romId) async {
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(url + "/review/" + romId, RequestType.get);
+
+    // convert the response to a list of comment model
+    List<CommentModel> commentList = List<CommentModel>.from(response["list"].map((x) => CommentModel.fromMap(x)));
+
+    // return a list of comment or an empty list
+    return commentList;
+  }
+
+  //! add a comment
+  static Future<void> addComment({
+    required String romId,
+    required String codename,
+    required String msg,
+    required double battery,
+    required double performance,
+    required double stability,
+    required double customization,
+  }) async {
+    // get the user controller
+    UserController _userController = Get.find();
+
+    // make the request
+    await HttpHandler.req(
+      url + "/review",
+      RequestType.put,
+      header: {"token": _userController.token},
+      body: {
+        "romid": romId,
+        "codename": codename,
+        "msg": msg,
+        "battery": battery,
+        "performance": performance,
+        "stability": stability,
+        "customization": customization,
+      },
+    );
   }
 }
 

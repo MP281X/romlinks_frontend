@@ -1,4 +1,4 @@
-//! All the custom widget for standardizing the app style
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,36 +13,66 @@ class ContainerW extends StatelessWidget {
     this.child, {
     this.height = 100,
     this.width = 100,
-    this.boxShadow = false,
     this.padding = const EdgeInsets.all(10),
     this.margin = const EdgeInsets.all(10),
     this.color = ThemeApp.secondaryColor,
     this.marginLeft = true,
     this.marginRight = true,
+    this.tag,
   });
   final Widget child;
   final double height;
   final double width;
-  final bool boxShadow;
   final EdgeInsets padding;
   final EdgeInsets margin;
   final Color color;
   final bool marginLeft;
   final bool marginRight;
+  final String? tag;
   @override
   Widget build(BuildContext context) {
     EdgeInsets customMargin = margin.copyWith(left: (marginLeft) ? margin.left : 0, right: (marginRight) ? margin.right : 0);
-    return Container(
-      child: child,
+    return HeroW(
+      Container(
+        child: child,
+        height: height,
+        width: width,
+        padding: padding,
+        margin: customMargin,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      tag: tag,
+    );
+  }
+}
+
+//! chip
+class ChipW extends StatelessWidget {
+  const ChipW({
+    this.text,
+    this.icon,
+    this.color = ThemeApp.secondaryColor,
+    required this.height,
+    required this.width,
+  });
+  final String? text;
+  final IconData? icon;
+  final Color color;
+  final double height;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return ContainerW(
+      (text == null) ? Icon(icon) : TextW(text!, singleLine: true),
+      color: color,
       height: height,
       width: width,
-      padding: padding,
-      margin: customMargin,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [if (boxShadow) BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 2, blurRadius: 7, offset: Offset(3, 3))],
-      ),
+      padding: EdgeInsets.all(5),
+      margin: EdgeInsets.all(5),
     );
   }
 }
@@ -52,126 +82,91 @@ class ButtonW extends StatelessWidget {
   ButtonW(
     this.text1, {
     required this.onTap,
-    this.onPress,
-    this.height = 40,
-    this.width = 170,
     this.animated = false,
+    this.width = 170,
     this.color = ThemeApp.accentColor,
-    this.white = true,
     this.padding = const EdgeInsets.all(10),
     this.margin = const EdgeInsets.all(10),
+    this.tag,
   });
   final String text1;
-  final bool animated;
-  final double height;
   final double width;
+  final bool animated;
   final Function onTap;
-  final void Function()? onPress;
   final Color color;
-  final bool white;
   final EdgeInsets padding;
   final EdgeInsets margin;
+  final String? tag;
+  final RxBool animation = false.obs;
 
   @override
   Widget build(BuildContext context) {
-    return GetX<ButtonWController>(
-      assignId: true,
-      global: false,
-      init: new ButtonWController(),
-      builder: (controller) {
-        return InkWell(
-          focusColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          onLongPress: onPress,
-          onTap: () async {
-            if (animated) {
-              controller.animation.value = true;
-              await onTap();
-              controller.animation.value = false;
-            } else
-              onTap();
-          },
-          child: ContainerW(
-            FittedBox(
-              child: (!controller.animation.value) ? TextW(text1, maxLine: 1) : Center(child: CircularProgressIndicator(color: ThemeApp.primaryColor)),
-            ),
-            color: color,
-            padding: padding,
-            margin: margin,
-            height: height,
-            width: width,
-          ),
-        );
+    return InkWell(
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onTap: () async {
+        if (animated) {
+          animation.value = true;
+          await onTap();
+          animation.value = false;
+        } else
+          onTap();
       },
+      child: ContainerW(
+        FittedBox(
+          child: Obx(
+            () => (!animation.value)
+                ? TextW(text1, singleLine: true)
+                : Center(
+                    child: CircularProgressIndicator(color: ThemeApp.primaryColor),
+                  ),
+          ),
+        ),
+        color: color,
+        padding: padding,
+        margin: margin,
+        height: 40,
+        width: width,
+        tag: tag,
+      ),
     );
   }
-}
-
-//! controller for the button animation state
-class ButtonWController extends GetxController {
-  var animation = false.obs;
 }
 
 //! text
 class TextW extends StatelessWidget {
   const TextW(
     this.text, {
-    this.white = true,
-    this.bold = true,
-    this.maxLine = 100,
+    this.singleLine = false,
     this.size = 20,
     this.big = false,
-    this.centerText = false,
   });
   final String text;
   final double size;
-  final bool white;
-  final bool bold;
   final bool big;
-  final int maxLine;
-  final bool centerText;
+  final bool singleLine;
   @override
   Widget build(BuildContext context) {
-    return (maxLine != 1)
-        ? Text(
-            text,
-            overflow: TextOverflow.clip,
-            style: TextStyle(
-              fontSize: (big) ? 30 : size,
-              color: white ? Colors.white : ThemeApp.primaryColor,
-              fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-            ),
-            textAlign: centerText ? TextAlign.center : TextAlign.left,
-            maxLines: maxLine,
-          )
-        : SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            child: Text(
-              text,
-              overflow: TextOverflow.clip,
-              style: TextStyle(
-                fontSize: (big) ? 30 : size,
-                color: white ? Colors.white : ThemeApp.primaryColor,
-                fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-              ),
-              textAlign: centerText ? TextAlign.center : TextAlign.left,
-              maxLines: maxLine,
-            ),
-          );
+    // text widget
+    Widget textW = Text(
+      text,
+      overflow: TextOverflow.clip,
+      style: TextStyle(
+        decoration: TextDecoration.none,
+        fontSize: (big) ? 30 : size,
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      maxLines: singleLine ? 1 : 20,
+    );
+
+    return !singleLine ? textW : FittedBox(child: textW);
   }
 }
 
-//! space
-class SpaceW extends StatelessWidget {
-  const SpaceW({this.big = false});
-  final bool big;
-  @override
-  Widget build(BuildContext context) => SizedBox(height: (big) ? 30 : 10);
-}
-
+//! textfield
 class TextFieldW extends StatelessWidget {
   const TextFieldW(
     this.text, {
@@ -179,7 +174,6 @@ class TextFieldW extends StatelessWidget {
     this.onPressed,
     this.number = false,
     this.controller,
-    this.bottomSpace = true,
     this.prefixIcon,
     this.hide = false,
   });
@@ -188,14 +182,13 @@ class TextFieldW extends StatelessWidget {
   final void Function()? onPressed;
   final bool number;
   final TextEditingController? controller;
-  final bool bottomSpace;
   final IconData? prefixIcon;
   final bool hide;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: bottomSpace ? 10 : 0),
+      padding: const EdgeInsets.only(bottom: 10),
       child: SizedBox(
         width: 230,
         child: TextField(
@@ -224,44 +217,6 @@ class TextFieldW extends StatelessWidget {
   }
 }
 
-//! custom snackbar
-void snackbarW(String title, String? msg) {
-  if (msg != null) if (Get.isSnackbarOpen == false)
-    Get.snackbar(
-      title,
-      msg,
-      icon: (title.toLowerCase() == "error") ? Icon(Icons.report_problem_outlined, color: ThemeApp.accentColor) : null,
-      shouldIconPulse: false,
-      colorText: Colors.white,
-      duration: Duration(seconds: 5),
-      backgroundColor: ThemeApp.secondaryColor.withOpacity(0.8),
-      snackPosition: SnackPosition.BOTTOM,
-      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-    );
-}
-
-//! display an error icon
-class ErrorW extends StatelessWidget {
-  const ErrorW(this.msg, {this.personIcon = false});
-
-  final String msg;
-  final bool personIcon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Icon((personIcon) ? Icons.person : Icons.report_problem_outlined, color: ThemeApp.accentColor),
-        SpaceW(),
-        TextW(msg),
-      ],
-    ));
-  }
-}
-
 //! custom future builder
 class FutureBuilderW<T> extends StatelessWidget {
   const FutureBuilderW({required this.future, required this.builder});
@@ -272,87 +227,275 @@ class FutureBuilderW<T> extends StatelessWidget {
     return FutureBuilder(
       future: future,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return (snapshot.data == null) ? ErrorW("unable to get the data") : builder(snapshot.data);
-        }
-        return Center(child: CircularProgressIndicator());
+        if (snapshot.connectionState != ConnectionState.done) return Center(child: CircularProgressIndicator());
+        return (snapshot.data == null) ? ErrorW(msg: "unable to get the data") : builder(snapshot.data);
       },
     );
   }
 }
 
-//! display an image or an icon if there is error
+//! network image with error icon
 class ImageW extends StatelessWidget {
-  const ImageW({required this.category, required this.name, this.profileIcon = false, this.first = false});
+  const ImageW({required this.category, required this.name, this.profileIcon = false, this.heroTag});
   final PhotoCategory category;
   final String name;
   final bool profileIcon;
-  final bool first;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Image.network(
-        FileStorageService.imgUrl(category, name),
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => ContainerW(
-          Icon((!profileIcon) ? Icons.report_problem_outlined : Icons.person),
-          margin: EdgeInsets.zero,
-          padding: EdgeInsets.zero,
+    return HeroW(
+      ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.network(
+          FileStorageService.imgUrl(category, name),
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => ErrorW(personIcon: profileIcon),
         ),
       ),
+      tag: heroTag,
     );
   }
 }
 
 //! custom scaffold with padding
 class ScaffoldW extends StatelessWidget {
-  ScaffoldW(this.child, {this.scroll = false, this.auth = false, this.maxWidth = true});
+  ScaffoldW(this.child, {this.scroll = false, this.auth = false, this.button});
 
   final Widget child;
   final bool scroll;
   final bool auth;
+  final Widget? button;
   final UserController _userController = Get.find();
-  final bool maxWidth;
 
   @override
   Widget build(BuildContext context) {
-    if (_userController.token.isEmpty && auth) {
-      return SafeArea(
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextW("Unauthorized"),
-                SpaceW(big: true),
-                ButtonW("Auth", onTap: () => Get.toNamed("/auth")),
-              ],
+    return (_userController.token.isEmpty && auth)
+        ? Material(
+            color: ThemeApp.primaryColor,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextW("Unauthorized"),
+                  SpaceW(big: true),
+                  ButtonW("Auth", onTap: () => Get.toNamed("/auth")),
+                ],
+              ),
+            ),
+          )
+        : SafeArea(
+            child: Scaffold(
+              floatingActionButton: button,
+              body: SizedBox(
+                height: context.height,
+                width: context.width,
+                child: (!scroll)
+                    ? Padding(padding: EdgeInsets.all(20), child: Center(child: child))
+                    : SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: MaxWidthW(child),
+                        ),
+                      ),
+              ),
+            ),
+          );
+  }
+}
+
+//! dialog widget
+class DialogW extends StatelessWidget {
+  const DialogW({
+    required this.button1,
+    required this.text1,
+    required this.child,
+    required this.height,
+    required this.width,
+    this.button2,
+    this.text2,
+    this.alignment = Alignment.bottomCenter,
+    this.tag,
+  });
+  final Function button1;
+  final Function? button2;
+  final String text1;
+  final String? text2;
+  final Widget child;
+  final Alignment alignment;
+  final double height;
+  final double width;
+  final String? tag;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: alignment,
+      child: SizedBox(
+        height: height,
+        width: width,
+        child: HeroW(
+          Material(
+            color: Colors.transparent,
+            child: ContainerW(
+              Stack(
+                children: [
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Center(child: child),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(child: ButtonW(text2 ?? "Close", onTap: () => (button2 != null) ? button2!() : Get.close(1))),
+                        Expanded(child: ButtonW(text1, onTap: () => button1())),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              margin: EdgeInsets.all(20),
+              color: ThemeApp.primaryColor,
             ),
           ),
+          tag: tag,
         ),
-      );
-    } else {
-      return SafeArea(
-        child: Scaffold(
-          body: SizedBox(
-            height: context.height,
-            width: context.width,
-            child: (scroll)
-                ? SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: (maxWidth) ? MaxWidthW(child) : child,
-                    ),
-                  )
-                : Padding(padding: EdgeInsets.all(20), child: Center(child: child)),
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
+}
+
+//! display a list of screenshot
+class ScreenshotW extends StatelessWidget {
+  const ScreenshotW(this.image);
+  final RxList<String> image;
+
+  @override
+  Widget build(BuildContext context) {
+    return (image.length > 0)
+        ? SizedBox(
+            height: 250,
+            child: Obx(
+              () => ListView.builder(
+                physics: BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemCount: image.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return AspectRatio(
+                    aspectRatio: 9 / 19,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB((index == 0) ? 0 : 10, 10, 10, 10),
+                      child: ImageW(
+                        category: PhotoCategory.screenshot,
+                        name: image[index],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          )
+        : SizedBox.shrink();
+  }
+}
+
+//! button that redirect to the auth or the profile screen depending on the auth state
+class AccountButtonW extends StatelessWidget {
+  final UserController _userController = Get.find();
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => (_userController.isLogged.value)
+          ? GestureDetector(
+              onTap: () => Get.toNamed("/profile"),
+              child: ContainerW(
+                (_userController.userData.value.username != "")
+                    ? ImageW(
+                        category: PhotoCategory.profile,
+                        name: _userController.userData.value.username,
+                        profileIcon: true,
+                      )
+                    : SizedBox.shrink(),
+                height: 40,
+                width: 40,
+                marginRight: false,
+                padding: EdgeInsets.zero,
+              ),
+            )
+          : ButtonW(
+              "Log in",
+              margin: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+              width: 40 * 2.2,
+              onTap: () => Get.toNamed("/auth"),
+            ),
+    );
+  }
+}
+
+//! display a list of text
+class TextListW extends StatelessWidget {
+  TextListW(this.data);
+  final RxList<String> data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => ListView.builder(
+        physics: BouncingScrollPhysics(),
+        itemCount: data.length,
+        shrinkWrap: true,
+        itemBuilder: (BuildContext context, int index) {
+          return Center(
+            child: ContainerW(
+              TextW(data[index], singleLine: true),
+              height: 45,
+              width: 210,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+//! display an error icon
+class ErrorW extends StatelessWidget {
+  const ErrorW({this.msg, this.personIcon = false});
+
+  final String? msg;
+  final bool personIcon;
+
+  @override
+  Widget build(BuildContext context) {
+    Icon icon = Icon((personIcon) ? Icons.person : Icons.report_problem_outlined);
+    return (msg == null)
+        ? ContainerW(icon, margin: EdgeInsets.zero, padding: EdgeInsets.zero)
+        : Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon((personIcon) ? Icons.person : Icons.report_problem_outlined),
+                SpaceW(),
+                TextW(msg!),
+              ],
+            ),
+          );
+  }
+}
+
+//! space
+class SpaceW extends StatelessWidget {
+  const SpaceW({this.big = false});
+  final bool big;
+  @override
+  Widget build(BuildContext context) => SizedBox(height: (big) ? 30 : 10);
 }
 
 //! widget that define the max width
@@ -371,7 +514,72 @@ class MaxWidthW extends StatelessWidget {
   }
 }
 
-//! dialog with two button and a scrollable child
+//! hero widget
+class HeroW extends StatelessWidget {
+  const HeroW(this.child, {this.tag});
+  final Widget child;
+  final String? tag;
+
+  @override
+  Widget build(BuildContext context) => (tag != null)
+      ? Hero(
+          tag: tag!,
+          child: child,
+          createRectTween: (begin, end) => CustomRectTween(begin: begin!, end: end!),
+        )
+      : child;
+}
+
+//! custom courve for the hero widget
+class CustomRectTween extends RectTween {
+  CustomRectTween({
+    required Rect begin,
+    required Rect end,
+  }) : super(begin: begin, end: end);
+
+  @override
+  Rect lerp(double t) {
+    final elasticCurveValue = Curves.easeOut.transform(t);
+    return Rect.fromLTRB(
+      lerpDouble(begin!.left, end!.left, elasticCurveValue)!,
+      lerpDouble(begin!.top, end!.top, elasticCurveValue)!,
+      lerpDouble(begin!.right, end!.right, elasticCurveValue)!,
+      lerpDouble(begin!.bottom, end!.bottom, elasticCurveValue)!,
+    );
+  }
+}
+
+//! custom dialog
+void dialogW(Widget child, {bool opacity = true}) {
+  navigator!.push(
+    PageRouteBuilder(
+      opaque: false,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(opacity ? 0.9 : 0),
+      pageBuilder: (_, __, ___) => child,
+    ),
+  );
+}
+
+//! custom snackbar
+void snackbarW(String title, String? msg) {
+  if (msg != null) if (Get.isSnackbarOpen == false)
+    Get.snackbar(
+      title,
+      msg,
+      icon: title.toLowerCase().contains("error") ? Icon(Icons.report_problem_outlined, color: ThemeApp.accentColor) : null,
+      shouldIconPulse: false,
+      colorText: Colors.white,
+      duration: Duration(seconds: 5),
+      backgroundColor: ThemeApp.secondaryColor.withOpacity(0.9),
+      snackPosition: SnackPosition.BOTTOM,
+      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+    );
+}
+
+//TODO: da rimuovere
+
+// //! dialog with two button and a scrollable child
 void bottomSheetW(
     {required Widget child, required String text, required Function onTap, bool scrollable = true, double height = 300, String text2 = "Edit data", Function? onTap2, bool oneButton = false}) {
   Get.bottomSheet(
@@ -383,7 +591,12 @@ void bottomSheetW(
           (scrollable)
               ? Stack(
                   children: [
-                    SingleChildScrollView(physics: BouncingScrollPhysics(), child: child),
+                    SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: child,
+                        )),
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: ConstrainedBox(
@@ -423,91 +636,4 @@ void bottomSheetW(
     ),
     barrierColor: Colors.black.withOpacity(0.9),
   );
-}
-
-//! display a list of screenshot
-class ScreenshotW extends StatelessWidget {
-  const ScreenshotW(this.image);
-  final List<String> image;
-
-  @override
-  Widget build(BuildContext context) {
-    return (image.length > 0)
-        ? SizedBox(
-            height: 250,
-            child: ListView.builder(
-              physics: BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              itemCount: image.length,
-              itemBuilder: (BuildContext context, int index) {
-                return AspectRatio(
-                  aspectRatio: 9 / 19,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB((index == 0) ? 0 : 10, 10, 10, 10),
-                    child: ImageW(
-                      first: (index == 0),
-                      category: PhotoCategory.screenshot,
-                      name: image[index],
-                    ),
-                  ),
-                );
-              },
-            ),
-          )
-        : SizedBox(height: 50);
-  }
-}
-
-//! button that redirect to the auth or the profile screen depending on the auth state
-class AccountButtonW extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GetX<UserController>(
-      builder: (_userController) {
-        if (_userController.isLogged.value) {
-          return GestureDetector(
-            onTap: () => Get.toNamed("/profile"),
-            child: ContainerW(
-              (_userController.userData.value.username != "") ? ImageW(category: PhotoCategory.profile, name: _userController.userData.value.username, profileIcon: true) : SizedBox.shrink(),
-              height: 40,
-              width: 40,
-              marginRight: false,
-              padding: EdgeInsets.zero,
-            ),
-          );
-        } else {
-          return ButtonW(
-            "Log in",
-            margin: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-            width: 40 * 2.2,
-            onTap: () => Get.toNamed("/auth"),
-          );
-        }
-      },
-    );
-  }
-}
-
-//! display a list of text
-class TextListW extends StatelessWidget {
-  TextListW(this.data);
-  final List<String> data;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      physics: BouncingScrollPhysics(),
-      itemCount: data.length,
-      shrinkWrap: true,
-      itemBuilder: (BuildContext context, int index) {
-        return Center(
-          child: ContainerW(
-            TextW(data[index], maxLine: 1),
-            height: 45,
-            width: 210,
-          ),
-        );
-      },
-    );
-  }
 }

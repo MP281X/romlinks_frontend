@@ -53,7 +53,6 @@ class SaveImageController extends GetxController {
               format: format,
             )
           : await FileStorageService.postProfilePicture(croppedImage.cast());
-      print(link);
       if (link != "") Get.back(result: link);
       loading = false;
       update();

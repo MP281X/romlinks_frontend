@@ -4,7 +4,6 @@ import 'package:romlinks_frontend/logic/controller/user_controller.dart';
 import 'package:romlinks_frontend/logic/models/version_model.dart';
 import 'package:romlinks_frontend/logic/services/device_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
-import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 import 'package:romlinks_frontend/views/screen/version_screen.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
@@ -17,8 +16,8 @@ class AddVersionController extends GetxController {
   void onInit() {
     super.onInit();
     codenameS = [];
-    changelog = [];
-    error = [];
+    changelog = <String>[].obs;
+    error = <String>[].obs;
     vanillaLink = "";
     gappsLink = "";
     relaseType = "";
@@ -35,9 +34,9 @@ class AddVersionController extends GetxController {
   String? gappsLink;
   String relaseType = "";
   TextEditingController changelogController = TextEditingController();
-  List<String> changelog = [];
+  var changelog = <String>[].obs;
   TextEditingController errorController = TextEditingController();
-  List<String> error = [];
+  var error = <String>[].obs;
   List codenameS = [];
   var official = false.obs;
   var date = DateTime.now().obs;
@@ -154,7 +153,7 @@ class AddVersionScreen extends StatelessWidget {
           Column(
             children: [
               TextW("Add version", big: true),
-              SpaceW(),
+              SpaceW(big: true),
               TextFieldW("Codename", controller: version.codename, onChanged: (_) => version.setCodenameAndSuggestion()),
               SuggestionW(suggestion: version.codenameS, onTap: version.setCodename),
               TextFieldW("Vanilla link", onChanged: version.setVanillaLink),
