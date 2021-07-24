@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/controller/user_controller.dart';
-import 'package:romlinks_frontend/logic/models/user_model.dart';
+import 'package:romlinks_frontend/logic/controller.dart';
+import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/http_handler.dart';
 
 class UserService {

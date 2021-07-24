@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/controller/user_controller.dart';
+import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 
@@ -305,6 +305,37 @@ class ScaffoldW extends StatelessWidget {
   }
 }
 
+//! display a list of suggestion
+class SuggestionW extends StatelessWidget {
+  const SuggestionW({required this.suggestion, required this.onTap});
+  final RxList suggestion;
+  final Function(String) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => (suggestion.length > 0)
+          ? ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 45, maxWidth: 800),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: suggestion.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ButtonW(
+                    suggestion[index],
+                    width: 90,
+                    color: ThemeApp.secondaryColor,
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    onTap: () => onTap(suggestion[index]),
+                  );
+                },
+              ),
+            )
+          : SizedBox.shrink(),
+    );
+  }
+}
+
 //! dialog widget
 class DialogW extends StatelessWidget {
   const DialogW({
@@ -378,30 +409,28 @@ class ScreenshotW extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (image.length > 0)
-        ? SizedBox(
-            height: 250,
-            child: Obx(
-              () => ListView.builder(
-                physics: BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemCount: image.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return AspectRatio(
-                    aspectRatio: 9 / 19,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB((index == 0) ? 0 : 10, 10, 10, 10),
-                      child: ImageW(
-                        category: PhotoCategory.screenshot,
-                        name: image[index],
-                      ),
-                    ),
-                  );
-                },
+    return SizedBox(
+      height: 250,
+      child: Obx(
+        () => ListView.builder(
+          physics: BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          itemCount: (image.length != 0) ? image.length : 1,
+          itemBuilder: (BuildContext context, int index) {
+            return AspectRatio(
+              aspectRatio: 9 / 19,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB((index == 0) ? 0 : 10, 10, 10, 10),
+                child: ImageW(
+                  category: PhotoCategory.screenshot,
+                  name: (image.length != 0) ? image[index] : "",
+                ),
               ),
-            ),
-          )
-        : SizedBox.shrink();
+            );
+          },
+        ),
+      ),
+    );
   }
 }
 
@@ -575,65 +604,4 @@ void snackbarW(String title, String? msg) {
       snackPosition: SnackPosition.BOTTOM,
       margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
     );
-}
-
-//TODO: da rimuovere
-
-// //! dialog with two button and a scrollable child
-void bottomSheetW(
-    {required Widget child, required String text, required Function onTap, bool scrollable = true, double height = 300, String text2 = "Edit data", Function? onTap2, bool oneButton = false}) {
-  Get.bottomSheet(
-    Padding(
-      padding: const EdgeInsets.all(20),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: (scrollable) ? 800 : 400, maxHeight: (scrollable) ? 3000 : height),
-        child: ContainerW(
-          (scrollable)
-              ? Stack(
-                  children: [
-                    SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: child,
-                        )),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxHeight: 60, maxWidth: 340),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            if (!oneButton) Expanded(child: ButtonW(text2, onTap: () => (onTap2 == null) ? Get.close(1) : onTap2())),
-                            Expanded(child: ButtonW(text, onTap: onTap)),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    child,
-                    SpaceW(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        if (!oneButton) Expanded(child: ButtonW(text2, onTap: () => (onTap2 == null) ? Get.close(1) : onTap2())),
-                        Expanded(child: ButtonW(text, onTap: onTap)),
-                      ],
-                    ),
-                  ],
-                ),
-          height: height,
-          color: ThemeApp.primaryColor,
-        ),
-      ),
-    ),
-    barrierColor: Colors.black.withOpacity(0.9),
-  );
 }

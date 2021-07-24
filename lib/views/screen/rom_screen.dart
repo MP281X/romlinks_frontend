@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/controller/user_controller.dart';
-import 'package:romlinks_frontend/logic/models/rom_model.dart';
+import 'package:romlinks_frontend/logic/controller.dart';
+import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/screen/version_screen.dart';
@@ -174,6 +174,7 @@ class AddReviewW extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AddReviewController controller = Get.put(AddReviewController(romId, codename));
+
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,

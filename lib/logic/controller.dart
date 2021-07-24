@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/models/user_model.dart';
+import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/user_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//! log in and keep the user token
 class UserController extends GetxController {
   @override
   void onInit() async {

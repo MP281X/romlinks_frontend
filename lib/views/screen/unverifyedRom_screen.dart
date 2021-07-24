@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/models/rom_model.dart';
+import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
-import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 
 class UnverifiedRomScreen extends StatelessWidget {
   @override
@@ -21,17 +20,18 @@ class UnverifiedRomScreen extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return MaxWidthW(
                         GestureDetector(
-                          onTap: () => bottomSheetW(
-                              child: TextW(data[index].romname, big: true, singleLine: true),
-                              text: "Approve",
-                              onTap: () {
+                          onTap: () => dialogW(
+                            DialogW(
+                              button1: () {
                                 RomService.verifyRom(data[index].id);
                                 Get.close(1);
                               },
-                              scrollable: false,
+                              text1: "Add version",
+                              child: TextW(data[index].romname, big: true, singleLine: true),
                               height: 150,
-                              text2: "View rom data",
-                              onTap2: () => Get.to(RomScreen(data[index]))),
+                              width: 400,
+                            ),
+                          ),
                           child: ContainerW(
                             Row(
                               children: [

@@ -15,7 +15,7 @@ class AddRomController extends GetxController {
     androidVersion = 0;
     description = "";
     screenshot.value = <String>[];
-    logo = "";
+    logo = "".obs;
     update();
   }
 
@@ -23,39 +23,8 @@ class AddRomController extends GetxController {
   String romName = "";
   double androidVersion = 0.0;
   String description = "";
-  String logo = "";
+  var logo = "".obs;
   var screenshot = <String>[].obs;
-
-  // setter method
-  void setRomName(String x) {
-    romName = x;
-    update();
-  }
-
-  void setAndroidVersion(String x) {
-    androidVersion = double.parse(x);
-    update();
-  }
-
-  void setDescription(String x) {
-    description = x;
-    update();
-  }
-
-  void setLogo(String x) {
-    if (x != "") {
-      logo = x;
-      update();
-    }
-  }
-
-  void addScreenshot(String x) {
-    print(x);
-    if (x != "") {
-      screenshot.add(x);
-      update();
-    }
-  }
 
   // add the rom to the db
   void addRom() async {
@@ -63,59 +32,90 @@ class AddRomController extends GetxController {
       romName: romName,
       androidVersion: androidVersion,
       screenshot: screenshot,
-      logo: logo,
+      logo: logo.value,
       description: description,
     );
-    await Future.delayed(Duration(seconds: 1, milliseconds: 500));
+    await Future.delayed(Duration(seconds: 1));
     Get.offAllNamed("/");
   }
 
   // display a dialog with the preview of the rom
   void romPreview() {
-    if (romName != "" && androidVersion != 0.0 && description != "" && logo != "" && screenshot.length > 0)
-      // dialogW(child: RomPreviewW(), height: 500, width: Get.width, text1: "Add rom", button1: () => addRom(), heroTag: "addRom");
-      bottomSheetW(child: RomPreviewW(), text: "Add rom", onTap: () => addRom());
+    if (romName != "" && androidVersion != 0.0 && description != "" && logo.value != "" && screenshot.length > 0)
+      dialogW(RomPreviewW());
     else
       snackbarW("Error", "Enter all the filed");
+  }
+
+  void setLogo() async {
+    if (romName.isEmpty)
+      snackbarW("Error", "Enter the rom name");
+    else if (androidVersion == 0)
+      snackbarW("Error", "Enter the android version");
+    else {
+      logo.value = "";
+      String res = await Get.dialog(SaveImageDialog(
+        romName: romName.removeAllWhitespace.toLowerCase(),
+        category: PhotoCategory.logo,
+        androidVersion: androidVersion,
+        index: 0,
+      ));
+      if (res.substring(5) != "") logo.value = res.substring(5);
+    }
+  }
+
+  void setScreenshot() async {
+    if (romName.isEmpty)
+      snackbarW("Error", "Enter the rom name");
+    else if (androidVersion == 0)
+      snackbarW("Error", "Enter the android version");
+    else if (screenshot.length > 5)
+      snackbarW("Error", "You can upload only 6 screenshot");
+    else {
+      String res = await Get.dialog(new SaveImageDialog(
+        romName: romName.removeAllWhitespace.toLowerCase(),
+        category: PhotoCategory.screenshot,
+        androidVersion: androidVersion,
+        index: screenshot.length,
+      ));
+      screenshot.add(res.substring(11));
+    }
   }
 }
 
 //! Screen for adding the rom
 class AddRomScreen extends StatelessWidget {
+  final AddRomController controller = Get.put(AddRomController());
   @override
   Widget build(BuildContext context) {
     return ScaffoldW(
-      GetBuilder<AddRomController>(
-        init: AddRomController(),
-        builder: (rom) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextW("Add rom", big: true),
+          SpaceW(),
+          LogoButtonW(),
+          TextFieldW("Rom Name", onChanged: (x) => controller.romName = x),
+          TextFieldW("Android Version", onChanged: (x) => controller.androidVersion = double.parse(x), number: true),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: SizedBox(
+              width: 230,
+              child: TextFormField(
+                onChanged: (x) => controller.description = x,
+                maxLines: 7,
+                decoration: InputDecoration(hintText: "Description"),
+              ),
+            ),
+          ),
+          Column(
             children: [
-              TextW("Add rom", big: true),
-              SpaceW(),
-              LogoButtonW(),
-              TextFieldW("Rom Name", onChanged: rom.setRomName),
-              TextFieldW("Android Version", onChanged: rom.setAndroidVersion, number: true),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: SizedBox(
-                  width: 230,
-                  child: TextFormField(
-                    onChanged: rom.setDescription,
-                    maxLines: 7,
-                    decoration: InputDecoration(hintText: "Description"),
-                  ),
-                ),
-              ),
-              ScreenshotButtonW(),
-              ButtonW(
-                "Preview",
-                onTap: () => rom.romPreview(),
-                tag: "addRom",
-              ),
+              ButtonW("Add screenshot", onTap: () => controller.setScreenshot()),
+              ScreenshotW(controller.screenshot),
             ],
-          );
-        },
+          ),
+          ButtonW("Preview", onTap: () => controller.romPreview(), tag: "romPreview"),
+        ],
       ),
       auth: true,
       scroll: true,
@@ -125,27 +125,9 @@ class AddRomScreen extends StatelessWidget {
 
 //!button for adding the logo
 class LogoButtonW extends StatelessWidget {
-  final AddRomController rom = Get.find();
-
+  final AddRomController controller = Get.find();
   @override
   Widget build(BuildContext context) {
-    void onTap() async {
-      if (rom.romName.isEmpty)
-        snackbarW("Error", "Enter the rom name");
-      else if (rom.androidVersion == 0)
-        snackbarW("Error", "Enter the android version");
-      else {
-        rom.setLogo("");
-        String res = await Get.dialog(SaveImageDialog(
-          romName: rom.romName.removeAllWhitespace.toLowerCase(),
-          category: PhotoCategory.logo,
-          androidVersion: rom.androidVersion,
-          index: 0,
-        ));
-        rom.setLogo(res.substring(5));
-      }
-    }
-
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: SizedBox(
@@ -154,17 +136,17 @@ class LogoButtonW extends StatelessWidget {
         child: Stack(
           children: [
             SizedBox(
-              child: ImageW(category: PhotoCategory.logo, name: rom.logo),
+              child: Obx(() => ImageW(category: PhotoCategory.logo, name: controller.logo.value)),
               height: 200,
               width: 200,
             ),
             Align(
               alignment: Alignment.bottomRight,
               child: IconButton(
-                onPressed: () => onTap(),
+                onPressed: () => controller.setLogo(),
                 iconSize: 30,
                 splashRadius: 20,
-                icon: Icon(Icons.edit),
+                icon: Icon(Icons.edit_rounded),
               ),
             )
           ],
@@ -174,68 +156,41 @@ class LogoButtonW extends StatelessWidget {
   }
 }
 
-//! button for adding the screenshot
-class ScreenshotButtonW extends StatelessWidget {
-  final AddRomController rom = Get.find();
-
-  @override
-  Widget build(BuildContext context) {
-    void onTap() async {
-      if (rom.romName.isEmpty)
-        snackbarW("Error", "Enter the rom name");
-      else if (rom.androidVersion == 0)
-        snackbarW("Error", "Enter the android version");
-      else if (rom.screenshot.length > 5)
-        snackbarW("Error", "You can upload only 6 screenshot");
-      else {
-        String res = await Get.dialog(new SaveImageDialog(
-          romName: rom.romName.removeAllWhitespace.toLowerCase(),
-          category: PhotoCategory.screenshot,
-          androidVersion: rom.androidVersion,
-          index: rom.screenshot.length,
-        ));
-        rom.addScreenshot(res.substring(11));
-      }
-    }
-
-    return Column(
-      children: [
-        ButtonW("Add screenshot", onTap: onTap),
-        ScreenshotW((rom.screenshot.length > 0) ? rom.screenshot : RxList<String>([""])),
-      ],
-    );
-  }
-}
-
 //! display the rom data preview
 class RomPreviewW extends StatelessWidget {
-  final AddRomController rom = Get.find();
+  final AddRomController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        TextW(rom.romName, big: true),
-        SpaceW(),
-        TextW("Android ${rom.androidVersion}", big: true),
-        SpaceW(big: true),
-        Center(
-          child: SizedBox(
-            child: ImageW(category: PhotoCategory.logo, name: rom.logo),
-            height: 200,
-            width: 200,
+    return DialogW(
+      button1: () => controller.addRom(),
+      text1: "Add rom",
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          TextW(controller.romName, big: true),
+          SpaceW(),
+          TextW("Android ${controller.androidVersion}", big: true),
+          SpaceW(big: true),
+          Center(
+            child: SizedBox(
+              child: ImageW(category: PhotoCategory.logo, name: controller.logo.value),
+              height: 200,
+              width: 200,
+            ),
           ),
-        ),
-        SpaceW(big: true),
-        TextW("Description", big: true),
-        SpaceW(),
-        TextW(rom.description),
-        SpaceW(big: true),
-        TextW("Screenshot", big: true),
-        ScreenshotW((rom.screenshot.length > 0) ? rom.screenshot : RxList<String>([""])),
-        SizedBox(height: 50),
-      ],
+          SpaceW(big: true),
+          TextW("Description", big: true),
+          SpaceW(),
+          TextW(controller.description),
+          SpaceW(big: true),
+          TextW("Screenshot", big: true),
+          ScreenshotW(controller.screenshot),
+        ],
+      ),
+      height: 1000,
+      width: 900,
+      tag: "romPreview",
     );
   }
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/controller/user_controller.dart';
+import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 
 //! screen for the login
 class LoginScreen extends StatelessWidget {
-  final UserController _userController = Get.find();
+  final UserController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +13,8 @@ class LoginScreen extends StatelessWidget {
     String password = "";
 
     Future<void> logIn() async {
-      await _userController.logIn(username, password);
-      if (_userController.isLogged.value) Get.toNamed("/");
+      await controller.logIn(username, password);
+      if (controller.isLogged.value) Get.toNamed("/");
     }
 
     return ScaffoldW(

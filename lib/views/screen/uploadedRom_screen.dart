@@ -2,10 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/models/device_model.dart';
-import 'package:romlinks_frontend/logic/models/romVersion_model.dart';
-import 'package:romlinks_frontend/logic/models/rom_model.dart';
-import 'package:romlinks_frontend/logic/models/version_model.dart';
+import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/device_service.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
@@ -62,17 +59,19 @@ class UploadedRomW extends StatelessWidget {
 
               return MaxWidthW(
                 GestureDetector(
-                  onTap: () => bottomSheetW(
-                    child: TextW(rom[index].romname, big: true, singleLine: true),
-                    text: "Add new version",
-                    onTap: () => Get.toNamed("/addVersion/" + rom[index].id),
-                    scrollable: false,
-                    height: 150,
-                    text2: "View rom data",
-                    onTap2: () => Get.to(RomScreen(
-                      rom[index],
-                      heroTag: heroTag,
-                    )),
+                  onTap: () => dialogW(
+                    DialogW(
+                      text1: "Add version",
+                      button1: () => Get.toNamed("/addVersion/" + rom[index].id),
+                      text2: "View rom data",
+                      button2: () => Get.to(RomScreen(
+                        rom[index],
+                        heroTag: heroTag,
+                      )),
+                      child: TextW(rom[index].romname, big: true, singleLine: true),
+                      height: 170,
+                      width: 400,
+                    ),
                   ),
                   child: ContainerW(
                     Row(
@@ -182,7 +181,6 @@ class UploadedDeviceW extends StatelessWidget {
   }
 }
 
-//TODO: migliorare
 //! widget for displaying the device info
 class DeviceW extends StatelessWidget {
   const DeviceW(this.device);

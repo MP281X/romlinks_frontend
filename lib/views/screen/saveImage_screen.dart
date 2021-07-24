@@ -82,6 +82,7 @@ class SaveImageDialog extends StatelessWidget {
   final PhotoCategory category;
   final double androidVersion;
   final int index;
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -94,7 +95,7 @@ class SaveImageDialog extends StatelessWidget {
             GetBuilder<SaveImageController>(
               global: false,
               init: SaveImageController(androidVersion: androidVersion, category: category, romName: romName),
-              builder: (img) {
+              builder: (controller) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -105,13 +106,13 @@ class SaveImageDialog extends StatelessWidget {
                         child: ConstrainedBox(
                           constraints: BoxConstraints(minWidth: 300, minHeight: 300, maxHeight: 500, maxWidth: 500),
                           child: Center(
-                            child: (img.image != null)
+                            child: (controller.image != null)
                                 ? new Crop(
-                                    controller: img.controller,
-                                    image: img.image!,
+                                    controller: controller.controller,
+                                    image: controller.image!,
                                     aspectRatio: (category == PhotoCategory.screenshot) ? 9 / 19 : 1,
                                     baseColor: ThemeApp.primaryColor,
-                                    onCropped: (croppedImg) async => img.saveImage(croppedImg, index),
+                                    onCropped: (croppedImg) async => controller.saveImage(croppedImg, index),
                                     cornerDotBuilder: (size, cornerIndex) => DotControl(color: ThemeApp.accentColor),
                                   )
                                 : CircularProgressIndicator(),
@@ -119,8 +120,8 @@ class SaveImageDialog extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SpaceW(big: (img.loading)),
-                    (img.loading) ? CircularProgressIndicator() : ButtonW("Save image", onTap: () => img.cropImage())
+                    SpaceW(big: (controller.loading)),
+                    (controller.loading) ? CircularProgressIndicator() : ButtonW("Save image", onTap: () => controller.cropImage())
                   ],
                 );
               },

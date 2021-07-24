@@ -1,7 +1,7 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/controller/user_controller.dart';
-import 'package:romlinks_frontend/logic/models/device_model.dart';
+import 'package:romlinks_frontend/logic/controller.dart';
+import 'package:romlinks_frontend/logic/models.dart';
 
 import 'http_handler.dart';
 

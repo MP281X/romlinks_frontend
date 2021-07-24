@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/models/version_model.dart';
+import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:romlinks_frontend/views/theme.dart';
@@ -69,93 +69,102 @@ class VersionW extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTap: () => bottomSheetW(
-        oneButton: true,
-        height: 1000,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                children: [
-                  TextW("${version.date.day}/${version.date.month}/${version.date.year}", singleLine: true),
-                  Spacer(),
-                  ChipW(
-                    text: version.relasetype,
-                    color: ThemeApp.secondaryColor,
-                    height: 36,
-                    width: 40 * 2.2,
-                  ),
-                  (width > 400)
-                      ? ChipW(
-                          text: version.official ? "Official" : "Unofficial",
-                          color: ThemeApp.primaryColor,
-                          height: 36,
-                          width: 40 * 2.2,
-                        )
-                      : Icon(
-                          version.official ? Icons.gpp_good_rounded : Icons.gpp_bad_rounded,
-                          color: Colors.white,
-                        )
-                ],
+      onTap: () => dialogW(
+        DialogW(
+          button1: () => launch(gapps ? version.gappslink : version.vanillalink),
+          text1: "Add version",
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  children: [
+                    TextW("${version.date.day}/${version.date.month}/${version.date.year}", singleLine: true),
+                    Spacer(),
+                    ChipW(
+                      text: version.relasetype,
+                      color: ThemeApp.secondaryColor,
+                      height: 36,
+                      width: 40 * 2.2,
+                    ),
+                    (width > 400)
+                        ? ChipW(
+                            text: version.official ? "Official" : "Unofficial",
+                            color: ThemeApp.primaryColor,
+                            height: 36,
+                            width: 40 * 2.2,
+                          )
+                        : Icon(
+                            version.official ? Icons.gpp_good_rounded : Icons.gpp_bad_rounded,
+                            color: Colors.white,
+                          )
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-              child: Divider(color: Colors.white, thickness: 1),
-            ),
-            TextW("Changelog", big: true),
-            SpaceW(),
-            ContainerW(
-              ListView.builder(
-                physics: BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: version.changelog.length,
-                itemBuilder: (BuildContext context, int index) => TextW(version.changelog[index]),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                child: Divider(color: Colors.white, thickness: 1),
               ),
-              width: width,
-              height: 200,
-            ),
-            SpaceW(),
-            TextW("Known issue", big: true),
-            SpaceW(),
-            ContainerW(
-              ListView.builder(
-                physics: BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: version.error.length,
-                itemBuilder: (BuildContext context, int index) => TextW(version.error[index]),
+              TextW("Changelog", big: true),
+              SpaceW(),
+              ContainerW(
+                ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: version.changelog.length,
+                  itemBuilder: (BuildContext context, int index) => TextW(version.changelog[index]),
+                ),
+                width: width,
+                height: 200,
               ),
-              width: Get.width,
-              height: 200,
-            ),
-            SizedBox(height: 60),
-          ],
+              SpaceW(),
+              TextW("Known issue", big: true),
+              SpaceW(),
+              ContainerW(
+                ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: version.error.length,
+                  itemBuilder: (BuildContext context, int index) => TextW(version.error[index]),
+                ),
+                width: Get.width,
+                height: 200,
+              ),
+              SizedBox(height: 60),
+            ],
+          ),
+          height: 1000,
+          width: context.width,
         ),
-        text: "Download",
-        onTap: () => launch(gapps ? version.gappslink : version.vanillalink),
       ),
       child: ContainerW(
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextW("${version.date.day}/${version.date.month}/${version.date.year}", singleLine: true),
-            Spacer(),
-            ChipW(
-              text: version.relasetype,
-              color: ThemeApp.secondaryColor,
-              height: 36,
-              width: 40 * 2.2,
+            Expanded(child: TextW("${version.date.day}/${version.date.month}/${version.date.year}", singleLine: true)),
+            Expanded(child: SizedBox()),
+            Expanded(
+              child: ChipW(
+                text: version.relasetype,
+                color: ThemeApp.secondaryColor,
+                height: 36,
+                width: 40 * 2.2,
+              ),
             ),
             (width > 400)
-                ? ChipW(
-                    text: version.official ? "Official" : "Unofficial",
-                    color: ThemeApp.primaryColor,
-                    height: 36,
-                    width: 40 * 2.2,
+                ? Expanded(
+                    child: ChipW(
+                      text: version.official ? "Official" : "Unofficial",
+                      color: ThemeApp.primaryColor,
+                      height: 36,
+                      width: 40 * 2.2,
+                    ),
                   )
-                : Icon(
-                    version.official ? Icons.gpp_good_rounded : Icons.gpp_bad_rounded,
-                    color: Colors.white,
+                : Expanded(
+                    child: Icon(
+                      version.official ? Icons.gpp_good_rounded : Icons.gpp_bad_rounded,
+                      color: Colors.white,
+                    ),
                   )
           ],
         ),

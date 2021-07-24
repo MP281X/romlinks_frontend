@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/controller/user_controller.dart';
+import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 
 //! screen for the sign up
 class SignUpScreen extends StatelessWidget {
-  final UserController _userController = Get.find();
+  final UserController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +18,8 @@ class SignUpScreen extends StatelessWidget {
         snackbarW("Error", "Enter a valid email");
         return;
       }
-      await _userController.signUp(username, password, email);
-      if (_userController.isLogged.value) Get.toNamed("/");
+      await controller.signUp(username, password, email);
+      if (controller.isLogged.value) Get.toNamed("/");
     }
 
     return ScaffoldW(

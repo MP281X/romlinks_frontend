@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/controller/user_controller.dart';
+import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/views/screen/addRom_screen.dart';
 import 'package:romlinks_frontend/views/screen/addVersion_screen.dart';
 import 'package:romlinks_frontend/views/screen/auth_screen.dart';

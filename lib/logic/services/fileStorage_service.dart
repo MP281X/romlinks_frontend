@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:romlinks_frontend/logic/controller/user_controller.dart';
+import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/logic/services/http_handler.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-//! General theme of the app
+//! App theme and color
 class ThemeApp {
   //! ThemeData
   static ThemeData themeData = ThemeData.dark().copyWith(
@@ -28,6 +28,7 @@ class ThemeApp {
     borderRadius: BorderRadius.all(Radius.circular(10)),
   );
 
+  //! Scrollbar
   static ScrollbarThemeData _scrollBarTheme = ScrollbarThemeData(
     showTrackOnHover: true,
     isAlwaysShown: true,
