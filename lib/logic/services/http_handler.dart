@@ -29,6 +29,9 @@ class HttpHandler extends GetxController {
         case RequestType.put:
           response = await http.put(uri, headers: header, body: json.encode(body)).timeout(Duration(seconds: 10));
           break;
+        case RequestType.delete:
+          response = await http.delete(uri, headers: header).timeout(Duration(seconds: 10));
+          break;
       }
 
       // decode the body
@@ -64,7 +67,7 @@ class HttpHandler extends GetxController {
   }
 }
 
-enum RequestType { get, post, put }
+enum RequestType { get, post, put, delete }
 
 class ServerResErr implements Exception {
   ServerResErr();

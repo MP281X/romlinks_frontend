@@ -7,7 +7,7 @@ import 'http_handler.dart';
 class RomService extends GetxController {
   //! rom service base url
   static final bool local = HttpHandler.local;
-  static final String url = (local) ? "http://localhost:9092" : "https://romlinks.rom.mp281x.xyz";
+  static final String url = (local) ? "http://localhost:9092" : "https://romlinks.rom.mp281x.xyz:9092";
 
   //! add a rom version to the db
   static Future<void> addVersion({
@@ -21,6 +21,7 @@ class RomService extends GetxController {
     required String relasetype,
     required bool official,
     required DateTime date,
+    required String version,
   }) async {
     print(date.toIso8601String());
     // make the request
@@ -38,6 +39,7 @@ class RomService extends GetxController {
         "relasetype": relasetype,
         "official": official,
         "date": date.toIso8601String() + "+00:00",
+        "version": version,
       },
     );
   }
@@ -92,6 +94,14 @@ class RomService extends GetxController {
     await HttpHandler.req(url + "/verifyrom/" + romId, RequestType.put, header: {"token": _userController.token});
   }
 
+  //! verify a version
+  static Future<void> verifyVersion(String versionId) async {
+    // get the user controller
+    UserController _userController = Get.find();
+    // make the request
+    await HttpHandler.req(url + "/verifyversion/" + versionId, RequestType.put, header: {"token": _userController.token});
+  }
+
   //! get a list of unverified rom
   static Future<List<RomModel>> getUnverifiedRom() async {
     // get the user controller
@@ -107,25 +117,19 @@ class RomService extends GetxController {
     return romList;
   }
 
-  //! get a single rom from the rom data
-  static Future<RomModel> getRom({required String codename, required double androidVersion, required String romName}) async {
-    // replace the space in the rom name with %
-    romName = romName.replaceAll(" ", "%");
+  //! get a list of unverified version
+  static Future<List<VersionModel>> getUnverifiedVersion() async {
+    // get the user controller
+    UserController _userController = Get.find();
 
     // make the request
-    Map<String, dynamic> response = await HttpHandler.req(url + "/rom/" + codename + "/" + androidVersion.toString() + "/" + romName, RequestType.get);
+    Map<String, dynamic> response = await HttpHandler.req(url + "/verifyversion", RequestType.get, header: {"token": _userController.token});
 
-    // return the rom
-    return RomModel.fromMap(response);
-  }
+    // convert the response to a list of version model
+    List<VersionModel> romList = List<VersionModel>.from(response["list"].map((x) => VersionModel.fromMap(x)));
 
-  //! get a single rom from the id
-  static Future<RomModel> getRomById(String id) async {
-    // make the request
-    Map<String, dynamic> response = await HttpHandler.req(url + "/romid/" + id, RequestType.get);
-
-    // return the rom data
-    return RomModel.fromMap(response);
+    // return a list of version or an empty list
+    return romList;
   }
 
   //! add a rom to the db
@@ -155,11 +159,14 @@ class RomService extends GetxController {
   }
 
   //! search rom by name
-  static Future<List<dynamic>> searchRomName(String romName) async {
+  static Future<List<RomModel>> searchRomName(String romName) async {
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(url + "/romName/" + romName, RequestType.get);
-    // return a list of rom name
-    return response["list"] ?? [];
+
+    // convert the response to a list of rom model
+    List<RomModel> romList = List<RomModel>.from(response["list"].map((x) => RomModel.fromMap(x)));
+
+    return romList;
   }
 
   //! get a single rom from the rom data
@@ -215,6 +222,69 @@ class RomService extends GetxController {
         "stability": stability,
         "customization": customization,
       },
+    );
+  }
+
+  // edit the data of a rom
+  static Future<void> editRom(String romId, List<String> screenshot, String description, List<String> link) async {
+    // get the user controller
+    UserController _userController = Get.find();
+
+    // make the request
+    await HttpHandler.req(
+      url + "/rom/" + romId,
+      RequestType.put,
+      header: {"token": _userController.token},
+      body: {
+        "screenshot": screenshot,
+        "description": description,
+        "link": link,
+      },
+    );
+  }
+
+  // edit the data of a version
+  static Future<void> editVersion(String versionId, List<String> changelog, List<String> error, String gappsLink, String vanillaLink) async {
+    // get the user controller
+    UserController _userController = Get.find();
+
+    // make the request
+    await HttpHandler.req(
+      url + "/version/" + versionId,
+      RequestType.put,
+      header: {"token": _userController.token},
+      body: {
+        "changelog": changelog,
+        "error": error,
+        "gappslink": gappsLink,
+        "vanillalink": vanillaLink,
+      },
+    );
+  }
+
+  // delete a rom
+  static Future<void> deleteRom(String romId) async {
+    // get the user controller
+    UserController _userController = Get.find();
+
+    // make the request
+    await HttpHandler.req(
+      url + "/rom/" + romId,
+      RequestType.delete,
+      header: {"token": _userController.token},
+    );
+  }
+
+  // delete a version
+  static Future<void> deleteVersion(String versionId) async {
+    // get the user controller
+    UserController _userController = Get.find();
+
+    // make the request
+    await HttpHandler.req(
+      url + "/version/" + versionId,
+      RequestType.delete,
+      header: {"token": _userController.token},
     );
   }
 }

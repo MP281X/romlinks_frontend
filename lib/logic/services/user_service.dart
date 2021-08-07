@@ -6,7 +6,7 @@ import 'package:romlinks_frontend/logic/services/http_handler.dart';
 class UserService {
   //! user service base url
   static final bool local = HttpHandler.local;
-  static final String url = (local) ? "http://localhost:9093" : "https://romlinks.user.mp281x.xyz";
+  static final String url = (local) ? "http://localhost:9093" : "https://romlinks.user.mp281x.xyz:9093";
 
   //! create a new user
   static Future<String> signUp({required String username, required String email, required String password}) async {

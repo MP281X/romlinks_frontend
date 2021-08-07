@@ -9,6 +9,7 @@ import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
+import 'package:romlinks_frontend/views/screen/searchRom_screen.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 
 class HomeScreenController extends GetxController {
@@ -27,11 +28,12 @@ class HomeScreenController extends GetxController {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       codename = androidInfo.device ?? "treble";
       androidVersion = double.parse(androidInfo.version.release ?? "0");
+      update();
     } else {
       codename = "treble";
       androidVersion = 11;
+      update();
     }
-    update();
   }
 
   void searchDevice(String device, double version) {
@@ -48,7 +50,7 @@ class HomeScreen extends StatelessWidget {
     return GetBuilder<HomeScreenController>(
       builder: (controller) {
         return RefreshIndicator(
-          onRefresh: () => controller.setValue(),
+          onRefresh: () async => controller.update(),
           child: ScaffoldW(
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -199,11 +201,16 @@ class SearchButton extends StatelessWidget {
         DialogW(
           alignment: Alignment.center,
           tag: "searchButton",
+          text1: "Search rom by device",
           button1: () {
             controller.searchDevice(codename.text, double.parse(version.text));
             Get.close(1);
           },
-          text1: "Search",
+          text2: "Search rom by name",
+          button2: () {
+            Get.close(1);
+            Get.to(SearchRomScreen());
+          },
           child: Column(
             children: [
               TextFieldW("codename", controller: codename, onChanged: searchDevice),
@@ -211,7 +218,7 @@ class SearchButton extends StatelessWidget {
               TextFieldW("Version", controller: version, number: true),
             ],
           ),
-          height: 300,
+          height: 250,
           width: 400,
         ),
       ),

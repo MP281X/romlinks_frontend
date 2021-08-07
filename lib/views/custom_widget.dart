@@ -153,6 +153,7 @@ class TextW extends StatelessWidget {
     Widget textW = Text(
       text,
       overflow: TextOverflow.clip,
+      textAlign: TextAlign.center,
       style: TextStyle(
         decoration: TextDecoration.none,
         fontSize: (big) ? 30 : size,
@@ -348,6 +349,8 @@ class DialogW extends StatelessWidget {
     this.text2,
     this.alignment = Alignment.bottomCenter,
     this.tag,
+    this.text3,
+    this.button3,
   });
   final Function button1;
   final Function? button2;
@@ -358,44 +361,66 @@ class DialogW extends StatelessWidget {
   final double height;
   final double width;
   final String? tag;
+  final String? text3;
+  final Function? button3;
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: alignment,
-      child: SizedBox(
-        height: height,
-        width: width,
-        child: HeroW(
-          Material(
-            color: Colors.transparent,
-            child: ContainerW(
-              Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Center(child: child),
+      child: SafeArea(
+        minimum: EdgeInsets.all(5),
+        child: SizedBox(
+          height: height,
+          width: width,
+          child: HeroW(
+            Material(
+              color: Colors.transparent,
+              child: ContainerW(
+                Stack(
+                  children: [
+                    SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Center(child: child),
+                      ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(child: ButtonW(text2 ?? "Close", onTap: () => (button2 != null) ? button2!() : Get.close(1))),
-                        Expanded(child: ButtonW(text1, onTap: () => button1())),
-                      ],
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: (button3 == null)
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Expanded(child: ButtonW(text2 ?? "Close", onTap: () => (button2 != null) ? button2!() : Get.close(1))),
+                                Expanded(child: ButtonW(text1, onTap: () => button1())),
+                              ],
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Expanded(child: ButtonW(text2 ?? "Close", onTap: () => (button2 != null) ? button2!() : Get.close(1))),
+                                    Expanded(child: ButtonW(text1, onTap: () => button1())),
+                                  ],
+                                ),
+                                ButtonW(text3!, onTap: () => button3!()),
+                              ],
+                            ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                margin: EdgeInsets.all(20),
+                color: ThemeApp.primaryColor,
               ),
-              margin: EdgeInsets.all(20),
-              color: ThemeApp.primaryColor,
             ),
+            tag: tag,
           ),
-          tag: tag,
         ),
       ),
     );
@@ -469,25 +494,34 @@ class AccountButtonW extends StatelessWidget {
 
 //! display a list of text
 class TextListW extends StatelessWidget {
-  TextListW(this.data);
+  TextListW(this.data, {this.vertical = true});
   final RxList<String> data;
+  final bool vertical;
 
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: data.length,
-        shrinkWrap: true,
-        itemBuilder: (BuildContext context, int index) {
-          return Center(
-            child: ContainerW(
-              TextW(data[index], singleLine: true),
-              height: 45,
-              width: 210,
-            ),
-          );
-        },
+      () => SizedBox(
+        height: vertical
+            ? null
+            : (data.length > 0)
+                ? 60
+                : 0,
+        child: ListView.builder(
+          physics: BouncingScrollPhysics(),
+          itemCount: data.length,
+          scrollDirection: vertical ? Axis.vertical : Axis.horizontal,
+          shrinkWrap: true,
+          itemBuilder: (BuildContext context, int index) {
+            return Center(
+              child: ContainerW(
+                TextW(data[index], singleLine: true),
+                height: 45,
+                width: 210,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -579,12 +613,12 @@ class CustomRectTween extends RectTween {
 }
 
 //! custom dialog
-void dialogW(Widget child, {bool opacity = true}) {
+void dialogW(Widget child) {
   navigator!.push(
     PageRouteBuilder(
       opaque: false,
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(opacity ? 0.9 : 0),
+      barrierColor: Colors.black.withOpacity(0.9),
       pageBuilder: (_, __, ___) => child,
     ),
   );

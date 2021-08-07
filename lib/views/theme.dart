@@ -44,7 +44,6 @@ class ThemeApp {
   );
 
   //! Color
-  // static Color white = (Get.isPlatformDarkMode) ? Colors.white : Colors.black;
   static const Color primaryColor = Color(0xFF181C2D);
   static const Color secondaryColor = Color(0xFF1D2335);
   static const Color accentColor = Color(0xFFFF3B30);

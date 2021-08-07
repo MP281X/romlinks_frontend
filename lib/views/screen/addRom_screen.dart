@@ -103,6 +103,7 @@ class AddRomScreen extends StatelessWidget {
               width: 230,
               child: TextFormField(
                 onChanged: (x) => controller.description = x,
+                scrollPhysics: BouncingScrollPhysics(),
                 maxLines: 7,
                 decoration: InputDecoration(hintText: "Description"),
               ),
@@ -186,6 +187,7 @@ class RomPreviewW extends StatelessWidget {
           SpaceW(big: true),
           TextW("Screenshot", big: true),
           ScreenshotW(controller.screenshot),
+          SizedBox(height: 100)
         ],
       ),
       height: 1000,

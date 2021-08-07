@@ -11,7 +11,8 @@ import 'package:romlinks_frontend/views/custom_widget.dart';
 class FileStorageService extends GetxController {
   //! file storage service base url
   static final bool local = HttpHandler.local;
-  static final String url = (local) ? "http://localhost:9091" : "https://romlinks.filestorage.mp281x.xyz";
+  static final String url = (local) ? "http://localhost:9091" : "https://romlinks.filestorage.mp281x.xyz:9091";
+  static final String appLink = "http://mp281x.xyz/romLinks.apk";
 
   //! save an image in the backend
   static Future<String> postImage({

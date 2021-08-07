@@ -38,6 +38,7 @@ class AddVersionController extends GetxController {
   var codenameS = [].obs;
   var official = false.obs;
   var date = DateTime.now().obs;
+  String version = "";
 
   // setter method
   void setCodenameAndSuggestion() async {
@@ -121,6 +122,7 @@ class AddVersionController extends GetxController {
       relasetype: relaseType,
       official: official.value,
       date: date.value,
+      version: version,
     );
     await Future.delayed(Duration(seconds: 1, milliseconds: 500));
     Get.offAllNamed("/");
@@ -142,6 +144,7 @@ class AddVersionScreen extends StatelessWidget {
           TextFieldW("Vanilla link", onChanged: (x) => controller.vanillaLink = x),
           TextFieldW("Gapps link", onChanged: (x) => controller.gappsLink = x),
           TextFieldW("Relase type", onChanged: (x) => controller.relaseType = x),
+          TextFieldW("Version", onChanged: (x) => controller.version = x),
           SizedBox(
             width: 340,
             child: Row(
@@ -168,13 +171,15 @@ class AddVersionScreen extends StatelessWidget {
               ],
             ),
           ),
+          SpaceW(),
           Obx(() => TextW("Relase date:  ${controller.date.value.day}/${controller.date.value.month}/${controller.date.value.year}")),
           ButtonW("Change date", onTap: () => controller.selectDate()),
+          SpaceW(),
           TextFieldW("Add change to changelog", controller: controller.changelogController, onPressed: () => controller.addChangelog()),
-          TextListW(controller.changelog),
+          TextListW(controller.changelog, vertical: false),
           SpaceW(),
           TextFieldW("Add known error", controller: controller.errorController, onPressed: () => controller.addError()),
-          TextListW(controller.error),
+          TextListW(controller.error, vertical: false),
           SpaceW(),
           ButtonW("Version preview", onTap: () => controller.versionPreview(), tag: "addVersion"),
         ],
