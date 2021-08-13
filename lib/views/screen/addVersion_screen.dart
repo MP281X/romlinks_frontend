@@ -175,7 +175,7 @@ class AddVersionScreen extends StatelessWidget {
           Obx(() => TextW("Relase date:  ${controller.date.value.day}/${controller.date.value.month}/${controller.date.value.year}")),
           ButtonW("Change date", onTap: () => controller.selectDate()),
           SpaceW(),
-          TextFieldW("Add change to changelog", controller: controller.changelogController, onPressed: () => controller.addChangelog()),
+          TextFieldW("Add rom change", controller: controller.changelogController, onPressed: () => controller.addChangelog()),
           TextListW(controller.changelog, vertical: false),
           SpaceW(),
           TextFieldW("Add known error", controller: controller.errorController, onPressed: () => controller.addError()),

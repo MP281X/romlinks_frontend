@@ -2,7 +2,7 @@
     package="com.example.romlinks_frontend">
    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="romlinks_frontend"
+        android:label="romLinks"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"

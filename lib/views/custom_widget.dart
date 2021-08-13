@@ -153,7 +153,6 @@ class TextW extends StatelessWidget {
     Widget textW = Text(
       text,
       overflow: TextOverflow.clip,
-      textAlign: TextAlign.center,
       style: TextStyle(
         decoration: TextDecoration.none,
         fontSize: (big) ? 30 : size,
@@ -177,6 +176,7 @@ class TextFieldW extends StatelessWidget {
     this.controller,
     this.prefixIcon,
     this.hide = false,
+    this.buttonIcon = Icons.add,
   });
   final String text;
   final void Function(String)? onChanged;
@@ -185,6 +185,7 @@ class TextFieldW extends StatelessWidget {
   final TextEditingController? controller;
   final IconData? prefixIcon;
   final bool hide;
+  final IconData buttonIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +208,7 @@ class TextFieldW extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 5),
                     child: IconButton(
                       splashRadius: 20,
-                      icon: Icon(Icons.add),
+                      icon: Icon(buttonIcon),
                       onPressed: onPressed,
                     ),
                   ),
@@ -608,6 +609,77 @@ class CustomRectTween extends RectTween {
       lerpDouble(begin!.top, end!.top, elasticCurveValue)!,
       lerpDouble(begin!.right, end!.right, elasticCurveValue)!,
       lerpDouble(begin!.bottom, end!.bottom, elasticCurveValue)!,
+    );
+  }
+}
+
+//! custom page view
+class PageViewW extends StatelessWidget {
+  PageViewW(this.child, {this.page = 2});
+  final List<Widget> child;
+  final PageController controller = PageController();
+  final RxInt currentPage = 0.obs;
+  final int page;
+
+  @override
+  Widget build(BuildContext context) {
+    controller.addListener(() {
+      currentPage.value = controller.page!.round();
+    });
+    return Stack(
+      children: [
+        PageView(
+          physics: BouncingScrollPhysics(),
+          controller: controller,
+          children: child,
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: ContainerW(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Obx(
+                  () => Container(
+                    height: 14,
+                    width: 14,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(3)),
+                      color: (currentPage.value == 0) ? ThemeApp.accentColor : ThemeApp.primaryColor,
+                    ),
+                  ),
+                ),
+                Obx(
+                  () => Container(
+                    height: 14,
+                    width: 14,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(3)),
+                      color: (currentPage.value == 1) ? ThemeApp.accentColor : ThemeApp.primaryColor,
+                    ),
+                  ),
+                ),
+                if (page == 3)
+                  Obx(
+                    () => Container(
+                      height: 14,
+                      width: 14,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                        color: (currentPage.value == 2) ? ThemeApp.accentColor : ThemeApp.primaryColor,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            height: 30,
+            width: 70,
+            padding: EdgeInsets.zero,
+            margin: EdgeInsets.zero,
+          ),
+        ),
+      ],
     );
   }
 }

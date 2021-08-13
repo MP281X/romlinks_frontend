@@ -20,40 +20,36 @@ class VersionScreen extends StatelessWidget {
           List<VersionModel> vanilla = data.where((element) => element.vanillalink != "").toList();
           List<VersionModel> gapps = data.where((element) => element.gappslink != "").toList();
 
-          return PageView(
-            controller: new PageController(),
-            physics: BouncingScrollPhysics(),
-            children: [
-              (vanilla.length > 0)
-                  ? Column(
-                      children: [
-                        TextW("Vanilla", big: true),
-                        SpaceW(),
-                        ListView.builder(
-                          controller: new ScrollController(),
-                          shrinkWrap: true,
-                          itemCount: vanilla.length,
-                          itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(vanilla[index], false)),
-                        ),
-                      ],
-                    )
-                  : ErrorW(msg: "No vanilla build"),
-              (gapps.length > 0)
-                  ? Column(
-                      children: [
-                        TextW("Gapps", big: true),
-                        SpaceW(),
-                        ListView.builder(
-                          controller: new ScrollController(),
-                          shrinkWrap: true,
-                          itemCount: gapps.length,
-                          itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(gapps[index], true)),
-                        ),
-                      ],
-                    )
-                  : ErrorW(msg: "No gapps build"),
-            ],
-          );
+          return PageViewW([
+            (vanilla.length > 0)
+                ? Column(
+                    children: [
+                      TextW("Vanilla", big: true),
+                      SpaceW(),
+                      ListView.builder(
+                        controller: new ScrollController(),
+                        shrinkWrap: true,
+                        itemCount: vanilla.length,
+                        itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(vanilla[index], false)),
+                      ),
+                    ],
+                  )
+                : ErrorW(msg: "No vanilla build"),
+            (gapps.length > 0)
+                ? Column(
+                    children: [
+                      TextW("Gapps", big: true),
+                      SpaceW(),
+                      ListView.builder(
+                        controller: new ScrollController(),
+                        shrinkWrap: true,
+                        itemCount: gapps.length,
+                        itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(gapps[index], true)),
+                      ),
+                    ],
+                  )
+                : ErrorW(msg: "No gapps build"),
+          ]);
         },
       ),
     );
@@ -102,11 +98,15 @@ class VersionW extends StatelessWidget {
               if (version.changelog.length > 0) SpaceW(),
               if (version.changelog.length > 0)
                 ContainerW(
-                  ListView.builder(
+                  ListView.separated(
                     physics: BouncingScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: version.changelog.length,
                     itemBuilder: (BuildContext context, int index) => TextW(version.changelog[index]),
+                    separatorBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      child: Divider(color: Colors.white, thickness: 2),
+                    ),
                   ),
                   width: width,
                   height: 200,
@@ -116,11 +116,15 @@ class VersionW extends StatelessWidget {
               if (version.error.length > 0) SpaceW(),
               if (version.error.length > 0)
                 ContainerW(
-                  ListView.builder(
+                  ListView.separated(
                     physics: BouncingScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: version.error.length,
                     itemBuilder: (BuildContext context, int index) => TextW(version.error[index]),
+                    separatorBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      child: Divider(color: Colors.white, thickness: 2),
+                    ),
                   ),
                   width: Get.width,
                   height: 200,

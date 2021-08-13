@@ -9,9 +9,9 @@ import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
-import 'package:romlinks_frontend/views/screen/searchRom_screen.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 
+//! controller for the home screen
 class HomeScreenController extends GetxController {
   @override
   void onInit() async {
@@ -20,6 +20,7 @@ class HomeScreenController extends GetxController {
   }
 
   String codename = "";
+  String romName = "";
   double androidVersion = 0;
 
   Future<void> setValue() async {
@@ -36,8 +37,9 @@ class HomeScreenController extends GetxController {
     }
   }
 
-  void searchDevice(String device, double version) {
+  void searchDevice(String device, double version, String name) {
     codename = device;
+    romName = name;
     androidVersion = version;
     update();
   }
@@ -56,23 +58,28 @@ class HomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(children: [
-                  SizedBox(height: 60, child: Image.asset("images/logo.png")),
+                  SizedBox(height: 40, child: Image.asset("images/logo1.png")),
                   Spacer(),
                   AccountButtonW(),
                   SearchButton(),
                 ]),
                 SpaceW(),
                 FutureBuilderW<DeviceModel>(
-                    future: DeviceService.getDeviceInfo(controller.codename),
-                    builder: (data) => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          TextW(data.name[0].toUpperCase() + data.name.substring(1), size: 25),
-                          TextW("Android ${controller.androidVersion.toInt()}", size: 25),
-                        ])),
+                  future: DeviceService.getDeviceInfo(controller.codename),
+                  builder: (data) => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (data.name != "") Expanded(child: TextW(data.name, size: 25, singleLine: true)),
+                      SizedBox(width: 20),
+                      if (controller.androidVersion != 0) TextW("Android ${controller.androidVersion.toInt()}", size: 25, singleLine: true),
+                    ],
+                  ),
+                ),
                 SpaceW(),
-                RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.battery),
-                RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.customization),
-                RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.performance),
-                RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.stability),
+                RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.battery, romName: controller.romName),
+                RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.customization, romName: controller.romName),
+                RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.performance, romName: controller.romName),
+                RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.stability, romName: controller.romName),
               ],
             ),
             scroll: true,
@@ -85,10 +92,11 @@ class HomeScreen extends StatelessWidget {
 
 //! display a list of rom
 class RomListW extends StatelessWidget {
-  const RomListW({required this.codename, required this.androidVersion, required this.orderBy});
+  const RomListW({required this.codename, required this.androidVersion, required this.orderBy, required this.romName});
   final String codename;
   final double androidVersion;
   final OrderBy orderBy;
+  final String romName;
 
   String categoryName() {
     String orderByString;
@@ -123,7 +131,7 @@ class RomListW extends StatelessWidget {
         SizedBox(
           height: 200,
           child: FutureBuilderW<List<RomModel>>(
-            future: RomService.getRomList(codename: codename, androidVersion: androidVersion, orderBy: orderBy),
+            future: RomService.getRomList(codename: codename, androidVersion: androidVersion, orderBy: orderBy, romName: romName),
             builder: (data) {
               return (data.length != 0)
                   ? ListView.builder(
@@ -172,7 +180,7 @@ class RomPreviewW extends StatelessWidget {
                 child: ImageW(category: PhotoCategory.logo, name: data.logo, heroTag: heroTag),
               ),
               SpaceW(),
-              TextW(data.romname, singleLine: true, size: 23),
+              TextW(data.romname + " - " + data.androidversion.toString(), singleLine: true, size: 23),
             ],
           ),
           marginLeft: (!first),
@@ -184,16 +192,22 @@ class RomPreviewW extends StatelessWidget {
 
 //! dialog for searchign devices and android version
 class SearchButton extends StatelessWidget {
-  final RxList suggestion = [].obs;
+  final RxList deviceSuggestion = [].obs;
+  final RxList romSuggestion = [].obs;
   final HomeScreenController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
     TextEditingController codename = TextEditingController(text: controller.codename);
-    TextEditingController version = TextEditingController(text: controller.androidVersion.toString());
+    TextEditingController version = TextEditingController(text: (controller.androidVersion != 0) ? controller.androidVersion.toString() : "");
+    TextEditingController romName = TextEditingController(text: controller.romName);
 
     void searchDevice(String x) async {
-      if (codename.text != "") suggestion.value = await DeviceService.searchDeviceName(codename.text);
+      if (codename.text != "") deviceSuggestion.value = await DeviceService.searchDeviceName(codename.text);
+    }
+
+    void searchRom(String x) async {
+      if (romName.text != "") romSuggestion.value = await RomService.searchDeviceName(romName.text);
     }
 
     return GestureDetector(
@@ -201,24 +215,39 @@ class SearchButton extends StatelessWidget {
         DialogW(
           alignment: Alignment.center,
           tag: "searchButton",
-          text1: "Search rom by device",
+          text1: "Search rom",
           button1: () {
-            controller.searchDevice(codename.text, double.parse(version.text));
+            controller.searchDevice(codename.text, double.tryParse(version.text) ?? 0, romName.text);
             Get.close(1);
-          },
-          text2: "Search rom by name",
-          button2: () {
-            Get.close(1);
-            Get.to(SearchRomScreen());
           },
           child: Column(
             children: [
-              TextFieldW("codename", controller: codename, onChanged: searchDevice),
-              Center(child: SuggestionW(suggestion: suggestion, onTap: (x) => codename.text = x)),
-              TextFieldW("Version", controller: version, number: true),
+              TextFieldW(
+                "rom name",
+                controller: romName,
+                onChanged: searchRom,
+                onPressed: () => romName.clear(),
+                buttonIcon: Icons.clear,
+              ),
+              Center(child: SuggestionW(suggestion: romSuggestion, onTap: (x) => romName.text = x)),
+              TextFieldW(
+                "codename",
+                controller: codename,
+                onChanged: searchDevice,
+                onPressed: () => codename.clear(),
+                buttonIcon: Icons.clear,
+              ),
+              Center(child: SuggestionW(suggestion: deviceSuggestion, onTap: (x) => codename.text = x)),
+              TextFieldW(
+                "Version",
+                controller: version,
+                number: true,
+                onPressed: () => version.clear(),
+                buttonIcon: Icons.clear,
+              ),
             ],
           ),
-          height: 250,
+          height: 400,
           width: 400,
         ),
       ),

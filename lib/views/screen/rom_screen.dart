@@ -45,9 +45,34 @@ class RomScreen extends StatelessWidget {
           ReviewW(romData.review, romData.id),
           SpaceW(),
           if (codename != null) ButtonW("Download", onTap: () => Get.to(VersionScreen(codename: codename!, romId: romData.id))),
+          SpaceW(),
+          SizedBox(child: Divider(color: Colors.white, thickness: 2), width: 130),
+          SpaceW(),
+          SizedBox(
+            height: 100,
+            width: 100,
+            child: Stack(
+              children: [
+                SizedBox(
+                  child: ImageW(category: PhotoCategory.profile, name: romData.uploadedby, profileIcon: true),
+                  height: 100,
+                  width: 100,
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Icon(
+                    Icons.verified,
+                    size: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SpaceW(),
+          TextW(romData.uploadedby, size: 25),
         ],
       ),
-      button: (Get.find<UserController>().token != "" && codename != null)
+      button: (Get.find<UserController>().token != "" && codename != null && codename != "")
           ? GestureDetector(
               onTap: () => dialogW(
                 DialogW(

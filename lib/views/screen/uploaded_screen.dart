@@ -20,15 +20,11 @@ class UploadedScreen extends StatelessWidget {
         future: RomService.getUploaded(),
         builder: (data) => FutureBuilderW<List<DeviceModel>>(
           future: DeviceService.getUploaded(),
-          builder: (device) => PageView(
-            physics: BouncingScrollPhysics(),
-            controller: PageController(),
-            children: [
-              (data.rom.length > 0) ? UploadedRomW(data.rom) : ErrorW(msg: "No rom found"),
-              (data.version.length > 0) ? UploadedVersionW(data.version, true) : ErrorW(msg: "No version found"),
-              (device.length > 0) ? UploadedDeviceW(device) : ErrorW(msg: "No device found"),
-            ],
-          ),
+          builder: (device) => PageViewW([
+            (data.rom.length > 0) ? UploadedRomW(data.rom) : ErrorW(msg: "No rom found"),
+            (data.version.length > 0) ? UploadedVersionW(data.version, false) : ErrorW(msg: "No version found"),
+            (device.length > 0) ? UploadedDeviceW(device) : ErrorW(msg: "No device found"),
+          ], page: 3),
         ),
       ),
       auth: true,
