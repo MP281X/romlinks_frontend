@@ -66,13 +66,15 @@ class HomeScreen extends StatelessWidget {
                 SpaceW(),
                 FutureBuilderW<DeviceModel>(
                   future: DeviceService.getDeviceInfo(controller.codename),
-                  builder: (data) => Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (data.name != "") Expanded(child: TextW(data.name, size: 25, singleLine: true)),
-                      SizedBox(width: 20),
-                      if (controller.androidVersion != 0) TextW("Android ${controller.androidVersion.toInt()}", size: 25, singleLine: true),
-                    ],
+                  builder: (data) => SizedBox(
+                    height: 25,
+                    child: Row(
+                      children: [
+                        if (data.name != "") TextW(data.name, size: 25, singleLine: true),
+                        Spacer(),
+                        if (controller.androidVersion != 0) TextW("Android ${controller.androidVersion.toInt()}", size: 25, singleLine: true),
+                      ],
+                    ),
                   ),
                 ),
                 SpaceW(),

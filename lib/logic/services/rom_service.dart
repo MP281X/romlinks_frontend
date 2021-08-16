@@ -294,6 +294,26 @@ class RomService extends GetxController {
     // return a rom name list or an empty list
     return response["list"] ?? [];
   }
+
+  //! get a list of rom by a list of id
+  static Future<List<RomModel>> getRomById() async {
+    // get the user data
+    UserController _userController = Get.find();
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(
+      url + "/romid",
+      RequestType.put,
+      body: {
+        "romid": _userController.userData.value.savedRom,
+      },
+    );
+
+    // convert the response to a list of rom model
+    List<RomModel> romList = List<RomModel>.from(response["list"].map((x) => RomModel.fromMap(x)));
+
+    // return the rom list or an empty list
+    return romList;
+  }
 }
 
 enum OrderBy { performance, battery, stability, customization }

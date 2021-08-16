@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/user_service.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 
 //! container
@@ -246,16 +247,46 @@ class ImageW extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HeroW(
-      ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Image.network(
-          FileStorageService.imgUrl(category, name),
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => ErrorW(personIcon: profileIcon),
+    return GestureDetector(
+      onTap: (category == PhotoCategory.screenshot)
+          ? () {
+              dialogW(
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(40),
+                    child: SizedBox(
+                      height: 2000,
+                      child: AspectRatio(
+                        aspectRatio: 9 / 19,
+                        child: HeroW(
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              FileStorageService.imgUrl(category, name),
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => ErrorW(personIcon: profileIcon),
+                            ),
+                          ),
+                          tag: heroTag,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+          : null,
+      child: HeroW(
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.network(
+            FileStorageService.imgUrl(category, name),
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => ErrorW(personIcon: profileIcon),
+          ),
         ),
+        tag: heroTag,
       ),
-      tag: heroTag,
     );
   }
 }
@@ -448,6 +479,7 @@ class ScreenshotW extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.fromLTRB((index == 0) ? 0 : 10, 10, 10, 10),
                 child: ImageW(
+                  heroTag: image[index],
                   category: PhotoCategory.screenshot,
                   name: (image.length != 0) ? image[index] : "",
                 ),
@@ -674,12 +706,44 @@ class PageViewW extends StatelessWidget {
               ],
             ),
             height: 30,
-            width: 70,
+            width: (page == 2) ? 60 : 80,
             padding: EdgeInsets.zero,
             margin: EdgeInsets.zero,
           ),
         ),
       ],
+    );
+  }
+}
+
+//! display the username and the profile picture of a user
+class UserW extends StatelessWidget {
+  const UserW(this.username);
+  final String username;
+
+  @override
+  Widget build(BuildContext context) {
+    return ContainerW(
+      GestureDetector(
+        onTap: () {
+          if (Get.find<UserController>().userData.value.moderator) {
+            UserService.editUserPerm(username: username, perm: PermType.verified, value: true);
+          }
+        },
+        child: Column(
+          children: [
+            SizedBox(
+              child: ImageW(category: PhotoCategory.profile, name: username, profileIcon: true),
+              height: 100,
+              width: 100,
+            ),
+            SpaceW(),
+            TextW(username),
+          ],
+        ),
+      ),
+      height: 155,
+      width: 140,
     );
   }
 }

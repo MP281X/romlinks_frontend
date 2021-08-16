@@ -84,6 +84,7 @@ class AddVersionController extends GetxController {
       snackbarW("Error", "Enter all the filed");
   }
 
+  // change the relase date
   void selectDate() async {
     date.value = await showDatePicker(
           context: Get.context!,
@@ -207,6 +208,7 @@ class VersionPreviewW extends StatelessWidget {
         gappslink: controller.gappsLink!,
         vanillalink: controller.vanillaLink!,
         downloadnumber: 0,
+        versionNum: controller.version,
         relasetype: controller.relaseType,
       ),
       (controller.gappsLink != null) ? true : false,

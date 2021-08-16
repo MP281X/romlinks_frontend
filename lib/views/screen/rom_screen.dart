@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/logic/models.dart';
+import 'package:romlinks_frontend/logic/services/device_service.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
+import 'package:romlinks_frontend/logic/services/user_service.dart';
 import 'package:romlinks_frontend/views/screen/comment_screen.dart';
 import 'package:romlinks_frontend/views/screen/version_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
@@ -44,69 +46,70 @@ class RomScreen extends StatelessWidget {
           ScreenshotW(romData.screenshot!),
           ReviewW(romData.review, romData.id),
           SpaceW(),
-          if (codename != null) ButtonW("Download", onTap: () => Get.to(VersionScreen(codename: codename!, romId: romData.id))),
+          if (codename != null && codename != "") ButtonW("Download", onTap: () => Get.to(VersionScreen(codename: codename!, romId: romData.id))),
           SpaceW(),
-          SizedBox(child: Divider(color: Colors.white, thickness: 2), width: 130),
+          TextW("Uploaded by", size: 25),
           SpaceW(),
-          SizedBox(
-            height: 100,
-            width: 100,
-            child: Stack(
-              children: [
-                SizedBox(
-                  child: ImageW(category: PhotoCategory.profile, name: romData.uploadedby, profileIcon: true),
-                  height: 100,
-                  width: 100,
-                ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Icon(
-                    Icons.verified,
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SpaceW(),
-          TextW(romData.uploadedby, size: 25),
+          UserW(romData.uploadedby),
         ],
       ),
-      button: (Get.find<UserController>().token != "" && codename != null && codename != "")
-          ? GestureDetector(
-              onTap: () => dialogW(
-                DialogW(
-                  tag: "romButton",
-                  text1: "Add review",
-                  button1: () {
-                    Get.close(1);
-                    dialogW(
+      button: (Get.find<UserController>().token != "")
+          ? SizedBox(
+              height: 150,
+              width: 70,
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () => UserService.saveRom(romData.id),
+                    child: ContainerW(
+                      Icon(Icons.favorite, color: Colors.white, size: 25),
+                      padding: EdgeInsets.zero,
+                      marginRight: false,
+                      height: 50,
+                      width: 50,
+                      color: ThemeApp.accentColor,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: () => dialogW(
                       DialogW(
-                        text1: "Add review",
-                        button1: () => Get.find<AddReviewController>().addReview(),
-                        button2: () => Get.close(2),
-                        child: AddReviewW(romId: romData.id, codename: codename ?? ""),
-                        height: 320,
+                        tag: "romButton",
+                        text2: (codename != null && codename != "") ? "Add review" : null,
+                        button2: (codename != null && codename != "")
+                            ? () {
+                                Get.close(1);
+                                dialogW(
+                                  DialogW(
+                                    text1: "Add review",
+                                    button1: () => Get.find<AddReviewController>().addReview(),
+                                    button2: () => Get.close(2),
+                                    child: AddReviewW(romId: romData.id, codename: codename ?? ""),
+                                    height: 420,
+                                    width: 400,
+                                    alignment: Alignment.center,
+                                  ),
+                                );
+                              }
+                            : null,
+                        text1: "Add version",
+                        button1: () => Get.toNamed("/addVersion/" + romData.id),
+                        child: TextW("${romData.romname} - ${romData.androidversion}", singleLine: true),
+                        height: 170,
                         width: 400,
-                        alignment: Alignment.center,
                       ),
-                    );
-                  },
-                  text2: "Add version",
-                  button2: () => Get.toNamed("/addVersion/" + romData.id),
-                  child: TextW("${romData.romname} - ${romData.androidversion}", singleLine: true),
-                  height: 170,
-                  width: 400,
-                ),
-              ),
-              child: ContainerW(
-                Icon(Icons.add_rounded, color: Colors.white, size: 25),
-                padding: EdgeInsets.zero,
-                marginRight: false,
-                height: 50,
-                width: 50,
-                color: ThemeApp.accentColor,
-                tag: "romButton",
+                    ),
+                    child: ContainerW(
+                      Icon(Icons.add_rounded, color: Colors.white, size: 25),
+                      padding: EdgeInsets.zero,
+                      marginRight: false,
+                      height: 50,
+                      width: 50,
+                      color: ThemeApp.accentColor,
+                      tag: "romButton",
+                    ),
+                  ),
+                ],
               ),
             )
           : null,
@@ -181,20 +184,26 @@ class ReviewW extends StatelessWidget {
 }
 
 class AddReviewController extends GetxController {
-  AddReviewController(this.romId, this.codename);
+  AddReviewController(this.romId);
   String romId;
-  String codename;
+  var codename = "".obs;
   var msg = "".obs;
   var battery = 1.0.obs;
   var performance = 1.0.obs;
   var stability = 1.0.obs;
   var customization = 1.0.obs;
+  var codenameSuggestion = [].obs;
+
+  void getSuggestion(String x) async {
+    codename.value = x;
+    if (codename.value != "") codenameSuggestion.value = await DeviceService.searchDeviceName(codename.value);
+  }
 
   void addReview() async {
-    if (romId != "" && codename != "") {
+    if (romId != "" && codename.value != "") {
       await RomService.addComment(
         romId: romId,
-        codename: codename,
+        codename: codename.value,
         msg: msg.value,
         battery: battery.value,
         performance: performance.value,
@@ -214,11 +223,11 @@ class AddReviewW extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AddReviewController controller = Get.put(AddReviewController(romId, codename));
+    final AddReviewController controller = Get.put(AddReviewController(romId));
+    final TextEditingController codenameController = TextEditingController(text: codename);
 
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
-      scrollDirection: Axis.horizontal,
       child: Column(
         children: [
           Row(
@@ -248,6 +257,13 @@ class AddReviewW extends StatelessWidget {
           ),
           SpaceW(),
           TextFieldW("Comment", onChanged: (x) => controller.msg.value = x),
+          TextFieldW("Codename", onChanged: controller.getSuggestion, controller: codenameController),
+          SuggestionW(
+              suggestion: controller.codenameSuggestion,
+              onTap: (x) {
+                controller.codename.value = x;
+                codenameController.text = x;
+              }),
         ],
       ),
     );

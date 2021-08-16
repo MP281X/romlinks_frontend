@@ -59,7 +59,6 @@ class DeviceService extends GetxController {
         body: {
           "codename": codename,
           "name": name,
-          "brand": brand,
         },
       );
     }
@@ -72,28 +71,6 @@ class DeviceService extends GetxController {
 
     // return a device name list or an empty list
     return response["list"] ?? [];
-  }
-
-  //! edit the info of a device
-  static Future<void> editDeviceInfo(String codename, {List<String>? gcamLinks, String? camera, double? battery, String? processor}) async {
-    // get the user controller
-    UserController _userController = Get.find();
-    if (_userController.token == "") return;
-    print("errore 3");
-
-    await HttpHandler.req(
-      url + "/devices/" + codename,
-      RequestType.put,
-      header: {"token": _userController.token},
-      body: {
-        "gcamlinks": gcamLinks,
-        "specs": {
-          "camera": camera,
-          "battery": battery,
-          "processor": processor,
-        }
-      },
-    );
   }
 
   //! get a list of uploaded devices

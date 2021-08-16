@@ -7,7 +7,6 @@ class UserModel {
     this.username = "",
     this.email = "",
     this.savedRom = const [],
-    this.link = const [],
     this.verified = false,
     this.moderator = false,
   });
@@ -16,7 +15,6 @@ class UserModel {
   final String username;
   final String email;
   final List savedRom;
-  final List link;
   final bool verified;
   final bool moderator;
 
@@ -25,8 +23,7 @@ class UserModel {
         username: data["username"],
         email: data["email"],
         savedRom: data["savedRom"],
-        link: data["dev"]["link"],
-        verified: data["dev"]["verified"],
+        verified: data["verified"],
         moderator: data["moderator"],
       );
 }
@@ -36,29 +33,14 @@ class DeviceModel {
   const DeviceModel({
     this.codename = "",
     this.name = "",
-    this.brand = "",
-    this.specs = const Specs(),
-    this.bootloaderlinks = const [],
-    this.recoverylinks = const [],
-    this.gcamlinks = const [],
   });
 
   final String codename;
   final String name;
-  final String brand;
-  final Specs specs;
-  final List<dynamic> bootloaderlinks;
-  final List<dynamic> recoverylinks;
-  final List<dynamic> gcamlinks;
 
   factory DeviceModel.fromMap(Map<String, dynamic> data) => DeviceModel(
         codename: data["codename"] ?? "",
         name: data["name"] ?? "",
-        brand: data["brand"] ?? "",
-        specs: Specs.fromMap(data["specs"]),
-        bootloaderlinks: List<dynamic>.from(data["bootloaderlinks"].map((x) => x)),
-        recoverylinks: List<dynamic>.from(data["recoverylinks"].map((x) => x)),
-        gcamlinks: List<dynamic>.from(data["gcamlinks"].map((x) => x)),
       );
 }
 
@@ -95,6 +77,8 @@ class VersionModel {
     this.downloadnumber = 0,
     this.relasetype = "",
     this.official = false,
+    this.uploadedBy = "",
+    this.versionNum = "",
   });
 
   final String id;
@@ -108,20 +92,23 @@ class VersionModel {
   final String vanillalink;
   final int downloadnumber;
   final String relasetype;
+  final String uploadedBy;
+  final String versionNum;
 
   factory VersionModel.fromMap(Map<String, dynamic> data) => VersionModel(
-        id: data["id"] ?? "",
-        romid: data["romid"] ?? "",
-        codename: data["codename"] ?? "",
-        date: DateTime.parse(data["date"]),
-        changelog: List<dynamic>.from(data["changelog"].map((x) => x)),
-        error: List<dynamic>.from(data["error"].map((x) => x)),
-        official: data["official"] ?? false,
-        gappslink: data["gappslink"] ?? "",
-        vanillalink: data["vanillalink"] ?? "",
-        downloadnumber: data["downloadnumber"] ?? 0,
-        relasetype: data["relasetype"] ?? "??" "",
-      );
+      id: data["id"] ?? "",
+      romid: data["romid"] ?? "",
+      codename: data["codename"] ?? "",
+      date: DateTime.parse(data["date"]),
+      changelog: List<dynamic>.from(data["changelog"].map((x) => x)),
+      error: List<dynamic>.from(data["error"].map((x) => x)),
+      official: data["official"] ?? false,
+      gappslink: data["gappslink"] ?? "",
+      vanillalink: data["vanillalink"] ?? "",
+      downloadnumber: data["downloadnumber"] ?? 0,
+      relasetype: data["relasetype"] ?? "",
+      uploadedBy: data["uploadedby"] ?? "",
+      versionNum: data["version"] ?? "");
 }
 
 //! rom model

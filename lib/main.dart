@@ -7,6 +7,7 @@ import 'package:romlinks_frontend/views/screen/auth_screen.dart';
 import 'package:romlinks_frontend/views/screen/home_screen.dart';
 import 'package:romlinks_frontend/views/screen/login_screen.dart';
 import 'package:romlinks_frontend/views/screen/profile_screen.dart';
+import 'package:romlinks_frontend/views/screen/savedRom_screen.dart';
 import 'package:romlinks_frontend/views/screen/signUp_screen.dart';
 import 'package:romlinks_frontend/views/screen/unverifyed_screen.dart';
 import 'package:romlinks_frontend/views/screen/uploaded_screen.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/addRom", page: () => AddRomScreen()),
         GetPage(name: "/addVersion/:romId", page: () => AddVersionScreen()),
         GetPage(name: "/unverified", page: () => UnverifiedScreen()),
+        GetPage(name: "/savedRom", page: () => SavedRomScreen())
       ],
     );
   }

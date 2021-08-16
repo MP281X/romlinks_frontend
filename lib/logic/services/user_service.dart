@@ -89,6 +89,18 @@ class UserService {
     // return the user data
     return UserModel.fromMap(response);
   }
+
+  //! save a rom
+  static Future<void> saveRom(String romId) async {
+    // get the user controller
+    UserController _userController = Get.find();
+    // make the request
+    await HttpHandler.req(
+      url + "/saveRom/" + romId,
+      RequestType.put,
+      header: {"token": _userController.token},
+    );
+  }
 }
 
 enum PermType { verified, ban, moderator }

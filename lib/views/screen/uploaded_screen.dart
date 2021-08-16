@@ -207,9 +207,10 @@ class DeviceW extends StatelessWidget {
       child: ContainerW(
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextW(device.name, singleLine: true),
-            TextW(device.codename, singleLine: true),
+            SizedBox(child: TextW(device.name, singleLine: true), height: 20),
+            SizedBox(child: TextW(device.codename, singleLine: true), height: 20),
           ],
         ),
       ),
