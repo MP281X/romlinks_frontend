@@ -167,7 +167,7 @@ class RomPreviewW extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? heroTag = new Random().nextInt(1000).toString();
+    String? heroTag = new Random().nextInt(100).toString() + new Random().nextInt(100).toString();
     return AspectRatio(
       aspectRatio: 0.8,
       child: GestureDetector(

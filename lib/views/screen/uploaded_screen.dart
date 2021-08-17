@@ -45,6 +45,7 @@ class UploadedRomW extends StatelessWidget {
     Widget titleColumn(Widget child) {
       return (!search)
           ? SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               controller: new ScrollController(),
               child: Column(
                 children: [TextW("Uploaded rom"), SpaceW(big: true), child],
@@ -178,6 +179,7 @@ class UploadedDeviceW extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       controller: new ScrollController(),
+      physics: BouncingScrollPhysics(),
       child: Column(
         children: [
           TextW("Uploaded devices"),

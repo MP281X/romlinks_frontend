@@ -461,8 +461,9 @@ class DialogW extends StatelessWidget {
 
 //! display a list of screenshot
 class ScreenshotW extends StatelessWidget {
-  const ScreenshotW(this.image);
+  const ScreenshotW(this.image, {this.removeImage});
   final RxList<String> image;
+  final Function? removeImage;
 
   @override
   Widget build(BuildContext context) {
@@ -474,15 +475,36 @@ class ScreenshotW extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           itemCount: (image.length != 0) ? image.length : 1,
           itemBuilder: (BuildContext context, int index) {
-            return AspectRatio(
-              aspectRatio: 9 / 19,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB((index == 0) ? 0 : 10, 10, 10, 10),
-                child: ImageW(
-                  heroTag: image[index],
-                  category: PhotoCategory.screenshot,
-                  name: (image.length != 0) ? image[index] : "",
-                ),
+            return SizedBox(
+              height: 250,
+              width: 120,
+              child: Stack(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 9 / 19,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB((index == 0) ? 0 : 10, 10, 10, 10),
+                      child: ImageW(
+                        heroTag: (image.length != 0) ? image[index] : null,
+                        category: PhotoCategory.screenshot,
+                        name: (image.length != 0) ? image[index] : "",
+                      ),
+                    ),
+                  ),
+                  if (removeImage != null && image.length != 0)
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: IconButton(
+                          onPressed: () => removeImage!(index),
+                          iconSize: 30,
+                          splashRadius: 20,
+                          icon: Icon(Icons.edit),
+                        ),
+                      ),
+                    )
+                ],
               ),
             );
           },

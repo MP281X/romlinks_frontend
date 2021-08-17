@@ -177,10 +177,10 @@ class AddVersionScreen extends StatelessWidget {
           ButtonW("Change date", onTap: () => controller.selectDate()),
           SpaceW(),
           TextFieldW("Add rom change", controller: controller.changelogController, onPressed: () => controller.addChangelog()),
-          TextListW(controller.changelog, vertical: false),
+          ChangelogPreviewW(controller.changelog),
           SpaceW(),
           TextFieldW("Add known error", controller: controller.errorController, onPressed: () => controller.addError()),
-          TextListW(controller.error, vertical: false),
+          ChangelogPreviewW(controller.error),
           SpaceW(),
           ButtonW("Version preview", onTap: () => controller.versionPreview(), tag: "addVersion"),
         ],
@@ -212,6 +212,35 @@ class VersionPreviewW extends StatelessWidget {
         relasetype: controller.relaseType,
       ),
       (controller.gappsLink != null) ? true : false,
+    );
+  }
+}
+
+//! display a list of changelog or error
+class ChangelogPreviewW extends StatelessWidget {
+  ChangelogPreviewW(this.data);
+  final RxList<String> data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => ContainerW(
+        ListView.separated(
+          physics: BouncingScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: data.length,
+          itemBuilder: (BuildContext context, int index) => GestureDetector(
+            onTap: () => data.removeAt(index),
+            child: TextW(data[index]),
+          ),
+          separatorBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            child: Divider(color: Colors.white, thickness: .5),
+          ),
+        ),
+        width: 300,
+        height: 200,
+      ),
     );
   }
 }

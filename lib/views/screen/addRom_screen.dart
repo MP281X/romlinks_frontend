@@ -81,6 +81,30 @@ class AddRomController extends GetxController {
       screenshot.add(res.substring(11));
     }
   }
+
+  void editScreenshot(int index) async {
+    if (romName.isEmpty)
+      snackbarW("Error", "Enter the rom name");
+    else if (androidVersion == 0)
+      snackbarW("Error", "Enter the android version");
+    else if (screenshot.length > 5)
+      snackbarW("Error", "You can upload only 6 screenshot");
+    else {
+      String x = screenshot[index];
+      screenshot[index] = "";
+      imageCache!.clear();
+      String? res = await Get.dialog(new SaveImageDialog(
+        romName: romName.removeAllWhitespace.toLowerCase(),
+        category: PhotoCategory.screenshot,
+        androidVersion: androidVersion,
+        index: index,
+      ));
+      if (res != null && res != "")
+        screenshot[index] = res.substring(11);
+      else
+        screenshot[index] = x;
+    }
+  }
 }
 
 //! Screen for adding the rom
@@ -112,7 +136,10 @@ class AddRomScreen extends StatelessWidget {
           Column(
             children: [
               ButtonW("Add screenshot", onTap: () => controller.setScreenshot()),
-              ScreenshotW(controller.screenshot),
+              ScreenshotW(
+                controller.screenshot,
+                removeImage: controller.editScreenshot,
+              ),
             ],
           ),
           ButtonW("Preview", onTap: () => controller.romPreview(), tag: "romPreview"),

@@ -55,7 +55,7 @@ class UserService {
     String permString;
     switch (perm) {
       case PermType.verified:
-        permString = "dev.verified";
+        permString = "verified";
         break;
       case PermType.ban:
         permString = "ban";
