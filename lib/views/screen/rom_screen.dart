@@ -10,6 +10,7 @@ import 'package:romlinks_frontend/views/screen/comment_screen.dart';
 import 'package:romlinks_frontend/views/screen/version_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:romlinks_frontend/views/theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 //! display the info of a rom
 class RomScreen extends StatelessWidget {
@@ -51,6 +52,8 @@ class RomScreen extends StatelessWidget {
           TextW("Uploaded by", size: 25),
           SpaceW(),
           UserW(romData.uploadedby),
+          SpaceW(),
+          LinkW(["https://github.com/PixelExperience", "https://t.me/PixelExperience", "https://twitter.com/PixelExpROM"]),
         ],
       ),
       button: (Get.find<UserController>().token != "")
@@ -75,23 +78,22 @@ class RomScreen extends StatelessWidget {
                     onTap: () => dialogW(
                       DialogW(
                         tag: "romButton",
-                        text2: (codename != null && codename != "") ? "Add review" : null,
-                        button2: (codename != null && codename != "")
-                            ? () {
-                                Get.close(1);
-                                dialogW(
-                                  DialogW(
-                                    text1: "Add review",
-                                    button1: () => Get.find<AddReviewController>().addReview(),
-                                    button2: () => Get.close(2),
-                                    child: AddReviewW(romId: romData.id, codename: codename ?? ""),
-                                    height: 420,
-                                    width: 400,
-                                    alignment: Alignment.center,
-                                  ),
-                                );
-                              }
-                            : null,
+                        text2: "Add review",
+                        button2: () async {
+                          Get.close(1);
+                          dialogW(
+                            DialogW(
+                              text1: "Add review",
+                              button1: () => Get.find<AddReviewController>().addReview(),
+                              button2: () => Get.close(1),
+                              child: AddReviewW(romId: romData.id, codename: codename ?? ""),
+                              height: 420,
+                              width: 400,
+                              alignment: Alignment.center,
+                            ),
+                          );
+                          await Future.delayed(Duration(seconds: 1));
+                        },
                         text1: "Add version",
                         button1: () => Get.toNamed("/addVersion/" + romData.id),
                         child: TextW("${romData.romname} - ${romData.androidversion}", singleLine: true),
@@ -184,9 +186,9 @@ class ReviewW extends StatelessWidget {
 }
 
 class AddReviewController extends GetxController {
-  AddReviewController(this.romId);
+  AddReviewController(this.romId, this.codename);
   String romId;
-  var codename = "".obs;
+  final RxString codename;
   var msg = "".obs;
   var battery = 1.0.obs;
   var performance = 1.0.obs;
@@ -210,8 +212,12 @@ class AddReviewController extends GetxController {
         stability: stability.value,
         customization: customization.value,
       );
-      await Future.delayed(Duration(seconds: 1));
-      Get.close(3);
+      await Future.delayed(Duration(seconds: 1, milliseconds: 300));
+      Get.close(2);
+    } else {
+      snackbarW("Error", "Enter all the value");
+      await Future.delayed(Duration(seconds: 1, milliseconds: 300));
+      Get.close(2);
     }
   }
 }
@@ -223,7 +229,7 @@ class AddReviewW extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AddReviewController controller = Get.put(AddReviewController(romId));
+    final AddReviewController controller = Get.put(AddReviewController(romId, codename.obs));
     final TextEditingController codenameController = TextEditingController(text: codename);
 
     return SingleChildScrollView(
@@ -289,6 +295,46 @@ class StarW extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+//! display a list of link
+class LinkW extends StatelessWidget {
+  const LinkW(this.links);
+  final List<dynamic> links;
+
+  @override
+  Widget build(BuildContext context) {
+    IconData selectIcon(int index) {
+      String link = links[index].toString();
+      if (link.contains("github")) {
+        return AppIcons.github_circled;
+      } else if (link.contains("twitter")) {
+        return AppIcons.twitter;
+      } else if (link.contains("t.me")) {
+        return AppIcons.telegram_plane;
+      } else {
+        return Icons.language;
+      }
+    }
+
+    return SizedBox(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List<Widget>.generate(
+          links.length,
+          (index) => GestureDetector(
+            onTap: () => launch(links[index]),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Icon(selectIcon(index), color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+      height: 40,
+      width: 1000,
     );
   }
 }

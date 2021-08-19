@@ -169,7 +169,7 @@ class TextW extends StatelessWidget {
 
 //! textfield
 class TextFieldW extends StatelessWidget {
-  const TextFieldW(
+  TextFieldW(
     this.text, {
     this.onChanged,
     this.onPressed,
@@ -187,32 +187,42 @@ class TextFieldW extends StatelessWidget {
   final IconData? prefixIcon;
   final bool hide;
   final IconData buttonIcon;
+  final RxBool showPassword = false.obs;
 
   @override
   Widget build(BuildContext context) {
+    if (hide) showPassword.value = true;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: SizedBox(
         width: 230,
-        child: TextField(
-          controller: controller,
-          onChanged: onChanged,
-          keyboardType: (number) ? TextInputType.number : null,
-          inputFormatters: (number) ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly] : null,
-          obscureText: hide,
-          decoration: InputDecoration(
-            prefixIcon: (prefixIcon != null) ? Icon(prefixIcon) : null,
-            hintText: text,
-            suffixIcon: (onPressed == null)
-                ? null
-                : Padding(
-                    padding: const EdgeInsets.only(right: 5),
-                    child: IconButton(
-                      splashRadius: 20,
-                      icon: Icon(buttonIcon),
-                      onPressed: onPressed,
+        child: Obx(
+          () => TextField(
+            controller: controller,
+            onChanged: onChanged,
+            keyboardType: (number) ? TextInputType.number : null,
+            inputFormatters: (number) ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly] : null,
+            obscureText: showPassword.value,
+            decoration: InputDecoration(
+              prefixIcon: (prefixIcon != null) ? Icon(prefixIcon) : null,
+              hintText: text,
+              suffixIcon: (onPressed == null && hide == false)
+                  ? null
+                  : Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: IconButton(
+                        splashRadius: 20,
+                        icon: Icon(
+                          hide
+                              ? showPassword.value
+                                  ? Icons.visibility_off
+                                  : Icons.visibility
+                              : buttonIcon,
+                        ),
+                        onPressed: (onPressed != null) ? onPressed : () => showPassword.value = !showPassword.value,
+                      ),
                     ),
-                  ),
+            ),
           ),
         ),
       ),

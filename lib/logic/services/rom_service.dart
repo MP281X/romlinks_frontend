@@ -148,6 +148,7 @@ class RomService extends GetxController {
     required List<String> screenshot,
     required String logo,
     required String description,
+    required List<String> link,
   }) async {
     // get the user controller
     UserController _userController = Get.find();
@@ -162,6 +163,7 @@ class RomService extends GetxController {
         "androidversion": androidVersion,
         "screenshot": screenshot,
         "logo": logo,
+        "link": link,
         "description": description,
       },
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
+import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 import 'package:romlinks_frontend/views/screen/saveImage_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 
@@ -25,6 +26,8 @@ class AddRomController extends GetxController {
   String description = "";
   var logo = "".obs;
   var screenshot = <String>[].obs;
+  var link = <String>[].obs;
+  TextEditingController linkController = TextEditingController();
 
   // add the rom to the db
   void addRom() async {
@@ -34,6 +37,7 @@ class AddRomController extends GetxController {
       screenshot: screenshot,
       logo: logo.value,
       description: description,
+      link: link,
     );
     await Future.delayed(Duration(seconds: 1));
     Get.offAllNamed("/");
@@ -105,6 +109,11 @@ class AddRomController extends GetxController {
         screenshot[index] = x;
     }
   }
+
+  void addLink() {
+    link.add(linkController.text);
+    linkController.clear();
+  }
 }
 
 //! Screen for adding the rom
@@ -142,6 +151,8 @@ class AddRomScreen extends StatelessWidget {
               ),
             ],
           ),
+          TextFieldW("Add link", controller: controller.linkController, onPressed: () => controller.addLink()),
+          Obx(() => LinkW(controller.link.value)),
           ButtonW("Preview", onTap: () => controller.romPreview(), tag: "romPreview"),
         ],
       ),

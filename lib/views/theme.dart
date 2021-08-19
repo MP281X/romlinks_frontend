@@ -48,3 +48,14 @@ class ThemeApp {
   static const Color secondaryColor = Color(0xFF1D2335);
   static const Color accentColor = Color(0xFFFF3B30);
 }
+
+class AppIcons {
+  AppIcons._();
+
+  static const _kFontFam = 'AppIcons';
+  static const String? _kFontPkg = null;
+
+  static const IconData twitter = IconData(0xf099, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData github_circled = IconData(0xf09b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData telegram_plane = IconData(0xf3fe, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+}
