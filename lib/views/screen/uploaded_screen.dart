@@ -7,6 +7,8 @@ import 'package:romlinks_frontend/logic/services/device_service.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
+import 'package:romlinks_frontend/views/screen/editRom_screen.dart';
+import 'package:romlinks_frontend/views/screen/home_screen.dart';
 import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 import 'package:romlinks_frontend/views/screen/version_screen.dart';
 import 'package:romlinks_frontend/views/theme.dart';
@@ -55,82 +57,93 @@ class UploadedRomW extends StatelessWidget {
     }
 
     return titleColumn(
-      ListView.builder(
-        physics: BouncingScrollPhysics(),
-        controller: new ScrollController(),
-        shrinkWrap: true,
-        itemCount: rom.length,
-        itemBuilder: (BuildContext context, int index) {
-          String? heroTag = new Random().nextInt(1000).toString();
+      (rom.length > 0)
+          ? ListView.builder(
+              physics: BouncingScrollPhysics(),
+              controller: new ScrollController(),
+              shrinkWrap: true,
+              itemCount: rom.length,
+              itemBuilder: (BuildContext context, int index) {
+                String? heroTag = new Random().nextInt(1000).toString();
 
-          return MaxWidthW(
-            GestureDetector(
-              onTap: () => dialogW(
-                DialogW(
-                  text1: verify ? "Approve" : "Add version",
-                  button1: () => verify ? RomService.verifyRom(rom[index].id) : Get.toNamed("/addVersion/" + rom[index].id),
-                  text2: "View rom data",
-                  button2: () {
-                    Get.close(1);
-                    Get.to(RomScreen(
-                      rom[index],
-                      heroTag: heroTag,
-                    ));
-                  },
-                  text3: "Delete rom",
-                  button3: () async {
-                    RomService.deleteRom(rom[index].id);
-                    await Future.delayed(Duration(seconds: 1, milliseconds: 300));
-                    Get.close(3);
-                  },
-                  child: TextW(rom[index].romname, big: true, singleLine: true),
-                  height: 230,
-                  width: 400,
-                ),
-              ),
-              child: ContainerW(
-                Row(
-                  children: [
-                    SizedBox(
-                      height: 70,
-                      width: 70,
-                      child: ImageW(
-                        category: PhotoCategory.logo,
-                        name: rom[index].logo,
-                        heroTag: heroTag,
+                return MaxWidthW(
+                  GestureDetector(
+                    onTap: () => dialogW(
+                      DialogW(
+                        text1: verify ? "Approve" : "Add version",
+                        button1: () => verify ? RomService.verifyRom(rom[index].id) : Get.toNamed("/addVersion/" + rom[index].id),
+                        text2: "View rom data",
+                        button2: () {
+                          Get.close(1);
+                          Get.to(RomScreen(
+                            rom[index],
+                            codename: search ? Get.find<HomeScreenController>().codename : null,
+                            heroTag: heroTag,
+                          ));
+                        },
+                        text3: !search ? "Delete rom" : null,
+                        button3: !search
+                            ? () async {
+                                RomService.deleteRom(rom[index].id);
+                                rom.removeAt(index);
+                                await Future.delayed(Duration(seconds: 1, milliseconds: 300));
+                                Get.close(3);
+                              }
+                            : null,
+                        text4: !search ? "Edit rom" : null,
+                        button4: !search ? () => Get.to(EditRomScreen(rom[index])) : null,
+                        child: TextW(rom[index].romname, big: true, singleLine: true),
+                        height: !search ? 230 : 170,
+                        width: 400,
                       ),
                     ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    child: ContainerW(
+                      Row(
                         children: [
-                          TextW(rom[index].romname, singleLine: true),
-                          SizedBox(height: 5),
-                          TextW("Android ${rom[index].androidversion}", singleLine: true),
+                          SizedBox(
+                            height: 70,
+                            width: 70,
+                            child: ImageW(
+                              category: PhotoCategory.logo,
+                              name: rom[index].logo,
+                              heroTag: heroTag,
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextW(rom[index].romname, singleLine: true),
+                                SizedBox(height: 5),
+                                TextW("Android ${rom[index].androidversion}", singleLine: true),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          (width > 400)
+                              ? ChipW(
+                                  text: (rom[index].verified) ? "Approved" : "Pending",
+                                  color: ThemeApp.primaryColor,
+                                  height: 36,
+                                  width: 40 * 2.2,
+                                )
+                              : Icon(
+                                  rom[index].verified ? Icons.check_circle_outline_rounded : Icons.highlight_off_rounded,
+                                  color: Colors.white,
+                                ),
                         ],
                       ),
                     ),
-                    SizedBox(width: 10),
-                    (width > 400)
-                        ? ChipW(
-                            text: (rom[index].verified) ? "Approved" : "Pending",
-                            color: ThemeApp.primaryColor,
-                            height: 36,
-                            width: 40 * 2.2,
-                          )
-                        : Icon(
-                            rom[index].verified ? Icons.check_circle_outline_rounded : Icons.highlight_off_rounded,
-                            color: Colors.white,
-                          ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: ErrorW(msg: "no rom found for this device"),
             ),
-          );
-        },
-      ),
     );
   }
 }
@@ -205,18 +218,16 @@ class DeviceW extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ContainerW(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(child: TextW(device.name, singleLine: true), height: 20),
-            SizedBox(child: TextW(device.codename, singleLine: true), height: 20),
-          ],
-        ),
+    return ContainerW(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(child: TextW(device.name, singleLine: true), height: 20),
+          SizedBox(child: TextW(device.codename, singleLine: true), height: 20),
+        ],
       ),
-      height: 80,
+      height: 60,
     );
   }
 }

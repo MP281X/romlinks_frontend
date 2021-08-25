@@ -203,6 +203,9 @@ class TextFieldW extends StatelessWidget {
             keyboardType: (number) ? TextInputType.number : null,
             inputFormatters: (number) ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly] : null,
             obscureText: showPassword.value,
+            onSubmitted: (_) {
+              if (onPressed != null) onPressed!();
+            },
             decoration: InputDecoration(
               prefixIcon: (prefixIcon != null) ? Icon(prefixIcon) : null,
               hintText: text,
@@ -219,7 +222,7 @@ class TextFieldW extends StatelessWidget {
                                   : Icons.visibility
                               : buttonIcon,
                         ),
-                        onPressed: (onPressed != null) ? onPressed : () => showPassword.value = !showPassword.value,
+                        onPressed: (!hide) ? onPressed : () => showPassword.value = !showPassword.value,
                       ),
                     ),
             ),
@@ -393,6 +396,8 @@ class DialogW extends StatelessWidget {
     this.tag,
     this.text3,
     this.button3,
+    this.text4,
+    this.button4,
   });
   final Function button1;
   final Function? button2;
@@ -405,6 +410,8 @@ class DialogW extends StatelessWidget {
   final String? tag;
   final String? text3;
   final Function? button3;
+  final String? text4;
+  final Function? button4;
 
   @override
   Widget build(BuildContext context) {
@@ -451,7 +458,14 @@ class DialogW extends StatelessWidget {
                                     Expanded(child: ButtonW(text1, onTap: () => button1())),
                                   ],
                                 ),
-                                ButtonW(text3!, onTap: () => button3!()),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Expanded(child: ButtonW(text3!, onTap: () => button3!())),
+                                    if (text4 != null) Expanded(child: ButtonW(text4!, onTap: () => button4!())),
+                                  ],
+                                ),
                               ],
                             ),
                     ),
@@ -760,6 +774,11 @@ class UserW extends StatelessWidget {
         onTap: () {
           if (Get.find<UserController>().userData.value.moderator) {
             UserService.editUserPerm(username: username, perm: PermType.verified, value: true);
+          }
+        },
+        onLongPress: () {
+          if (Get.find<UserController>().userData.value.moderator) {
+            UserService.editUserPerm(username: username, perm: PermType.moderator, value: true);
           }
         },
         child: Column(

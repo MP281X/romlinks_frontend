@@ -85,6 +85,38 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             scroll: true,
+            button: GestureDetector(
+              onTap: () => dialogW(DialogW(
+                button1: () async {
+                  await RomService.reqestRom(controller.codename, controller.androidVersion, controller.romName);
+                  await Future.delayed(Duration(seconds: 1, milliseconds: 500));
+                  Get.close(2);
+                },
+                text1: "Request a rom",
+                child: SizedBox(
+                  width: 200,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(child: TextW("Request a rom", singleLine: true), alignment: Alignment.center),
+                      SpaceW(),
+                      if (controller.codename != "") TextW("Codename: " + controller.codename),
+                      if (controller.romName != "") TextW("Rom name: " + controller.romName),
+                      if (controller.androidVersion != 0) TextW("Android version: " + controller.androidVersion.toString()),
+                    ],
+                  ),
+                ),
+                height: 240,
+                width: 450,
+                tag: "requestButton",
+              )),
+              child: ContainerW(
+                Icon(Icons.info_outline_rounded),
+                tag: "requestButton",
+                height: 50,
+                width: 50,
+              ),
+            ),
           ),
         );
       },

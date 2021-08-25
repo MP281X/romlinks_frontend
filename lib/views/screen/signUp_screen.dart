@@ -31,7 +31,7 @@ class SignUpScreen extends StatelessWidget {
           SpaceW(big: true),
           TextFieldW("Username", onChanged: (text) => username = text, prefixIcon: Icons.person),
           TextFieldW("Email", onChanged: (text) => email = text, prefixIcon: Icons.email),
-          TextFieldW("Password", onChanged: (text) => password = text, prefixIcon: Icons.lock, hide: true),
+          TextFieldW("Password", onChanged: (text) => password = text, prefixIcon: Icons.lock, hide: true, onPressed: singUp),
           ButtonW("Sign up", animated: true, onTap: () async => await singUp()),
         ],
       ),

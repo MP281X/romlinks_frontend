@@ -9,7 +9,7 @@ import 'package:romlinks_frontend/views/screen/login_screen.dart';
 import 'package:romlinks_frontend/views/screen/profile_screen.dart';
 import 'package:romlinks_frontend/views/screen/savedRom_screen.dart';
 import 'package:romlinks_frontend/views/screen/signUp_screen.dart';
-import 'package:romlinks_frontend/views/screen/unverifyed_screen.dart';
+import 'package:romlinks_frontend/views/screen/unverified_screen.dart';
 import 'package:romlinks_frontend/views/screen/uploaded_screen.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 

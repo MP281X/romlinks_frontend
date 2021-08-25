@@ -243,25 +243,6 @@ class RomService extends GetxController {
     );
   }
 
-  //! edit the data of a version
-  static Future<void> editVersion(String versionId, List<String> changelog, List<String> error, String gappsLink, String vanillaLink) async {
-    // get the user controller
-    UserController _userController = Get.find();
-
-    // make the request
-    await HttpHandler.req(
-      url + "/version/" + versionId,
-      RequestType.put,
-      header: {"token": _userController.token},
-      body: {
-        "changelog": changelog,
-        "error": error,
-        "gappslink": gappsLink,
-        "vanillalink": vanillaLink,
-      },
-    );
-  }
-
   //! delete a rom
   static Future<void> deleteRom(String romId) async {
     // get the user controller
@@ -315,6 +296,49 @@ class RomService extends GetxController {
 
     // return the rom list or an empty list
     return romList;
+  }
+
+  //! add a rom request
+  static Future<void> reqestRom(String? codename, double? androidversion, String? romname) async {
+    // make the request
+    await HttpHandler.req(
+      url + "/reqest",
+      RequestType.post,
+      body: {
+        "codename": codename,
+        "androidversion": androidversion,
+        "romname": romname,
+      },
+    );
+  }
+
+  //! get a list of rom request
+  static Future<List<RequestModel>> getRequest() async {
+    UserController _userController = Get.find();
+    // make the request
+    Map<String, dynamic> response = await HttpHandler.req(
+      url + "/reqest",
+      RequestType.get,
+      header: {
+        "token": _userController.token,
+      },
+    );
+
+    List<RequestModel> reqList = List<RequestModel>.from(response["list"].map((x) => RequestModel.fromMap(x)));
+    return reqList;
+  }
+
+  //! remove a rom request
+  static Future<void> removeRequest(String reqId) async {
+    UserController _userController = Get.find();
+    // make the request
+    await HttpHandler.req(
+      url + "/reqest/" + reqId,
+      RequestType.delete,
+      header: {
+        "token": _userController.token,
+      },
+    );
   }
 }
 

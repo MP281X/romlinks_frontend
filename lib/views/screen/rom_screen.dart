@@ -53,7 +53,7 @@ class RomScreen extends StatelessWidget {
           SpaceW(),
           UserW(romData.uploadedby),
           SpaceW(),
-          LinkW(["https://github.com/PixelExperience", "https://t.me/PixelExperience", "https://twitter.com/PixelExpROM"]),
+          LinkW(romData.link),
         ],
       ),
       button: (Get.find<UserController>().token != "")
@@ -65,12 +65,11 @@ class RomScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () => UserService.saveRom(romData.id),
                     child: ContainerW(
-                      Icon(Icons.favorite, color: Colors.white, size: 25),
+                      Icon(Icons.favorite, size: 25),
                       padding: EdgeInsets.zero,
                       marginRight: false,
                       height: 50,
                       width: 50,
-                      color: ThemeApp.accentColor,
                     ),
                   ),
                   SizedBox(height: 10),
@@ -102,12 +101,11 @@ class RomScreen extends StatelessWidget {
                       ),
                     ),
                     child: ContainerW(
-                      Icon(Icons.add_rounded, color: Colors.white, size: 25),
+                      Icon(Icons.add_rounded, size: 25),
                       padding: EdgeInsets.zero,
                       marginRight: false,
                       height: 50,
                       width: 50,
-                      color: ThemeApp.accentColor,
                       tag: "romButton",
                     ),
                   ),

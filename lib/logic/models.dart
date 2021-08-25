@@ -232,3 +232,24 @@ class RomVersionModel {
         version: List<VersionModel>.from(data["version"].map((x) => VersionModel.fromMap(x))),
       );
 }
+
+class RequestModel {
+  const RequestModel({
+    this.id = "",
+    this.romname = "",
+    this.codename = "",
+    this.androidVersion = 0,
+  });
+
+  final String id;
+  final String romname;
+  final String codename;
+  final double androidVersion;
+
+  factory RequestModel.fromMap(Map<String, dynamic> data) => RequestModel(
+        id: data["id"] ?? "",
+        romname: data["romname"] ?? "",
+        codename: data["codename"] ?? "",
+        androidVersion: data["androidversion"] ?? 0,
+      );
+}
