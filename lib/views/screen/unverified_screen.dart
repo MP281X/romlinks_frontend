@@ -12,6 +12,12 @@ class UnverifiedScreen extends StatelessWidget {
     return ScaffoldW(
       PageViewW(
         [
+          FutureBuilderW<List<RequestModel>>(
+            future: RomService.getRequest(),
+            builder: (data) {
+              return (data.length > 0) ? RomRequestW(data) : ErrorW(msg: "No rom request");
+            },
+          ),
           FutureBuilderW<List<RomModel>>(
             future: RomService.getUnverifiedRom(),
             builder: (data) {
@@ -22,12 +28,6 @@ class UnverifiedScreen extends StatelessWidget {
             future: RomService.getUnverifiedVersion(),
             builder: (data) {
               return (data.length > 0) ? UploadedVersionW(data, true) : ErrorW(msg: "All version are verified");
-            },
-          ),
-          FutureBuilderW<List<RequestModel>>(
-            future: RomService.getRequest(),
-            builder: (data) {
-              return (data.length > 0) ? RomRequestW(data) : ErrorW(msg: "No rom request");
             },
           ),
         ],
@@ -65,7 +65,7 @@ class RomRequestW extends StatelessWidget {
                       await RomService.removeRequest(req[index].id);
                       req.removeAt(index);
                       await Future.delayed(Duration(seconds: 1, milliseconds: 500));
-                      Get.close(2);
+                      Get.close(3);
                     },
                     text1: "Remove request",
                     child: SizedBox.shrink(),

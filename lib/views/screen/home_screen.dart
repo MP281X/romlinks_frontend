@@ -111,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                 tag: "requestButton",
               )),
               child: ContainerW(
-                Icon(Icons.info_outline_rounded),
+                Icon(Icons.feedback_outlined),
                 tag: "requestButton",
                 height: 50,
                 width: 50,

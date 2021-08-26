@@ -64,7 +64,7 @@ class UploadedRomW extends StatelessWidget {
               shrinkWrap: true,
               itemCount: rom.length,
               itemBuilder: (BuildContext context, int index) {
-                String? heroTag = new Random().nextInt(1000).toString();
+                String? heroTag = new Random().nextInt(100).toString() + new Random().nextInt(100).toString();
 
                 return MaxWidthW(
                   GestureDetector(
@@ -140,10 +140,7 @@ class UploadedRomW extends StatelessWidget {
                 );
               },
             )
-          : Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30),
-              child: ErrorW(msg: "no rom found for this device"),
-            ),
+          : Expanded(child: ErrorW(msg: "no rom found for this device")),
     );
   }
 }

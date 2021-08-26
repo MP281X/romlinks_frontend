@@ -250,6 +250,6 @@ class RequestModel {
         id: data["id"] ?? "",
         romname: data["romname"] ?? "",
         codename: data["codename"] ?? "",
-        androidVersion: data["androidversion"] ?? 0,
+        androidVersion: double.parse(data["androidversion"].toString()),
       );
 }

@@ -100,6 +100,8 @@ class UserService {
       RequestType.put,
       header: {"token": _userController.token},
     );
+
+    _userController.userData.value = await UserService.userData();
   }
 }
 

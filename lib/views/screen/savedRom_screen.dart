@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
@@ -13,6 +14,7 @@ class SavedRomScreen extends StatelessWidget {
     return ScaffoldW(
       Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextW("Saved rom - " + Get.find<HomeScreenController>().codename, big: true),
           SpaceW(),
@@ -25,7 +27,7 @@ class SavedRomScreen extends StatelessWidget {
           ),
         ],
       ),
-      scroll: true,
+      scroll: (Get.find<UserController>().userData.value.savedRom.length == 0) ? false : true,
     );
   }
 }

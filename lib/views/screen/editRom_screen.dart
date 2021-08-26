@@ -89,6 +89,10 @@ class EditRomScreen extends StatelessWidget {
     return ScaffoldW(
       Column(children: [
         TextW("Edit rom - " + romData.romname, big: true),
+        SpaceW(big: true),
+        TextFieldW("Add link", controller: controller.linkController, onPressed: () => controller.addLink()),
+        // ignore: invalid_use_of_protected_member
+        Obx(() => (controller.link.length > 0) ? LinkW(controller.link.value) : SizedBox.shrink()),
         Padding(
           padding: const EdgeInsets.only(bottom: 10),
           child: SizedBox(
@@ -111,9 +115,6 @@ class EditRomScreen extends StatelessWidget {
             SpaceW(),
           ],
         ),
-        TextFieldW("Add link", controller: controller.linkController, onPressed: () => controller.addLink()),
-        // ignore: invalid_use_of_protected_member
-        Obx(() => LinkW(controller.link.value)),
         ButtonW("Edit rom data", onTap: () => controller.editRom()),
       ]),
       scroll: true,
