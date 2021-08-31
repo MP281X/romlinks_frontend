@@ -7,7 +7,7 @@ import 'http_handler.dart';
 class RomService extends GetxController {
   //! rom service base url
   static final bool local = HttpHandler.local;
-  static final String url = (local) ? "http://localhost:9092" : "https://romlinks.rom.mp281x.xyz:9092";
+  static final String url = (local) ? "http://localhost:9092" : "https://rom.romlinks.xyz:9092";
 
   //! add a rom version to the db
   static Future<void> addVersion({

@@ -15,6 +15,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     UserModel userData = controller.userData.value;
     link.value = userData.username;
+    double height = MediaQuery.of(context).size.height;
     return ScaffoldW(
       Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -73,6 +74,7 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       auth: true,
+      scroll: (height > 600) ? false : true,
     );
   }
 }
