@@ -107,7 +107,7 @@ class VersionW extends StatelessWidget {
                   height: (version.error.length > 0) ? 200 : 400,
                 ),
               if (version.error.length > 0) SpaceW(),
-              if (version.error.length > 0) TextW("Known issue", big: true),
+              if (version.error.length > 0) TextW("Notes", big: true),
               if (version.error.length > 0) SpaceW(),
               if (version.error.length > 0)
                 ContainerW(

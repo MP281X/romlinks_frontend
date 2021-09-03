@@ -179,7 +179,7 @@ class AddVersionScreen extends StatelessWidget {
           TextFieldW("Add rom change", controller: controller.changelogController, onPressed: () => controller.addChangelog()),
           ChangelogPreviewW(controller.changelog),
           SpaceW(),
-          TextFieldW("Add known error", controller: controller.errorController, onPressed: () => controller.addError()),
+          TextFieldW("Add notes", controller: controller.errorController, onPressed: () => controller.addError()),
           ChangelogPreviewW(controller.error),
           SpaceW(),
           ButtonW("Version preview", onTap: () => controller.versionPreview(), tag: "addVersion"),
