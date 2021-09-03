@@ -152,8 +152,7 @@ class AddRomScreen extends StatelessWidget {
             ],
           ),
           TextFieldW("Add link", controller: controller.linkController, onPressed: () => controller.addLink()),
-          // ignore: invalid_use_of_protected_member
-          Obx(() => LinkW(controller.link.value)),
+          LinkW(controller.link, true),
           ButtonW("Preview", onTap: () => controller.romPreview(), tag: "romPreview"),
         ],
       ),
@@ -225,7 +224,7 @@ class RomPreviewW extends StatelessWidget {
           TextW(controller.description),
           SpaceW(big: true),
           TextW("Screenshot", big: true),
-          ScreenshotW(controller.screenshot),
+          ScreenshotW(controller.screenshot, useHero: false),
           SizedBox(height: 100)
         ],
       ),

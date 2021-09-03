@@ -226,7 +226,7 @@ class RomService extends GetxController {
   }
 
   //! edit the data of a rom
-  static Future<void> editRom(String romId, List<String> screenshot, String description, List<String> link) async {
+  static Future<void> editRom(String romId, List<String> screenshot, String description, List<String> link, String logo) async {
     // get the user controller
     UserController _userController = Get.find();
 
@@ -236,6 +236,7 @@ class RomService extends GetxController {
       RequestType.put,
       header: {"token": _userController.token},
       body: {
+        "logo": logo,
         "screenshot": screenshot,
         "description": description,
         "link": link,

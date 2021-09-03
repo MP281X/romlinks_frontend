@@ -53,7 +53,7 @@ class RomScreen extends StatelessWidget {
           SpaceW(),
           UserW(romData.uploadedby),
           SpaceW(),
-          LinkW(romData.link),
+          LinkW(romData.link.obs, false),
         ],
       ),
       button: (Get.find<UserController>().token != "")
@@ -299,8 +299,9 @@ class StarW extends StatelessWidget {
 
 //! display a list of link
 class LinkW extends StatelessWidget {
-  const LinkW(this.links);
-  final List<dynamic> links;
+  const LinkW(this.links, this.editLink);
+  final RxList<dynamic> links;
+  final bool editLink;
 
   @override
   Widget build(BuildContext context) {
@@ -318,15 +319,17 @@ class LinkW extends StatelessWidget {
     }
 
     return SizedBox(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List<Widget>.generate(
-          links.length,
-          (index) => GestureDetector(
-            onTap: () => launch(links[index]),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Icon(selectIcon(index), color: Colors.white),
+      child: Obx(
+        () => Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List<Widget>.generate(
+            links.length,
+            (index) => GestureDetector(
+              onTap: () => editLink ? links.removeAt(index) : launch(links[index]),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Icon(selectIcon(index), color: Colors.white),
+              ),
             ),
           ),
         ),

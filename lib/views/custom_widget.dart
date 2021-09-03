@@ -485,9 +485,10 @@ class DialogW extends StatelessWidget {
 
 //! display a list of screenshot
 class ScreenshotW extends StatelessWidget {
-  const ScreenshotW(this.image, {this.removeImage});
+  const ScreenshotW(this.image, {this.removeImage, this.useHero = true});
   final RxList<String> image;
   final Function? removeImage;
+  final bool useHero;
 
   @override
   Widget build(BuildContext context) {
@@ -509,7 +510,7 @@ class ScreenshotW extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB((index == 0) ? 0 : 10, 10, 10, 10),
                       child: ImageW(
-                        heroTag: (image.length != 0) ? image[index] : null,
+                        heroTag: (image.length != 0 && useHero) ? image[index] : null,
                         category: PhotoCategory.screenshot,
                         name: (image.length != 0) ? image[index] : "",
                       ),

@@ -17,10 +17,12 @@ class EditRomController extends GetxController {
     super.onInit();
     link.value = List<String>.from(romData.link);
     screenshot = romData.screenshot ?? screenshot;
+    logo = romData.logo.obs;
   }
 
   var link = <String>[].obs;
   var screenshot = <String>[].obs;
+  var logo = "".obs;
   String description = "";
   TextEditingController linkController = TextEditingController();
 
@@ -71,8 +73,23 @@ class EditRomController extends GetxController {
     }
   }
 
+  void setLogo() async {
+    logo.value = "";
+    imageCache!.clear();
+    String? res = await Get.dialog(new SaveImageDialog(
+      romName: romData.romname.removeAllWhitespace.toLowerCase(),
+      category: PhotoCategory.logo,
+      androidVersion: romData.androidversion.toDouble(),
+      index: 0,
+    ));
+    if (res != null && res != "")
+      logo.value = res.substring(5);
+    else
+      logo.value = romData.logo;
+  }
+
   void editRom() async {
-    await RomService.editRom(romData.id, screenshot, description, link);
+    await RomService.editRom(romData.id, screenshot, description, link, logo.value);
     await Future.delayed(Duration(seconds: 1));
     Get.offAllNamed("/");
   }
@@ -89,10 +106,33 @@ class EditRomScreen extends StatelessWidget {
     return ScaffoldW(
       Column(children: [
         TextW("Edit rom - " + romData.romname, big: true),
-        SpaceW(big: true),
+        Padding(
+          padding: const EdgeInsets.only(top: 10, bottom: 20),
+          child: SizedBox(
+            height: 200,
+            width: 200,
+            child: Stack(
+              children: [
+                SizedBox(
+                  child: Obx(() => ImageW(category: PhotoCategory.logo, name: controller.logo.value)),
+                  height: 200,
+                  width: 200,
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: IconButton(
+                    onPressed: () => controller.setLogo(),
+                    iconSize: 30,
+                    splashRadius: 20,
+                    icon: Icon(Icons.edit_rounded),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
         TextFieldW("Add link", controller: controller.linkController, onPressed: () => controller.addLink()),
-        // ignore: invalid_use_of_protected_member
-        Obx(() => (controller.link.length > 0) ? LinkW(controller.link.value) : SizedBox.shrink()),
+        Obx(() => (controller.link.length > 0) ? LinkW(controller.link, true) : SizedBox.shrink()),
         Padding(
           padding: const EdgeInsets.only(bottom: 10),
           child: SizedBox(
