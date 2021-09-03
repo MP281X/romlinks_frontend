@@ -11,8 +11,9 @@ This app was also an opportunity to build my first full-stack project and try ne
 ## 📁 **Downloads**
 The app and the website are free and without ads
 - [Github releases](https://github.com/MP281X/romlinks_frontend/releases)
-- [Play Store]()
+- [Play Store](https://play.google.com/store/apps/details?id=com.mp281x.romLinks)
 - [Website](https://romlinks.xyz)
+- [RomLinks Backend](https://github.com/MP281X/romLinks_backend)
 <br /><br />
 ## 🔧 **Build**
 If you want to build the app you can download the repository and run `flutter build apk` or `flutter build web`
