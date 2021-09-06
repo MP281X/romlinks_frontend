@@ -7,9 +7,10 @@ import 'package:romlinks_frontend/views/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class VersionScreen extends StatelessWidget {
-  const VersionScreen({required this.codename, required this.romId});
+  const VersionScreen({required this.codename, required this.romId, this.hasUploaed = false});
   final String codename;
   final String romId;
+  final bool hasUploaed;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class VersionScreen extends StatelessWidget {
                         controller: new ScrollController(),
                         shrinkWrap: true,
                         itemCount: vanilla.length,
-                        itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(vanilla[index], false)),
+                        itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(vanilla[index], false, hasUploaded: hasUploaed)),
                       ),
                     ],
                   )
@@ -44,7 +45,7 @@ class VersionScreen extends StatelessWidget {
                         controller: new ScrollController(),
                         shrinkWrap: true,
                         itemCount: gapps.length,
-                        itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(gapps[index], true)),
+                        itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(gapps[index], true, hasUploaded: hasUploaed)),
                       ),
                     ],
                   )

@@ -14,10 +14,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 //! display the info of a rom
 class RomScreen extends StatelessWidget {
-  const RomScreen(this.romData, {this.codename, this.heroTag});
+  const RomScreen(this.romData, {this.codename, this.heroTag, this.uploadedVersion = false});
   final RomModel romData;
   final String? codename;
   final String? heroTag;
+  final bool uploadedVersion;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +49,7 @@ class RomScreen extends StatelessWidget {
           ReviewW(romData.review, romData.id),
           SpaceW(),
           if (codename != null && codename != "") ButtonW("Download", onTap: () => Get.to(VersionScreen(codename: codename!, romId: romData.id))),
+          if (uploadedVersion) ButtonW("Uploaded Version", onTap: () => Get.to(VersionScreen(codename: "*", romId: romData.id, hasUploaed: true))),
           SpaceW(),
           TextW("Uploaded by", size: 25),
           SpaceW(),

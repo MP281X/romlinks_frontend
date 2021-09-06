@@ -217,22 +217,6 @@ class CommentModel {
       );
 }
 
-//! list of rom and version model
-class RomVersionModel {
-  RomVersionModel({
-    this.rom = const <RomModel>[],
-    this.version = const <VersionModel>[],
-  });
-
-  final List<RomModel> rom;
-  final List<VersionModel> version;
-
-  factory RomVersionModel.fromMap(Map<String, dynamic> data) => RomVersionModel(
-        rom: List<RomModel>.from(data["rom"].map((x) => RomModel.fromMap(x))),
-        version: List<VersionModel>.from(data["version"].map((x) => VersionModel.fromMap(x))),
-      );
-}
-
 class RequestModel {
   const RequestModel({
     this.id = "",
@@ -250,6 +234,6 @@ class RequestModel {
         id: data["id"] ?? "",
         romname: data["romname"] ?? "",
         codename: data["codename"] ?? "",
-        androidVersion: double.parse(data["androidversion"].toString()),
+        androidVersion: double.parse(data["androidversion"] ?? "0"),
       );
 }

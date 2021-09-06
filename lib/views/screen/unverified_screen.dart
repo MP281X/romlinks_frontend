@@ -4,6 +4,7 @@ import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:romlinks_frontend/views/screen/uploaded_screen.dart';
+import 'package:romlinks_frontend/views/screen/version_screen.dart';
 
 //! display a list of unverified rom and version
 class UnverifiedScreen extends StatelessWidget {
@@ -27,7 +28,7 @@ class UnverifiedScreen extends StatelessWidget {
           FutureBuilderW<List<VersionModel>>(
             future: RomService.getUnverifiedVersion(),
             builder: (data) {
-              return (data.length > 0) ? UploadedVersionW(data, true) : ErrorW(msg: "All version are verified");
+              return (data.length > 0) ? UnverifiedVersionW(data, true) : ErrorW(msg: "All version are verified");
             },
           ),
         ],
@@ -78,11 +79,47 @@ class RomRequestW extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(child: TextW(req[index].codename, singleLine: true), height: 20),
-                        SizedBox(child: TextW(req[index].romname + " " + req[index].androidVersion.toString(), singleLine: true), height: 20),
+                        SizedBox(child: TextW(req[index].romname + " Android: " + req[index].androidVersion.toString(), singleLine: true), height: 20),
                       ],
                     ),
                     height: 60,
                   ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+//!display the unverified version
+class UnverifiedVersionW extends StatelessWidget {
+  const UnverifiedVersionW(this.version, this.verify);
+  final List<VersionModel> version;
+  final bool verify;
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: new ScrollController(),
+      physics: BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          TextW("Uploaded version"),
+          SpaceW(big: true),
+          ListView.builder(
+            physics: BouncingScrollPhysics(),
+            controller: new ScrollController(),
+            shrinkWrap: true,
+            itemCount: version.length,
+            itemBuilder: (BuildContext context, int index) {
+              return MaxWidthW(
+                VersionW(
+                  version[index],
+                  (version[index].gappslink != "") ? true : false,
+                  hasUploaded: true,
+                  verify: verify,
                 ),
               );
             },

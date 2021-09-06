@@ -10,7 +10,6 @@ import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:romlinks_frontend/views/screen/editRom_screen.dart';
 import 'package:romlinks_frontend/views/screen/home_screen.dart';
 import 'package:romlinks_frontend/views/screen/rom_screen.dart';
-import 'package:romlinks_frontend/views/screen/version_screen.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 
 //! pageview for the uploaded version and rom
@@ -18,15 +17,14 @@ class UploadedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScaffoldW(
-      FutureBuilderW<RomVersionModel>(
-        future: RomService.getUploaded(),
+      FutureBuilderW<List<RomModel>>(
+        future: RomService.getRomList(),
         builder: (data) => FutureBuilderW<List<DeviceModel>>(
           future: DeviceService.getUploaded(),
           builder: (device) => PageViewW([
-            (data.rom.length > 0) ? UploadedRomW(data.rom) : ErrorW(msg: "No rom found"),
-            (data.version.length > 0) ? UploadedVersionW(data.version, false) : ErrorW(msg: "No version found"),
+            (data.length > 0) ? UploadedRomW(data, uploadedVersion: true) : ErrorW(msg: "No rom found"),
             (device.length > 0) ? UploadedDeviceW(device) : ErrorW(msg: "No device found"),
-          ], page: 3),
+          ], page: 2),
         ),
       ),
       auth: true,
@@ -36,10 +34,11 @@ class UploadedScreen extends StatelessWidget {
 
 //! display the uploaded rom
 class UploadedRomW extends StatelessWidget {
-  const UploadedRomW(this.rom, {this.search = false, this.verify = false});
+  const UploadedRomW(this.rom, {this.search = false, this.verify = false, this.uploadedVersion = false});
   final List<RomModel> rom;
   final bool search;
   final bool verify;
+  final bool uploadedVersion;
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -79,6 +78,7 @@ class UploadedRomW extends StatelessWidget {
                             rom[index],
                             codename: search ? Get.find<HomeScreenController>().codename : null,
                             heroTag: heroTag,
+                            uploadedVersion: uploadedVersion,
                           ));
                         },
                         text3: !search ? "Delete rom" : null,
@@ -141,42 +141,6 @@ class UploadedRomW extends StatelessWidget {
               },
             )
           : Expanded(child: ErrorW(msg: "no rom found for this device")),
-    );
-  }
-}
-
-//!display the uploaded version
-class UploadedVersionW extends StatelessWidget {
-  const UploadedVersionW(this.version, this.verify);
-  final List<VersionModel> version;
-  final bool verify;
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: new ScrollController(),
-      physics: BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          TextW("Uploaded version"),
-          SpaceW(big: true),
-          ListView.builder(
-            physics: BouncingScrollPhysics(),
-            controller: new ScrollController(),
-            shrinkWrap: true,
-            itemCount: version.length,
-            itemBuilder: (BuildContext context, int index) {
-              return MaxWidthW(
-                VersionW(
-                  version[index],
-                  (version[index].gappslink != "") ? true : false,
-                  hasUploaded: true,
-                  verify: verify,
-                ),
-              );
-            },
-          ),
-        ],
-      ),
     );
   }
 }

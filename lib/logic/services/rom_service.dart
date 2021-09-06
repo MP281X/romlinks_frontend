@@ -45,7 +45,12 @@ class RomService extends GetxController {
   }
 
   //! get a list of rom
-  static Future<List<RomModel>> getRomList({required String codename, required double androidVersion, required OrderBy orderBy, required String romName}) async {
+  static Future<List<RomModel>> getRomList({
+    String? codename,
+    double? androidVersion,
+    OrderBy? orderBy,
+    String? romName,
+  }) async {
     // convert the order by to a string
     String orderByString;
     switch (orderBy) {
@@ -74,6 +79,7 @@ class RomService extends GetxController {
         "androidversion": androidVersion,
         "codename": codename,
         "orderby": orderByString,
+        "uploadedby": (romName == null && androidVersion == null && codename == null) ? Get.find<UserController>().userData.value.username : null
       },
     );
 
@@ -87,7 +93,9 @@ class RomService extends GetxController {
   //! get a list of rom version
   static Future<List<VersionModel>> getVersionList({required String codename, required String romId}) async {
     // make the request
-    Map<String, dynamic> response = await HttpHandler.req(url + "/versionList/" + codename + "/" + romId, RequestType.get);
+    Map<String, dynamic> response = await HttpHandler.req(url + "/versionList/" + codename + "/" + romId, RequestType.get, header: {
+      "username": (codename == "*") ? Get.find<UserController>().userData.value.username : "",
+    });
 
     // convert the response to a list of versionmodel
     List<VersionModel> versionList = List<VersionModel>.from(response["list"].map((x) => VersionModel.fromMap(x)));
@@ -167,20 +175,6 @@ class RomService extends GetxController {
         "description": description,
       },
     );
-  }
-
-  //! get a single rom from the rom data
-  static Future<RomVersionModel> getUploaded() async {
-    // get the user controller
-    UserController _userController = Get.find();
-    // make the request
-    Map<String, dynamic> response = await HttpHandler.req(url + "/romVersion", RequestType.get, header: {"token": _userController.token});
-
-    if (response["rom"] == null && response["version"] == null) {
-      return RomVersionModel();
-    }
-    // return the rom
-    return RomVersionModel.fromMap(response);
   }
 
   //! get a list comment
