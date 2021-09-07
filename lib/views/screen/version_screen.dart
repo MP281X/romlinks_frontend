@@ -19,7 +19,9 @@ class VersionScreen extends StatelessWidget {
         future: RomService.getVersionList(codename: codename, romId: romId),
         builder: (data) {
           List<VersionModel> vanilla = data.where((element) => element.vanillalink != "").toList();
+          vanilla.sort((a, b) => a.codename.compareTo(b.codename));
           List<VersionModel> gapps = data.where((element) => element.gappslink != "").toList();
+          gapps.sort((a, b) => a.codename.compareTo(b.codename));
 
           return PageViewW([
             (vanilla.length > 0)

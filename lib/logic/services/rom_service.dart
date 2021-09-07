@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/logic/models.dart';
-
+import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'http_handler.dart';
 
 class RomService extends GetxController {
@@ -239,16 +239,21 @@ class RomService extends GetxController {
   }
 
   //! delete a rom
-  static Future<void> deleteRom(String romId) async {
+  static Future<void> deleteRom(RomModel romData) async {
     // get the user controller
     UserController _userController = Get.find();
 
     // make the request
     await HttpHandler.req(
-      url + "/rom/" + romId,
+      url + "/rom/" + romData.id,
       RequestType.delete,
       header: {"token": _userController.token},
     );
+
+    if (romData.screenshot != null)
+      for (int i = 0; i < romData.screenshot!.length; i++) await HttpHandler.req(url + "/image/screenshot/" + romData.screenshot![i], RequestType.delete, header: {"token": _userController.token});
+
+    await HttpHandler.req(FileStorageService.url + "/image/logo/" + romData.logo, RequestType.delete, header: {"token": _userController.token});
   }
 
   //! delete a version

@@ -72,17 +72,4 @@ class DeviceService extends GetxController {
     // return a device name list or an empty list
     return response["list"] ?? [];
   }
-
-  //! get a list of uploaded devices
-  static Future<List<DeviceModel>> getUploaded() async {
-    // get the user controller
-    UserController _userController = Get.find();
-    if (_userController.token == "") return [];
-
-    // make the request
-    Map<String, dynamic> response = await HttpHandler.req(url + "/devices", RequestType.get, header: {"token": _userController.token});
-
-    // return the list of devices
-    return List<DeviceModel>.from(response["list"].map((x) => DeviceModel.fromMap(x)));
-  }
 }

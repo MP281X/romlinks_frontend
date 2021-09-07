@@ -10,6 +10,7 @@ import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:romlinks_frontend/views/theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 //! controller for the home screen
 class HomeScreenController extends GetxController {
@@ -28,11 +29,11 @@ class HomeScreenController extends GetxController {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       codename = androidInfo.device ?? "treble";
-      androidVersion = double.parse(androidInfo.version.release ?? "0");
+      androidVersion = 0;
       update();
     } else {
       codename = "treble";
-      androidVersion = 11;
+      androidVersion = 0;
       update();
     }
   }
@@ -51,6 +52,21 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<HomeScreenController>(
       builder: (controller) {
+        Future.delayed(Duration(seconds: 1), () {
+          if (GetPlatform.isWeb && GetPlatform.isAndroid) {
+            dialogW(
+              DialogW(
+                text1: "PlayStore Download",
+                button1: () => launch("https://play.google.com/store/apps/details?id=com.mp281x.romLinks"),
+                text2: "Github Download",
+                button2: () => launch("https://github.com/MP281X/romlinks_frontend/releases"),
+                child: TextW("The web version of the app is designed for the pc users for performance reason. If you want a lag-free experience download the app on the PlayStore or on Github"),
+                height: 260,
+                width: 400,
+              ),
+            );
+          }
+        });
         return RefreshIndicator(
           onRefresh: () async => controller.update(),
           child: ScaffoldW(

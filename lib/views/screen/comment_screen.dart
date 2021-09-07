@@ -10,13 +10,13 @@ class CommentScreen extends StatelessWidget {
   final String romId;
   @override
   Widget build(BuildContext context) {
-    return ScaffoldW(
-      FutureBuilderW<List<CommentModel>>(
-        future: RomService.getComment(romId),
-        builder: (data) {
-          data = data.where((element) => element.msg != "").toList();
-          return (data.length > 0)
-              ? SingleChildScrollView(
+    return FutureBuilderW<List<CommentModel>>(
+      future: RomService.getComment(romId),
+      builder: (data) {
+        data = data.where((element) => element.msg != "").toList();
+        return (data.length > 0)
+            ? ScaffoldW(
+                SingleChildScrollView(
                   child: MaxWidthW(
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -89,11 +89,11 @@ class CommentScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                )
-              : Center(child: ErrorW(msg: "No review found for this rom"));
-        },
-      ),
-      scroll: true,
+                ),
+                scroll: true,
+              )
+            : ScaffoldW(Center(child: ErrorW(msg: "No review found for this rom")));
+      },
     );
   }
 }

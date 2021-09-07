@@ -46,7 +46,7 @@ class RomScreen extends StatelessWidget {
           TextW(romData.description),
           SpaceW(big: true),
           ScreenshotW(romData.screenshot!),
-          ReviewW(romData.review, romData.id),
+          if (romData.review.revNum > 0) ReviewW(romData.review, romData.id),
           SpaceW(),
           if (codename != null && codename != "") ButtonW("Download", onTap: () => Get.to(VersionScreen(codename: codename!, romId: romData.id))),
           if (uploadedVersion) ButtonW("Uploaded Version", onTap: () => Get.to(VersionScreen(codename: "*", romId: romData.id, hasUploaed: true))),

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/models.dart';
-import 'package:romlinks_frontend/logic/services/device_service.dart';
 import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
@@ -19,15 +18,10 @@ class UploadedScreen extends StatelessWidget {
     return ScaffoldW(
       FutureBuilderW<List<RomModel>>(
         future: RomService.getRomList(),
-        builder: (data) => FutureBuilderW<List<DeviceModel>>(
-          future: DeviceService.getUploaded(),
-          builder: (device) => PageViewW([
-            (data.length > 0) ? UploadedRomW(data, uploadedVersion: true) : ErrorW(msg: "No rom found"),
-            (device.length > 0) ? UploadedDeviceW(device) : ErrorW(msg: "No device found"),
-          ], page: 2),
-        ),
+        builder: (data) => (data.length > 0) ? UploadedRomW(data, uploadedVersion: true) : ErrorW(msg: "No rom found"),
       ),
       auth: true,
+      scroll: true,
     );
   }
 }
@@ -84,7 +78,7 @@ class UploadedRomW extends StatelessWidget {
                         text3: !search ? "Delete rom" : null,
                         button3: !search
                             ? () async {
-                                RomService.deleteRom(rom[index].id);
+                                RomService.deleteRom(rom[index]);
                                 rom.removeAt(index);
                                 await Future.delayed(Duration(seconds: 1, milliseconds: 300));
                                 Get.close(3);
@@ -141,54 +135,6 @@ class UploadedRomW extends StatelessWidget {
               },
             )
           : Expanded(child: ErrorW(msg: "no rom found for this device")),
-    );
-  }
-}
-
-//! display the uploaded devices list
-class UploadedDeviceW extends StatelessWidget {
-  const UploadedDeviceW(this.device);
-  final List<DeviceModel> device;
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: new ScrollController(),
-      physics: BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          TextW("Uploaded devices"),
-          SpaceW(big: true),
-          ListView.builder(
-            controller: new ScrollController(),
-            shrinkWrap: true,
-            itemCount: device.length,
-            itemBuilder: (BuildContext context, int index) {
-              return MaxWidthW(DeviceW(device[index]));
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-//! widget for displaying the device info
-class DeviceW extends StatelessWidget {
-  const DeviceW(this.device);
-  final DeviceModel device;
-
-  @override
-  Widget build(BuildContext context) {
-    return ContainerW(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(child: TextW(device.name, singleLine: true), height: 20),
-          SizedBox(child: TextW(device.codename, singleLine: true), height: 20),
-        ],
-      ),
-      height: 60,
     );
   }
 }
