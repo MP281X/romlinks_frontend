@@ -8,6 +8,8 @@ import 'package:romlinks_frontend/views/screen/version_screen.dart';
 
 //! display a list of unverified rom and version
 class UnverifiedScreen extends StatelessWidget {
+  const UnverifiedScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldW(
@@ -16,19 +18,19 @@ class UnverifiedScreen extends StatelessWidget {
           FutureBuilderW<List<RequestModel>>(
             future: RomService.getRequest(),
             builder: (data) {
-              return (data.length > 0) ? RomRequestW(data) : ErrorW(msg: "No rom request");
+              return (data.isNotEmpty) ? RomRequestW(data) : const ErrorW(msg: "No rom request");
             },
           ),
           FutureBuilderW<List<RomModel>>(
             future: RomService.getUnverifiedRom(),
             builder: (data) {
-              return (data.length > 0) ? UploadedRomW(data, verify: true) : ErrorW(msg: "All rom are verified");
+              return (data.isNotEmpty) ? UploadedRomW(data, verify: true) : const ErrorW(msg: "All rom are verified");
             },
           ),
           FutureBuilderW<List<VersionModel>>(
             future: RomService.getUnverifiedVersion(),
             builder: (data) {
-              return (data.length > 0) ? UnverifiedVersionW(data, true) : ErrorW(msg: "All version are verified");
+              return (data.isNotEmpty) ? UnverifiedVersionW(data, true) : const ErrorW(msg: "All version are verified");
             },
           ),
         ],
@@ -41,21 +43,21 @@ class UnverifiedScreen extends StatelessWidget {
 
 //! display a list of rom request
 class RomRequestW extends StatelessWidget {
-  const RomRequestW(this.req);
+  const RomRequestW(this.req, {Key? key}) : super(key: key);
   final List<RequestModel> req;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      controller: new ScrollController(),
-      physics: BouncingScrollPhysics(),
+      controller: ScrollController(),
+      physics: const BouncingScrollPhysics(),
       child: Column(
         children: [
-          TextW("Rom request"),
-          SpaceW(big: true),
+          const TextW("Rom request"),
+          const SpaceW(big: true),
           ListView.builder(
-            physics: BouncingScrollPhysics(),
-            controller: new ScrollController(),
+            physics: const BouncingScrollPhysics(),
+            controller: ScrollController(),
             shrinkWrap: true,
             itemCount: req.length,
             itemBuilder: (BuildContext context, int index) {
@@ -65,11 +67,11 @@ class RomRequestW extends StatelessWidget {
                     button1: () async {
                       await RomService.removeRequest(req[index].id);
                       req.removeAt(index);
-                      await Future.delayed(Duration(seconds: 1, milliseconds: 500));
+                      await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
                       Get.close(3);
                     },
                     text1: "Remove request",
-                    child: SizedBox.shrink(),
+                    child: const SizedBox.shrink(),
                     height: 120,
                     width: 450,
                   )),
@@ -96,21 +98,21 @@ class RomRequestW extends StatelessWidget {
 
 //!display the unverified version
 class UnverifiedVersionW extends StatelessWidget {
-  const UnverifiedVersionW(this.version, this.verify);
+  const UnverifiedVersionW(this.version, this.verify, {Key? key}) : super(key: key);
   final List<VersionModel> version;
   final bool verify;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      controller: new ScrollController(),
-      physics: BouncingScrollPhysics(),
+      controller: ScrollController(),
+      physics: const BouncingScrollPhysics(),
       child: Column(
         children: [
-          TextW("Uploaded version"),
-          SpaceW(big: true),
+          const TextW("Uploaded version"),
+          const SpaceW(big: true),
           ListView.builder(
-            physics: BouncingScrollPhysics(),
-            controller: new ScrollController(),
+            physics: const BouncingScrollPhysics(),
+            controller: ScrollController(),
             shrinkWrap: true,
             itemCount: version.length,
             itemBuilder: (BuildContext context, int index) {

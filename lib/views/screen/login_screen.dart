@@ -7,6 +7,8 @@ import 'package:romlinks_frontend/views/custom_widget.dart';
 class LoginScreen extends StatelessWidget {
   final UserController controller = Get.find();
 
+  LoginScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     String username = "";
@@ -22,8 +24,8 @@ class LoginScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          TextW("Log In", big: true),
-          SpaceW(big: true),
+          const TextW("Log In", big: true),
+          const SpaceW(big: true),
           TextFieldW("Username", onChanged: (text) => username = text, prefixIcon: Icons.person),
           TextFieldW(
             "Password",

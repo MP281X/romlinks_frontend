@@ -1,7 +1,9 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/models.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/filestorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:romlinks_frontend/views/screen/rom_screen.dart';
@@ -32,14 +34,14 @@ class EditRomController extends GetxController {
   }
 
   void setScreenshot() async {
-    if (romData.romname.isEmpty)
+    if (romData.romname.isEmpty) {
       snackbarW("Error", "Enter the rom name");
-    else if (romData.androidversion == 0)
+    } else if (romData.androidversion == 0) {
       snackbarW("Error", "Enter the android version");
-    else if (screenshot.length > 5)
+    } else if (screenshot.length > 5) {
       snackbarW("Error", "You can upload only 6 screenshot");
-    else {
-      String res = await Get.dialog(new SaveImageDialog(
+    } else {
+      String res = await Get.dialog(SaveImageDialog(
         romName: romData.romname.removeAllWhitespace.toLowerCase(),
         category: PhotoCategory.screenshot,
         androidVersion: romData.androidversion.toDouble(),
@@ -50,54 +52,56 @@ class EditRomController extends GetxController {
   }
 
   void editScreenshot(int index) async {
-    if (romData.romname.isEmpty)
+    if (romData.romname.isEmpty) {
       snackbarW("Error", "Enter the rom name");
-    else if (romData.androidversion == 0)
+    } else if (romData.androidversion == 0) {
       snackbarW("Error", "Enter the android version");
-    else if (screenshot.length > 5)
+    } else if (screenshot.length > 5) {
       snackbarW("Error", "You can upload only 6 screenshot");
-    else {
+    } else {
       String x = screenshot[index];
       screenshot[index] = "";
       imageCache!.clear();
-      String? res = await Get.dialog(new SaveImageDialog(
+      String? res = await Get.dialog(SaveImageDialog(
         romName: romData.romname.removeAllWhitespace.toLowerCase(),
         category: PhotoCategory.screenshot,
         androidVersion: romData.androidversion.toDouble(),
         index: index,
       ));
-      if (res != null && res != "")
+      if (res != null && res != "") {
         screenshot[index] = res.substring(11);
-      else
+      } else {
         screenshot[index] = x;
+      }
     }
   }
 
   void setLogo() async {
     logo.value = "";
     imageCache!.clear();
-    String? res = await Get.dialog(new SaveImageDialog(
+    String? res = await Get.dialog(SaveImageDialog(
       romName: romData.romname.removeAllWhitespace.toLowerCase(),
       category: PhotoCategory.logo,
       androidVersion: romData.androidversion.toDouble(),
       index: 0,
     ));
-    if (res != null && res != "")
+    if (res != null && res != "") {
       logo.value = res.substring(5);
-    else
+    } else {
       logo.value = romData.logo;
+    }
   }
 
   void editRom() async {
     await RomService.editRom(romData.id, screenshot, description, link, logo.value);
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     Get.offAllNamed("/");
   }
 }
 
 //! screen for editing the data of a rom
 class EditRomScreen extends StatelessWidget {
-  EditRomScreen(this.romData);
+  const EditRomScreen(this.romData, {Key? key}) : super(key: key);
   final RomModel romData;
 
   @override
@@ -124,7 +128,7 @@ class EditRomScreen extends StatelessWidget {
                     onPressed: () => controller.setLogo(),
                     iconSize: 30,
                     splashRadius: 20,
-                    icon: Icon(Icons.edit_rounded),
+                    icon: const Icon(Icons.edit_rounded),
                   ),
                 )
               ],
@@ -132,16 +136,16 @@ class EditRomScreen extends StatelessWidget {
           ),
         ),
         TextFieldW("Add link", controller: controller.linkController, onPressed: () => controller.addLink()),
-        Obx(() => (controller.link.length > 0) ? LinkW(controller.link, true) : SizedBox.shrink()),
+        Obx(() => (controller.link.isNotEmpty) ? LinkW(controller.link, true) : const SizedBox.shrink()),
         Padding(
           padding: const EdgeInsets.only(bottom: 10),
           child: SizedBox(
             width: 230,
             child: TextFormField(
               onChanged: (x) => controller.description = x,
-              scrollPhysics: BouncingScrollPhysics(),
+              scrollPhysics: const BouncingScrollPhysics(),
               maxLines: 7,
-              decoration: InputDecoration(hintText: "Description"),
+              decoration: const InputDecoration(hintText: "Description"),
             ),
           ),
         ),
@@ -152,7 +156,7 @@ class EditRomScreen extends StatelessWidget {
               controller.screenshot,
               removeImage: controller.editScreenshot,
             ),
-            SpaceW(),
+            const SpaceW(),
           ],
         ),
         ButtonW("Edit rom data", onTap: () => controller.editRom()),

@@ -12,7 +12,7 @@ class DeviceService extends GetxController {
 
   //! get the info of a device
   static Future<DeviceModel> getDeviceInfo(String codename) async {
-    if (codename == "") return DeviceModel();
+    if (codename == "") return const DeviceModel();
     // make the request
     Map<String, dynamic> response = await HttpHandler.req(url + "/devices/" + codename, RequestType.get);
 

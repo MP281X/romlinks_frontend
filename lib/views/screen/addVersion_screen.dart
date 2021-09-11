@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller.dart';
@@ -66,7 +68,7 @@ class AddVersionController extends GetxController {
       return;
     }
 
-    if (romId != "" && codename.text != "" && relaseType != "")
+    if (romId != "" && codename.text != "" && relaseType != "") {
       dialogW(
         DialogW(
           tag: "addVersion",
@@ -80,8 +82,9 @@ class AddVersionController extends GetxController {
           width: 500,
         ),
       );
-    else
+    } else {
       snackbarW("Error", "Enter all the filed");
+    }
   }
 
   // change the relase date
@@ -95,7 +98,7 @@ class AddVersionController extends GetxController {
             return Theme(
               child: child!,
               data: ThemeData.dark().copyWith(
-                colorScheme: ColorScheme.dark(
+                colorScheme: const ColorScheme.dark(
                   primary: ThemeApp.accentColor,
                   onPrimary: Colors.white,
                   onSurface: Colors.white,
@@ -125,7 +128,7 @@ class AddVersionController extends GetxController {
       date: date.value,
       version: version,
     );
-    await Future.delayed(Duration(seconds: 1, milliseconds: 500));
+    await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
     Get.offAllNamed("/");
   }
 }
@@ -133,13 +136,15 @@ class AddVersionController extends GetxController {
 //! Screen for adding the version
 class AddVersionScreen extends StatelessWidget {
   final AddVersionController controller = Get.put(AddVersionController(Get.parameters["romId"] ?? ""));
+
+  AddVersionScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ScaffoldW(
       Column(
         children: [
-          TextW("Add version", big: true),
-          SpaceW(big: true),
+          const TextW("Add version", big: true),
+          const SpaceW(big: true),
           TextFieldW("Codename", controller: controller.codename, onChanged: (_) => controller.setCodenameAndSuggestion()),
           SuggestionW(suggestion: controller.codenameS, onTap: (x) => controller.codename.text = x),
           TextFieldW("Vanilla link", onChanged: (x) => controller.vanillaLink = x),
@@ -172,16 +177,16 @@ class AddVersionScreen extends StatelessWidget {
               ],
             ),
           ),
-          SpaceW(),
+          const SpaceW(),
           Obx(() => TextW("Relase date:  ${controller.date.value.day}/${controller.date.value.month}/${controller.date.value.year}")),
           ButtonW("Change date", onTap: () => controller.selectDate()),
-          SpaceW(),
+          const SpaceW(),
           TextFieldW("Add rom change", controller: controller.changelogController, onPressed: () => controller.addChangelog()),
           ChangelogPreviewW(controller.changelog),
-          SpaceW(),
+          const SpaceW(),
           TextFieldW("Add notes", controller: controller.errorController, onPressed: () => controller.addError()),
           ChangelogPreviewW(controller.error),
-          SpaceW(),
+          const SpaceW(),
           ButtonW("Version preview", onTap: () => controller.versionPreview(), tag: "addVersion"),
         ],
       ),
@@ -194,6 +199,8 @@ class AddVersionScreen extends StatelessWidget {
 //! display a preview of the version
 class VersionPreviewW extends StatelessWidget {
   final AddVersionController controller = Get.find();
+
+  VersionPreviewW({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return VersionW(
@@ -218,7 +225,7 @@ class VersionPreviewW extends StatelessWidget {
 
 //! display a list of changelog or error
 class ChangelogPreviewW extends StatelessWidget {
-  ChangelogPreviewW(this.data);
+  const ChangelogPreviewW(this.data, {Key? key}) : super(key: key);
   final RxList<String> data;
 
   @override
@@ -226,15 +233,15 @@ class ChangelogPreviewW extends StatelessWidget {
     return Obx(
       () => ContainerW(
         ListView.separated(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: data.length,
           itemBuilder: (BuildContext context, int index) => GestureDetector(
             onTap: () => data.removeAt(index),
             child: TextW(data[index]),
           ),
-          separatorBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          separatorBuilder: (context, index) => const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             child: Divider(color: Colors.white, thickness: .5),
           ),
         ),

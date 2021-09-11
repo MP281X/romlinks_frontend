@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller.dart';
@@ -9,6 +11,8 @@ import 'package:romlinks_frontend/views/screen/uploaded_screen.dart';
 
 //! display a list of saved rom
 class SavedRomScreen extends StatelessWidget {
+  const SavedRomScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldW(
@@ -17,7 +21,7 @@ class SavedRomScreen extends StatelessWidget {
         // mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextW("Saved rom - " + Get.find<HomeScreenController>().codename, big: true),
-          SpaceW(),
+          const SpaceW(),
           FutureBuilderW<List<RomModel>>(
             future: RomService.getRomById(),
             builder: (data) {
@@ -27,7 +31,7 @@ class SavedRomScreen extends StatelessWidget {
           ),
         ],
       ),
-      scroll: (Get.find<UserController>().userData.value.savedRom.length == 0) ? false : true,
+      scroll: (Get.find<UserController>().userData.value.savedRom.isEmpty) ? false : true,
     );
   }
 }

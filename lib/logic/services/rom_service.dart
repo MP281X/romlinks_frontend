@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/logic/models.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/filestorage_service.dart';
 import 'http_handler.dart';
 
 class RomService extends GetxController {
@@ -23,7 +23,6 @@ class RomService extends GetxController {
     required DateTime date,
     required String version,
   }) async {
-    print(date.toIso8601String());
     // make the request
     await HttpHandler.req(
       url + "/version",
@@ -250,8 +249,11 @@ class RomService extends GetxController {
       header: {"token": _userController.token},
     );
 
-    if (romData.screenshot != null)
-      for (int i = 0; i < romData.screenshot!.length; i++) await HttpHandler.req(url + "/image/screenshot/" + romData.screenshot![i], RequestType.delete, header: {"token": _userController.token});
+    if (romData.screenshot != null) {
+      for (int i = 0; i < romData.screenshot!.length; i++) {
+        await HttpHandler.req(url + "/image/screenshot/" + romData.screenshot![i], RequestType.delete, header: {"token": _userController.token});
+      }
+    }
 
     await HttpHandler.req(FileStorageService.url + "/image/logo/" + romData.logo, RequestType.delete, header: {"token": _userController.token});
   }

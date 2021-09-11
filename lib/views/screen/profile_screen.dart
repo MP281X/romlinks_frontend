@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/logic/models.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/filestorage_service.dart';
 import 'package:romlinks_frontend/views/screen/saveImage_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:romlinks_frontend/views/theme.dart';
@@ -11,6 +11,8 @@ import 'package:romlinks_frontend/views/theme.dart';
 class ProfileScreen extends StatelessWidget {
   final UserController controller = Get.find();
   final link = "".obs;
+
+  ProfileScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     UserModel userData = controller.userData.value;
@@ -36,26 +38,26 @@ class ProfileScreen extends StatelessWidget {
                   child: IconButton(
                     onPressed: () async {
                       link.value = "";
-                      await Get.dialog(SaveImageDialog(index: 0, category: PhotoCategory.profile));
+                      await Get.dialog(const SaveImageDialog(index: 0, category: PhotoCategory.profile));
                       link.value = userData.username;
                     },
                     iconSize: 30,
                     splashRadius: 20,
-                    icon: Icon(Icons.edit),
+                    icon: const Icon(Icons.edit),
                   ),
                 )
               ],
             ),
           ),
-          SpaceW(),
+          const SpaceW(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextW(userData.username.toUpperCase(), big: true),
-              if (userData.verified) SizedBox(width: 10),
-              if (userData.verified) Icon(Icons.verified),
+              if (userData.verified) const SizedBox(width: 10),
+              if (userData.verified) const Icon(Icons.verified),
               if (userData.moderator)
-                ChipW(
+                const ChipW(
                   text: "Mod",
                   color: ThemeApp.accentColor,
                   height: 30,
@@ -63,9 +65,9 @@ class ProfileScreen extends StatelessWidget {
                 ),
             ],
           ),
-          SpaceW(),
+          const SpaceW(),
           TextW(userData.email, singleLine: true),
-          SpaceW(),
+          const SpaceW(),
           ButtonW("Add new rom", onTap: () => Get.toNamed("/addRom")),
           ButtonW("Saved", onTap: () => Get.toNamed("/savedRom")),
           ButtonW("Uploaded", onTap: () => Get.toNamed("/uploaded")),

@@ -7,7 +7,7 @@ import 'package:romlinks_frontend/views/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class VersionScreen extends StatelessWidget {
-  const VersionScreen({required this.codename, required this.romId, this.hasUploaed = false});
+  const VersionScreen({required this.codename, required this.romId, this.hasUploaed = false, Key? key}) : super(key: key);
   final String codename;
   final String romId;
   final bool hasUploaed;
@@ -24,34 +24,34 @@ class VersionScreen extends StatelessWidget {
           gapps.sort((a, b) => a.codename.compareTo(b.codename));
 
           return PageViewW([
-            (vanilla.length > 0)
+            (vanilla.isNotEmpty)
                 ? Column(
                     children: [
-                      TextW("Vanilla", big: true),
-                      SpaceW(),
+                      const TextW("Vanilla", big: true),
+                      const SpaceW(),
                       ListView.builder(
-                        controller: new ScrollController(),
+                        controller: ScrollController(),
                         shrinkWrap: true,
                         itemCount: vanilla.length,
                         itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(vanilla[index], false, hasUploaded: hasUploaed)),
                       ),
                     ],
                   )
-                : ErrorW(msg: "No vanilla build"),
-            (gapps.length > 0)
+                : const ErrorW(msg: "No vanilla build"),
+            (gapps.isNotEmpty)
                 ? Column(
                     children: [
-                      TextW("Gapps", big: true),
-                      SpaceW(),
+                      const TextW("Gapps", big: true),
+                      const SpaceW(),
                       ListView.builder(
-                        controller: new ScrollController(),
+                        controller: ScrollController(),
                         shrinkWrap: true,
                         itemCount: gapps.length,
                         itemBuilder: (BuildContext context, int index) => MaxWidthW(VersionW(gapps[index], true, hasUploaded: hasUploaed)),
                       ),
                     ],
                   )
-                : ErrorW(msg: "No gapps build"),
+                : const ErrorW(msg: "No gapps build"),
           ]);
         },
       ),
@@ -60,7 +60,7 @@ class VersionScreen extends StatelessWidget {
 }
 
 class VersionW extends StatelessWidget {
-  VersionW(this.version, this.gapps, {this.hasUploaded = false, this.verify = false});
+  const VersionW(this.version, this.gapps, {this.hasUploaded = false, this.verify = false, Key? key}) : super(key: key);
   final bool gapps;
   final VersionModel version;
   final bool hasUploaded;
@@ -81,59 +81,59 @@ class VersionW extends StatelessWidget {
                   Get.close(1);
                 }
               : null,
-          text3: this.hasUploaded ? "Delete version" : null,
-          button3: this.hasUploaded
+          text3: hasUploaded ? "Delete version" : null,
+          button3: hasUploaded
               ? () async {
                   RomService.deleteVersion(version.id);
-                  await Future.delayed(Duration(seconds: 1, milliseconds: 300));
+                  await Future.delayed(const Duration(seconds: 1, milliseconds: 300));
                   Get.close(3);
                 }
               : null,
           child: Column(
             children: [
-              Padding(padding: (width > 400) ? EdgeInsets.all(5.0) : EdgeInsets.zero, child: VersionInfoW(version)),
-              if (version.changelog.length > 0) TextW("Changelog", big: true),
-              if (version.changelog.length > 0) SpaceW(),
-              if (version.changelog.length > 0)
+              Padding(padding: (width > 400) ? const EdgeInsets.all(5.0) : EdgeInsets.zero, child: VersionInfoW(version)),
+              if (version.changelog.isNotEmpty) const TextW("Changelog", big: true),
+              if (version.changelog.isNotEmpty) const SpaceW(),
+              if (version.changelog.isNotEmpty)
                 ContainerW(
                   ListView.separated(
-                    physics: BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: version.changelog.length,
                     itemBuilder: (BuildContext context, int index) => TextW(version.changelog[index]),
-                    separatorBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    separatorBuilder: (context, index) => const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                       child: Divider(color: Colors.white, thickness: .5),
                     ),
                   ),
                   width: width,
-                  height: (version.error.length > 0) ? 200 : 400,
+                  height: (version.error.isNotEmpty) ? 200 : 400,
                 ),
-              if (version.error.length > 0) SpaceW(),
-              if (version.error.length > 0) TextW("Notes", big: true),
-              if (version.error.length > 0) SpaceW(),
-              if (version.error.length > 0)
+              if (version.error.isNotEmpty) const SpaceW(),
+              if (version.error.isNotEmpty) const TextW("Notes", big: true),
+              if (version.error.isNotEmpty) const SpaceW(),
+              if (version.error.isNotEmpty)
                 ContainerW(
                   ListView.separated(
-                    physics: BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: version.error.length,
                     itemBuilder: (BuildContext context, int index) => TextW(version.error[index]),
-                    separatorBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    separatorBuilder: (context, index) => const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                       child: Divider(color: Colors.white, thickness: .5),
                     ),
                   ),
                   width: Get.width,
-                  height: (version.changelog.length > 0) ? 200 : 400,
+                  height: (version.changelog.isNotEmpty) ? 200 : 400,
                 ),
-              SpaceW(),
-              TextW("Uploaded by", size: 25),
-              SpaceW(),
+              const SpaceW(),
+              const TextW("Uploaded by", size: 25),
+              const SpaceW(),
               UserW(version.uploadedBy),
-              SpaceW(),
-              SizedBox(width: 170, child: Divider(color: Colors.white, thickness: .5)),
-              SpaceW(),
+              const SpaceW(),
+              const SizedBox(width: 170, child: Divider(color: Colors.white, thickness: .5)),
+              const SpaceW(),
               TextW("Device: " + version.codename),
               TextW("Version: " + version.versionNum),
               SizedBox(height: !hasUploaded ? 70 : 100),
@@ -149,7 +149,7 @@ class VersionW extends StatelessWidget {
 }
 
 class VersionInfoW extends StatelessWidget {
-  const VersionInfoW(this.version);
+  const VersionInfoW(this.version, {Key? key}) : super(key: key);
   final VersionModel version;
 
   @override
@@ -162,7 +162,7 @@ class VersionInfoW extends StatelessWidget {
           child: TextW("${version.date.day}/${version.date.month}/${version.date.year}", singleLine: true),
           height: (width > 400) ? 30 : 25,
         ),
-        Spacer(),
+        const Spacer(),
         ChipW(
           text: version.relasetype,
           color: ThemeApp.secondaryColor,

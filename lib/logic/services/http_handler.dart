@@ -21,16 +21,16 @@ class HttpHandler extends GetxController {
       // make the request
       switch (request) {
         case RequestType.get:
-          response = await http.get(uri, headers: header).timeout(Duration(seconds: 10));
+          response = await http.get(uri, headers: header).timeout(const Duration(seconds: 10));
           break;
         case RequestType.post:
-          response = await http.post(uri, headers: header, body: json.encode(body)).timeout(Duration(seconds: 10));
+          response = await http.post(uri, headers: header, body: json.encode(body)).timeout(const Duration(seconds: 10));
           break;
         case RequestType.put:
-          response = await http.put(uri, headers: header, body: json.encode(body)).timeout(Duration(seconds: 10));
+          response = await http.put(uri, headers: header, body: json.encode(body)).timeout(const Duration(seconds: 10));
           break;
         case RequestType.delete:
-          response = await http.delete(uri, headers: header).timeout(Duration(seconds: 10));
+          response = await http.delete(uri, headers: header).timeout(const Duration(seconds: 10));
           break;
       }
 

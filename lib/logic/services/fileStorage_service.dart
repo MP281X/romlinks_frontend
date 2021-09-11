@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -12,7 +13,7 @@ class FileStorageService extends GetxController {
   //! file storage service base url
   static final bool local = HttpHandler.local;
   static final String url = (local) ? "http://localhost:9091" : "https://filestorage.romlinks.xyz:9091";
-  static final String appLink = "http://mp281x.xyz/romLinks.apk";
+  static const String download = "http://mp281x.xyz/romLinks.apk";
 
   //! save an image in the backend
   static Future<String> postImage({

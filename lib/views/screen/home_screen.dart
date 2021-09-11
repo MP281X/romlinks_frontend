@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_new
+
 import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -5,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/device_service.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/filestorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
@@ -48,11 +50,13 @@ class HomeScreenController extends GetxController {
 
 //! main screen, display list of rom ordered by the review
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeScreenController>(
       builder: (controller) {
-        Future.delayed(Duration(seconds: 1), () {
+        Future.delayed(const Duration(seconds: 1), () {
           if (GetPlatform.isWeb && GetPlatform.isAndroid) {
             dialogW(
               DialogW(
@@ -60,7 +64,7 @@ class HomeScreen extends StatelessWidget {
                 button1: () => launch("https://play.google.com/store/apps/details?id=com.mp281x.romLinks"),
                 text2: "Github Download",
                 button2: () => launch("https://github.com/MP281X/romlinks_frontend/releases"),
-                child: TextW("The web version of the app is designed for the pc users for performance reason. If you want a lag-free experience download the app on the PlayStore or on Github"),
+                child: const TextW("The web version of the app is designed for the pc users for performance reason. If you want a lag-free experience download the app on the PlayStore or on Github"),
                 height: 260,
                 width: 400,
               ),
@@ -75,11 +79,11 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Row(children: [
                   SizedBox(height: 40, child: Image.asset("images/logo1.png")),
-                  Spacer(),
+                  const Spacer(),
                   AccountButtonW(),
                   SearchButton(),
                 ]),
-                SpaceW(),
+                const SpaceW(),
                 FutureBuilderW<DeviceModel>(
                   future: DeviceService.getDeviceInfo(controller.codename),
                   builder: (data) => SizedBox(
@@ -87,13 +91,13 @@ class HomeScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         if (data.name != "") TextW(data.name, size: 25, singleLine: true),
-                        Spacer(),
+                        const Spacer(),
                         if (controller.androidVersion != 0) TextW("Android ${controller.androidVersion.toInt()}", size: 25, singleLine: true),
                       ],
                     ),
                   ),
                 ),
-                SpaceW(),
+                const SpaceW(),
                 RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.battery, romName: controller.romName),
                 RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.customization, romName: controller.romName),
                 RomListW(codename: controller.codename, androidVersion: controller.androidVersion, orderBy: OrderBy.performance, romName: controller.romName),
@@ -105,7 +109,7 @@ class HomeScreen extends StatelessWidget {
               onTap: () => dialogW(DialogW(
                 button1: () async {
                   await RomService.reqestRom(controller.codename, controller.androidVersion, controller.romName);
-                  await Future.delayed(Duration(seconds: 1, milliseconds: 500));
+                  await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
                   Get.close(2);
                 },
                 text1: "Request a rom",
@@ -114,8 +118,8 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Align(child: TextW("Request a rom", singleLine: true), alignment: Alignment.center),
-                      SpaceW(),
+                      const Align(child: TextW("Request a rom", singleLine: true), alignment: Alignment.center),
+                      const SpaceW(),
                       if (controller.codename != "") TextW("Codename: " + controller.codename),
                       if (controller.romName != "") TextW("Rom name: " + controller.romName),
                       if (controller.androidVersion != 0) TextW("Android version: " + controller.androidVersion.toString()),
@@ -126,7 +130,7 @@ class HomeScreen extends StatelessWidget {
                 width: 450,
                 tag: "requestButton",
               )),
-              child: ContainerW(
+              child: const ContainerW(
                 Icon(Icons.feedback_outlined),
                 tag: "requestButton",
                 height: 50,
@@ -142,7 +146,7 @@ class HomeScreen extends StatelessWidget {
 
 //! display a list of rom
 class RomListW extends StatelessWidget {
-  const RomListW({required this.codename, required this.androidVersion, required this.orderBy, required this.romName});
+  const RomListW({required this.codename, required this.androidVersion, required this.orderBy, required this.romName, Key? key}) : super(key: key);
   final String codename;
   final double androidVersion;
   final OrderBy orderBy;
@@ -175,17 +179,17 @@ class RomListW extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SpaceW(),
+        const SpaceW(),
         TextW(categoryName(), big: true, singleLine: true),
-        SpaceW(),
+        const SpaceW(),
         SizedBox(
           height: 200,
           child: FutureBuilderW<List<RomModel>>(
             future: RomService.getRomList(codename: codename, androidVersion: androidVersion, orderBy: orderBy, romName: romName),
             builder: (data) {
-              return (data.length != 0)
+              return (data.isNotEmpty)
                   ? ListView.builder(
-                      physics: BouncingScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
                       itemCount: data.length,
                       itemBuilder: (BuildContext context, int index) => RomPreviewW(
@@ -193,7 +197,7 @@ class RomListW extends StatelessWidget {
                             data: data[index],
                             first: (index == 0),
                           ))
-                  : ErrorW(msg: "No rom found for this device");
+                  : const ErrorW(msg: "No rom found for this device");
             },
           ),
         ),
@@ -204,11 +208,7 @@ class RomListW extends StatelessWidget {
 
 //! display the rom name, the logo and basic rom info in the romlist widget
 class RomPreviewW extends StatelessWidget {
-  const RomPreviewW({
-    required this.data,
-    required this.codename,
-    this.first = false,
-  });
+  const RomPreviewW({required this.data, required this.codename, this.first = false, Key? key}) : super(key: key);
   final RomModel data;
   final bool first;
   final String codename;
@@ -229,7 +229,7 @@ class RomPreviewW extends StatelessWidget {
                 width: 140,
                 child: ImageW(category: PhotoCategory.logo, name: data.logo, heroTag: heroTag),
               ),
-              SpaceW(),
+              const SpaceW(),
               TextW(data.romname + " - " + data.androidversion.toString(), singleLine: true, size: 23),
             ],
           ),
@@ -245,6 +245,8 @@ class SearchButton extends StatelessWidget {
   final RxList deviceSuggestion = [].obs;
   final RxList romSuggestion = [].obs;
   final HomeScreenController controller = Get.find();
+
+  SearchButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -301,7 +303,7 @@ class SearchButton extends StatelessWidget {
           width: 400,
         ),
       ),
-      child: ContainerW(
+      child: const ContainerW(
         Icon(Icons.search_rounded, color: Colors.white, size: 25),
         padding: EdgeInsets.zero,
         marginRight: false,

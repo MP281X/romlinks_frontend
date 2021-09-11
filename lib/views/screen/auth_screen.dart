@@ -5,6 +5,8 @@ import 'package:romlinks_frontend/views/custom_widget.dart';
 
 //! redirect to the login and sign up screen
 class AuthScreen extends StatelessWidget {
+  const AuthScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldW(
@@ -12,8 +14,8 @@ class AuthScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          TextW("RomLinks", big: true),
-          SpaceW(big: true),
+          const TextW("RomLinks", big: true),
+          const SpaceW(big: true),
           ButtonW("Log in", onTap: () => Get.toNamed("/logIn")),
           ButtonW("Sign up", color: ThemeApp.primaryColor, margin: EdgeInsets.zero, onTap: () => Get.toNamed("/signUp")),
         ],

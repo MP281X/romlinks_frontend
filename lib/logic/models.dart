@@ -172,7 +172,7 @@ class Review {
 
   factory Review.fromMap(Map<String, dynamic> data) {
     var x = int.parse(data["reviewnum"].toString());
-    if (x == 0) return Review(battery: 0, performance: 0, stability: 0, customization: 0, revNum: 0);
+    if (x == 0) return const Review(battery: 0, performance: 0, stability: 0, customization: 0, revNum: 0);
     return Review(
       battery: double.parse(data["battery"].toString()) / x,
       performance: double.parse(data["performance"].toString()) / x,

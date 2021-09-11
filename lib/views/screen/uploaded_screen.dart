@@ -1,9 +1,11 @@
+// ignore_for_file: unnecessary_new
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/models.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/filestorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:romlinks_frontend/views/screen/editRom_screen.dart';
@@ -13,12 +15,14 @@ import 'package:romlinks_frontend/views/theme.dart';
 
 //! pageview for the uploaded version and rom
 class UploadedScreen extends StatelessWidget {
+  const UploadedScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldW(
       FutureBuilderW<List<RomModel>>(
         future: RomService.getRomList(),
-        builder: (data) => (data.length > 0) ? UploadedRomW(data, uploadedVersion: true) : ErrorW(msg: "No rom found"),
+        builder: (data) => (data.isNotEmpty) ? UploadedRomW(data, uploadedVersion: true) : const ErrorW(msg: "No rom found"),
       ),
       auth: true,
       scroll: true,
@@ -28,7 +32,7 @@ class UploadedScreen extends StatelessWidget {
 
 //! display the uploaded rom
 class UploadedRomW extends StatelessWidget {
-  const UploadedRomW(this.rom, {this.search = false, this.verify = false, this.uploadedVersion = false});
+  const UploadedRomW(this.rom, {this.search = false, this.verify = false, this.uploadedVersion = false, Key? key}) : super(key: key);
   final List<RomModel> rom;
   final bool search;
   final bool verify;
@@ -40,20 +44,20 @@ class UploadedRomW extends StatelessWidget {
     Widget titleColumn(Widget child) {
       return (!search)
           ? SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              controller: new ScrollController(),
+              physics: const BouncingScrollPhysics(),
+              controller: ScrollController(),
               child: Column(
-                children: [TextW("Uploaded rom"), SpaceW(big: true), child],
+                children: [const TextW("Uploaded rom"), const SpaceW(big: true), child],
               ),
             )
           : child;
     }
 
     return titleColumn(
-      (rom.length > 0)
+      (rom.isNotEmpty)
           ? ListView.builder(
-              physics: BouncingScrollPhysics(),
-              controller: new ScrollController(),
+              physics: const BouncingScrollPhysics(),
+              controller: ScrollController(),
               shrinkWrap: true,
               itemCount: rom.length,
               itemBuilder: (BuildContext context, int index) {
@@ -80,7 +84,7 @@ class UploadedRomW extends StatelessWidget {
                             ? () async {
                                 RomService.deleteRom(rom[index]);
                                 rom.removeAt(index);
-                                await Future.delayed(Duration(seconds: 1, milliseconds: 300));
+                                await Future.delayed(const Duration(seconds: 1, milliseconds: 300));
                                 Get.close(3);
                               }
                             : null,
@@ -103,19 +107,19 @@ class UploadedRomW extends StatelessWidget {
                               heroTag: heroTag,
                             ),
                           ),
-                          SizedBox(width: 20),
+                          const SizedBox(width: 20),
                           Expanded(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextW(rom[index].romname, singleLine: true),
-                                SizedBox(height: 5),
+                                const SizedBox(height: 5),
                                 TextW("Android ${rom[index].androidversion}", singleLine: true),
                               ],
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           (width > 400)
                               ? ChipW(
                                   text: (rom[index].verified) ? "Approved" : "Pending",
@@ -134,7 +138,7 @@ class UploadedRomW extends StatelessWidget {
                 );
               },
             )
-          : Expanded(child: ErrorW(msg: "no rom found for this device")),
+          : const Expanded(child: ErrorW(msg: "no rom found for this device")),
     );
   }
 }

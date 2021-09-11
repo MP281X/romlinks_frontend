@@ -7,6 +7,8 @@ import 'package:romlinks_frontend/views/custom_widget.dart';
 class SignUpScreen extends StatelessWidget {
   final UserController controller = Get.find();
 
+  SignUpScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     String username = "";
@@ -27,8 +29,8 @@ class SignUpScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          TextW("Sign up", big: true),
-          SpaceW(big: true),
+          const TextW("Sign up", big: true),
+          const SpaceW(big: true),
           TextFieldW("Username", onChanged: (text) => username = text, prefixIcon: Icons.person),
           TextFieldW("Email", onChanged: (text) => email = text, prefixIcon: Icons.email),
           TextFieldW("Password", onChanged: (text) => password = text, prefixIcon: Icons.lock, hide: true, onPressed: singUp),

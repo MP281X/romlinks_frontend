@@ -19,7 +19,7 @@ class UserController extends GetxController {
   // user variable
   var isLogged = false.obs;
   String token = "";
-  var userData = UserModel().obs;
+  var userData = const UserModel().obs;
 
   //! log in a user
   Future<void> logIn(String username, String password, {bool autoLogOut = false}) async {
@@ -67,7 +67,7 @@ class UserController extends GetxController {
     // set the logger propriety to false
     isLogged.value = false;
     token = "";
-    userData.value = UserModel();
+    userData.value = const UserModel();
 
     // remove the user info and the token
     prefs.remove("username");
@@ -82,7 +82,7 @@ class UserController extends GetxController {
       String username = prefs.getString("username") ?? "";
       String password = prefs.getString("password") ?? "";
       if (username != "" && password != "") await logIn(username, password, autoLogOut: true);
-      await Future.delayed(Duration(minutes: 20));
+      await Future.delayed(const Duration(minutes: 20));
     }
   }
 }

@@ -4,23 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/filestorage_service.dart';
 import 'package:romlinks_frontend/logic/services/user_service.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 
 //! container
 class ContainerW extends StatelessWidget {
-  const ContainerW(
-    this.child, {
-    this.height = 100,
-    this.width = 100,
-    this.padding = const EdgeInsets.all(10),
-    this.margin = const EdgeInsets.all(10),
-    this.color = ThemeApp.secondaryColor,
-    this.marginLeft = true,
-    this.marginRight = true,
-    this.tag,
-  });
+  const ContainerW(this.child,
+      {this.height = 100,
+      this.width = 100,
+      this.padding = const EdgeInsets.all(10),
+      this.margin = const EdgeInsets.all(10),
+      this.color = ThemeApp.secondaryColor,
+      this.marginLeft = true,
+      this.marginRight = true,
+      this.tag,
+      Key? key})
+      : super(key: key);
   final Widget child;
   final double height;
   final double width;
@@ -52,13 +52,7 @@ class ContainerW extends StatelessWidget {
 
 //! chip
 class ChipW extends StatelessWidget {
-  const ChipW({
-    this.text,
-    this.icon,
-    this.color = ThemeApp.secondaryColor,
-    required this.height,
-    required this.width,
-  });
+  const ChipW({this.text, this.icon, this.color = ThemeApp.secondaryColor, required this.height, required this.width, Key? key}) : super(key: key);
   final String? text;
   final IconData? icon;
   final Color color;
@@ -72,8 +66,8 @@ class ChipW extends StatelessWidget {
       color: color,
       height: height,
       width: width,
-      padding: EdgeInsets.all(5),
-      margin: EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
+      margin: const EdgeInsets.all(5),
     );
   }
 }
@@ -82,6 +76,7 @@ class ChipW extends StatelessWidget {
 class ButtonW extends StatelessWidget {
   ButtonW(
     this.text1, {
+    Key? key,
     required this.onTap,
     this.animated = false,
     this.width = 170,
@@ -89,7 +84,7 @@ class ButtonW extends StatelessWidget {
     this.padding = const EdgeInsets.all(10),
     this.margin = const EdgeInsets.all(10),
     this.tag,
-  });
+  }) : super(key: key);
   final String text1;
   final double width;
   final bool animated;
@@ -112,15 +107,16 @@ class ButtonW extends StatelessWidget {
           animation.value = true;
           await onTap();
           animation.value = false;
-        } else
+        } else {
           onTap();
+        }
       },
       child: ContainerW(
         FittedBox(
           child: Obx(
             () => (!animation.value)
                 ? TextW(text1, singleLine: true)
-                : Center(
+                : const Center(
                     child: CircularProgressIndicator(color: ThemeApp.primaryColor),
                   ),
           ),
@@ -138,12 +134,7 @@ class ButtonW extends StatelessWidget {
 
 //! text
 class TextW extends StatelessWidget {
-  const TextW(
-    this.text, {
-    this.singleLine = false,
-    this.size = 20,
-    this.big = false,
-  });
+  const TextW(this.text, {this.singleLine = false, this.size = 20, this.big = false, Key? key}) : super(key: key);
   final String text;
   final double size;
   final bool big;
@@ -171,6 +162,7 @@ class TextW extends StatelessWidget {
 class TextFieldW extends StatelessWidget {
   TextFieldW(
     this.text, {
+    Key? key,
     this.onChanged,
     this.onPressed,
     this.number = false,
@@ -178,7 +170,7 @@ class TextFieldW extends StatelessWidget {
     this.prefixIcon,
     this.hide = false,
     this.buttonIcon = Icons.add,
-  });
+  }) : super(key: key);
   final String text;
   final void Function(String)? onChanged;
   final void Function()? onPressed;
@@ -235,7 +227,7 @@ class TextFieldW extends StatelessWidget {
 
 //! custom future builder
 class FutureBuilderW<T> extends StatelessWidget {
-  const FutureBuilderW({required this.future, required this.builder});
+  const FutureBuilderW({required this.future, required this.builder, Key? key}) : super(key: key);
   final Widget Function(T) builder;
   final Future future;
   @override
@@ -243,8 +235,8 @@ class FutureBuilderW<T> extends StatelessWidget {
     return FutureBuilder(
       future: future,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) return Center(child: CircularProgressIndicator());
-        return (snapshot.data == null) ? ErrorW(msg: "unable to get the data") : builder(snapshot.data);
+        if (snapshot.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
+        return (snapshot.data == null) ? const ErrorW(msg: "unable to get the data") : builder(snapshot.data);
       },
     );
   }
@@ -252,7 +244,7 @@ class FutureBuilderW<T> extends StatelessWidget {
 
 //! network image with error icon
 class ImageW extends StatelessWidget {
-  const ImageW({required this.category, required this.name, this.profileIcon = false, this.heroTag});
+  const ImageW({required this.category, required this.name, this.profileIcon = false, this.heroTag, Key? key}) : super(key: key);
   final PhotoCategory category;
   final String name;
   final bool profileIcon;
@@ -306,7 +298,7 @@ class ImageW extends StatelessWidget {
 
 //! custom scaffold with padding
 class ScaffoldW extends StatelessWidget {
-  ScaffoldW(this.child, {this.scroll = false, this.auth = false, this.button});
+  ScaffoldW(this.child, {this.scroll = false, this.auth = false, this.button, Key? key}) : super(key: key);
 
   final Widget child;
   final bool scroll;
@@ -323,8 +315,8 @@ class ScaffoldW extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextW("Unauthorized"),
-                  SpaceW(big: true),
+                  const TextW("Unauthorized"),
+                  const SpaceW(big: true),
                   ButtonW("Auth", onTap: () => Get.toNamed("/auth")),
                 ],
               ),
@@ -337,11 +329,11 @@ class ScaffoldW extends StatelessWidget {
                 height: context.height,
                 width: context.width,
                 child: (!scroll)
-                    ? Padding(padding: EdgeInsets.all(20), child: Center(child: child))
+                    ? Padding(padding: const EdgeInsets.all(20), child: Center(child: child))
                     : SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
+                        physics: const BouncingScrollPhysics(),
                         child: Padding(
-                          padding: EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(20),
                           child: MaxWidthW(child),
                         ),
                       ),
@@ -353,16 +345,16 @@ class ScaffoldW extends StatelessWidget {
 
 //! display a list of suggestion
 class SuggestionW extends StatelessWidget {
-  const SuggestionW({required this.suggestion, required this.onTap});
+  const SuggestionW({required this.suggestion, required this.onTap, Key? key}) : super(key: key);
   final RxList suggestion;
   final Function(String) onTap;
 
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => (suggestion.length > 0)
+      () => (suggestion.isNotEmpty)
           ? ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 45, maxWidth: 800),
+              constraints: const BoxConstraints(maxHeight: 45, maxWidth: 800),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: suggestion.length,
@@ -371,34 +363,35 @@ class SuggestionW extends StatelessWidget {
                     suggestion[index],
                     width: 90,
                     color: ThemeApp.secondaryColor,
-                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
                     onTap: () => onTap(suggestion[index]),
                   );
                 },
               ),
             )
-          : SizedBox.shrink(),
+          : const SizedBox.shrink(),
     );
   }
 }
 
 //! dialog widget
 class DialogW extends StatelessWidget {
-  const DialogW({
-    required this.button1,
-    required this.text1,
-    required this.child,
-    required this.height,
-    required this.width,
-    this.button2,
-    this.text2,
-    this.alignment = Alignment.bottomCenter,
-    this.tag,
-    this.text3,
-    this.button3,
-    this.text4,
-    this.button4,
-  });
+  const DialogW(
+      {required this.button1,
+      required this.text1,
+      required this.child,
+      required this.height,
+      required this.width,
+      this.button2,
+      this.text2,
+      this.alignment = Alignment.bottomCenter,
+      this.tag,
+      this.text3,
+      this.button3,
+      this.text4,
+      this.button4,
+      Key? key})
+      : super(key: key);
   final Function button1;
   final Function? button2;
   final String text1;
@@ -418,7 +411,7 @@ class DialogW extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: SafeArea(
-        minimum: EdgeInsets.all(5),
+        minimum: const EdgeInsets.all(5),
         child: SizedBox(
           height: height,
           width: width,
@@ -429,7 +422,7 @@ class DialogW extends StatelessWidget {
                 Stack(
                   children: [
                     SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(child: child),
@@ -471,7 +464,7 @@ class DialogW extends StatelessWidget {
                     ),
                   ],
                 ),
-                margin: EdgeInsets.all(20),
+                margin: const EdgeInsets.all(20),
                 color: ThemeApp.primaryColor,
               ),
             ),
@@ -485,7 +478,7 @@ class DialogW extends StatelessWidget {
 
 //! display a list of screenshot
 class ScreenshotW extends StatelessWidget {
-  const ScreenshotW(this.image, {this.removeImage, this.useHero = true});
+  const ScreenshotW(this.image, {this.removeImage, this.useHero = true, Key? key}) : super(key: key);
   final RxList<String> image;
   final Function? removeImage;
   final bool useHero;
@@ -496,9 +489,9 @@ class ScreenshotW extends StatelessWidget {
       height: 250,
       child: Obx(
         () => ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
-          itemCount: (image.length != 0) ? image.length : 1,
+          itemCount: (image.isNotEmpty) ? image.length : 1,
           itemBuilder: (BuildContext context, int index) {
             return SizedBox(
               height: 250,
@@ -510,13 +503,13 @@ class ScreenshotW extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB((index == 0) ? 0 : 10, 10, 10, 10),
                       child: ImageW(
-                        heroTag: (image.length != 0 && useHero) ? image[index] : null,
+                        heroTag: (image.isNotEmpty && useHero) ? image[index] : null,
                         category: PhotoCategory.screenshot,
-                        name: (image.length != 0) ? image[index] : "",
+                        name: (image.isNotEmpty) ? image[index] : "",
                       ),
                     ),
                   ),
-                  if (removeImage != null && image.length != 0)
+                  if (removeImage != null && image.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: Align(
@@ -525,7 +518,7 @@ class ScreenshotW extends StatelessWidget {
                           onPressed: () => removeImage!(index),
                           iconSize: 30,
                           splashRadius: 20,
-                          icon: Icon(Icons.edit),
+                          icon: const Icon(Icons.edit),
                         ),
                       ),
                     )
@@ -542,6 +535,7 @@ class ScreenshotW extends StatelessWidget {
 //! button that redirect to the auth or the profile screen depending on the auth state
 class AccountButtonW extends StatelessWidget {
   final UserController _userController = Get.find();
+  AccountButtonW({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -555,7 +549,7 @@ class AccountButtonW extends StatelessWidget {
                         name: _userController.userData.value.username,
                         profileIcon: true,
                       )
-                    : SizedBox.shrink(),
+                    : const SizedBox.shrink(),
                 height: 40,
                 width: 40,
                 marginRight: false,
@@ -574,7 +568,7 @@ class AccountButtonW extends StatelessWidget {
 
 //! display a list of text
 class TextListW extends StatelessWidget {
-  TextListW(this.data, {this.vertical = true});
+  const TextListW(this.data, {this.vertical = true, Key? key}) : super(key: key);
   final RxList<String> data;
   final bool vertical;
 
@@ -584,11 +578,11 @@ class TextListW extends StatelessWidget {
       () => SizedBox(
         height: vertical
             ? null
-            : (data.length > 0)
+            : (data.isNotEmpty)
                 ? 60
                 : 0,
         child: ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           itemCount: data.length,
           scrollDirection: vertical ? Axis.vertical : Axis.horizontal,
           shrinkWrap: true,
@@ -609,7 +603,7 @@ class TextListW extends StatelessWidget {
 
 //! display an error icon
 class ErrorW extends StatelessWidget {
-  const ErrorW({this.msg, this.personIcon = false});
+  const ErrorW({this.msg, this.personIcon = false, Key? key}) : super(key: key);
 
   final String? msg;
   final bool personIcon;
@@ -625,7 +619,7 @@ class ErrorW extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Icon((personIcon) ? Icons.person : Icons.report_problem_outlined),
-                SpaceW(),
+                const SpaceW(),
                 TextW(msg!),
               ],
             ),
@@ -635,7 +629,7 @@ class ErrorW extends StatelessWidget {
 
 //! space
 class SpaceW extends StatelessWidget {
-  const SpaceW({this.big = false});
+  const SpaceW({this.big = false, Key? key}) : super(key: key);
   final bool big;
   @override
   Widget build(BuildContext context) => SizedBox(height: (big) ? 30 : 10);
@@ -643,7 +637,7 @@ class SpaceW extends StatelessWidget {
 
 //! widget that define the max width
 class MaxWidthW extends StatelessWidget {
-  const MaxWidthW(this.child);
+  const MaxWidthW(this.child, {Key? key}) : super(key: key);
   final Widget child;
 
   @override
@@ -659,7 +653,7 @@ class MaxWidthW extends StatelessWidget {
 
 //! hero widget
 class HeroW extends StatelessWidget {
-  const HeroW(this.child, {this.tag});
+  const HeroW(this.child, {this.tag, Key? key}) : super(key: key);
   final Widget child;
   final String? tag;
 
@@ -694,7 +688,7 @@ class CustomRectTween extends RectTween {
 
 //! custom page view
 class PageViewW extends StatelessWidget {
-  PageViewW(this.child, {this.page = 2});
+  PageViewW(this.child, {Key? key, this.page = 2}) : super(key: key);
   final List<Widget> child;
   final PageController controller = PageController();
   final RxInt currentPage = 0.obs;
@@ -708,7 +702,7 @@ class PageViewW extends StatelessWidget {
     return Stack(
       children: [
         PageView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           controller: controller,
           children: child,
         ),
@@ -724,7 +718,7 @@ class PageViewW extends StatelessWidget {
                     height: 14,
                     width: 14,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(3)),
+                      borderRadius: const BorderRadius.all(Radius.circular(3)),
                       color: (currentPage.value == 0) ? ThemeApp.accentColor : ThemeApp.primaryColor,
                     ),
                   ),
@@ -734,7 +728,7 @@ class PageViewW extends StatelessWidget {
                     height: 14,
                     width: 14,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(3)),
+                      borderRadius: const BorderRadius.all(Radius.circular(3)),
                       color: (currentPage.value == 1) ? ThemeApp.accentColor : ThemeApp.primaryColor,
                     ),
                   ),
@@ -745,7 +739,7 @@ class PageViewW extends StatelessWidget {
                       height: 14,
                       width: 14,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                        borderRadius: const BorderRadius.all(Radius.circular(3)),
                         color: (currentPage.value == 2) ? ThemeApp.accentColor : ThemeApp.primaryColor,
                       ),
                     ),
@@ -765,7 +759,7 @@ class PageViewW extends StatelessWidget {
 
 //! display the username and the profile picture of a user
 class UserW extends StatelessWidget {
-  const UserW(this.username);
+  const UserW(this.username, {Key? key}) : super(key: key);
   final String username;
 
   @override
@@ -789,7 +783,7 @@ class UserW extends StatelessWidget {
               height: 100,
               width: 100,
             ),
-            SpaceW(),
+            const SpaceW(),
             TextW(username),
           ],
         ),
@@ -814,16 +808,18 @@ void dialogW(Widget child) {
 
 //! custom snackbar
 void snackbarW(String title, String? msg) {
-  if (msg != null) if (Get.isSnackbarOpen == false)
+  // ignore: curly_braces_in_flow_control_structures
+  if (msg != null) if (Get.isSnackbarOpen == false) {
     Get.snackbar(
       title,
       msg,
-      icon: title.toLowerCase().contains("error") ? Icon(Icons.report_problem_outlined, color: ThemeApp.accentColor) : null,
+      icon: title.toLowerCase().contains("error") ? const Icon(Icons.report_problem_outlined, color: ThemeApp.accentColor) : null,
       shouldIconPulse: false,
       colorText: Colors.white,
-      duration: Duration(seconds: 5),
+      duration: const Duration(seconds: 5),
       backgroundColor: ThemeApp.secondaryColor.withOpacity(0.9),
       snackPosition: SnackPosition.BOTTOM,
-      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
     );
+  }
 }

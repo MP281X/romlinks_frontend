@@ -9,27 +9,26 @@ class ThemeApp {
     primaryColor: accentColor,
     dialogBackgroundColor: primaryColor,
     colorScheme: ThemeData.dark().colorScheme.copyWith(primary: accentColor),
-    accentColor: accentColor,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       color: primaryColor,
       elevation: 0,
     ),
     scrollbarTheme: _scrollBarTheme,
-    iconTheme: IconThemeData(size: 30, color: accentColor),
-    inputDecorationTheme: InputDecorationTheme(
+    iconTheme: const IconThemeData(size: 30, color: accentColor),
+    inputDecorationTheme: const InputDecorationTheme(
       focusedBorder: _textFieldBorder,
       enabledBorder: _textFieldBorder,
     ),
   );
 
   //! TextField border
-  static OutlineInputBorder _textFieldBorder = OutlineInputBorder(
+  static const OutlineInputBorder _textFieldBorder = OutlineInputBorder(
     borderSide: BorderSide(color: secondaryColor, width: 4.0),
     borderRadius: BorderRadius.all(Radius.circular(10)),
   );
 
   //! Scrollbar
-  static ScrollbarThemeData _scrollBarTheme = ScrollbarThemeData(
+  static final ScrollbarThemeData _scrollBarTheme = ScrollbarThemeData(
     showTrackOnHover: true,
     isAlwaysShown: true,
     trackColor: MaterialStateProperty.resolveWith<Color>(

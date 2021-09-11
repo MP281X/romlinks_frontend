@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:romlinks_frontend/logic/controller.dart';
 import 'package:romlinks_frontend/logic/models.dart';
 import 'package:romlinks_frontend/logic/services/device_service.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/filestorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/logic/services/user_service.dart';
 import 'package:romlinks_frontend/views/screen/comment_screen.dart';
@@ -14,7 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 //! display the info of a rom
 class RomScreen extends StatelessWidget {
-  const RomScreen(this.romData, {this.codename, this.heroTag, this.uploadedVersion = false});
+  const RomScreen(this.romData, {this.codename, this.heroTag, this.uploadedVersion = false, Key? key}) : super(key: key);
   final RomModel romData;
   final String? codename;
   final String? heroTag;
@@ -26,7 +26,7 @@ class RomScreen extends StatelessWidget {
       Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SpaceW(),
+          const SpaceW(),
           Center(
             child: SizedBox(
               child: ImageW(
@@ -38,23 +38,23 @@ class RomScreen extends StatelessWidget {
               width: 200,
             ),
           ),
-          SpaceW(),
+          const SpaceW(),
           TextW(romData.romname, size: 45, singleLine: true),
-          SpaceW(),
+          const SpaceW(),
           TextW("Android ${romData.androidversion}", big: true),
-          SpaceW(big: true),
+          const SpaceW(big: true),
           TextW(romData.description),
-          SpaceW(big: true),
+          const SpaceW(big: true),
           ScreenshotW(romData.screenshot!),
           if (romData.review.revNum > 0) ReviewW(romData.review, romData.id),
-          SpaceW(),
+          const SpaceW(),
           if (codename != null && codename != "") ButtonW("Download", onTap: () => Get.to(VersionScreen(codename: codename!, romId: romData.id))),
           if (uploadedVersion) ButtonW("Uploaded Version", onTap: () => Get.to(VersionScreen(codename: "*", romId: romData.id, hasUploaed: true))),
-          SpaceW(),
-          TextW("Uploaded by", size: 25),
-          SpaceW(),
+          const SpaceW(),
+          const TextW("Uploaded by", size: 25),
+          const SpaceW(),
           UserW(romData.uploadedby),
-          SpaceW(),
+          const SpaceW(),
           LinkW(romData.link.obs, false),
         ],
       ),
@@ -66,7 +66,7 @@ class RomScreen extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () => UserService.saveRom(romData.id),
-                    child: ContainerW(
+                    child: const ContainerW(
                       Icon(Icons.favorite, size: 25),
                       padding: EdgeInsets.zero,
                       marginRight: false,
@@ -74,7 +74,7 @@ class RomScreen extends StatelessWidget {
                       width: 50,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   GestureDetector(
                     onTap: () => dialogW(
                       DialogW(
@@ -93,7 +93,7 @@ class RomScreen extends StatelessWidget {
                               alignment: Alignment.center,
                             ),
                           );
-                          await Future.delayed(Duration(seconds: 1));
+                          await Future.delayed(const Duration(seconds: 1));
                         },
                         text1: "Add version",
                         button1: () => Get.toNamed("/addVersion/" + romData.id),
@@ -102,7 +102,7 @@ class RomScreen extends StatelessWidget {
                         width: 400,
                       ),
                     ),
-                    child: ContainerW(
+                    child: const ContainerW(
                       Icon(Icons.add_rounded, size: 25),
                       padding: EdgeInsets.zero,
                       marginRight: false,
@@ -122,14 +122,14 @@ class RomScreen extends StatelessWidget {
 
 //! display the review of the rom
 class ReviewW extends StatelessWidget {
-  const ReviewW(this.rev, this.romId);
+  const ReviewW(this.rev, this.romId, {Key? key}) : super(key: key);
   final Review rev;
   final String romId;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,10 +139,10 @@ class ReviewW extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextW("Review", big: true),
+                const TextW("Review", big: true),
                 GestureDetector(
                   onTap: () => Get.to(CommentScreen(romId)),
-                  child: Icon(Icons.arrow_right_rounded, color: Colors.white, size: 50),
+                  child: const Icon(Icons.arrow_right_rounded, color: Colors.white, size: 50),
                 ),
               ],
             ),
@@ -153,7 +153,7 @@ class ReviewW extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
+                  children: const [
                     TextW("Performance:"),
                     TextW("Stability:"),
                     TextW("Customization:"),
@@ -161,7 +161,7 @@ class ReviewW extends StatelessWidget {
                     TextW("Review:"),
                   ],
                 ),
-                SizedBox(width: 30),
+                const SizedBox(width: 30),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -212,18 +212,18 @@ class AddReviewController extends GetxController {
         stability: stability.value,
         customization: customization.value,
       );
-      await Future.delayed(Duration(seconds: 1, milliseconds: 300));
+      await Future.delayed(const Duration(seconds: 1, milliseconds: 300));
       Get.close(2);
     } else {
       snackbarW("Error", "Enter all the value");
-      await Future.delayed(Duration(seconds: 1, milliseconds: 300));
+      await Future.delayed(const Duration(seconds: 1, milliseconds: 300));
       Get.close(2);
     }
   }
 }
 
 class AddReviewW extends StatelessWidget {
-  AddReviewW({required this.romId, required this.codename});
+  const AddReviewW({required this.romId, required this.codename, Key? key}) : super(key: key);
   final String romId;
   final String codename;
 
@@ -233,7 +233,7 @@ class AddReviewW extends StatelessWidget {
     final TextEditingController codenameController = TextEditingController(text: codename);
 
     return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       child: Column(
         children: [
           Row(
@@ -241,14 +241,14 @@ class AddReviewW extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
+                children: const [
                   TextW("Performance:"),
                   TextW("Stability:"),
                   TextW("Customization:"),
                   TextW("Battery:"),
                 ],
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -261,7 +261,7 @@ class AddReviewW extends StatelessWidget {
               ),
             ],
           ),
-          SpaceW(),
+          const SpaceW(),
           TextFieldW("Comment", onChanged: (x) => controller.msg.value = x),
           TextFieldW("Codename", onChanged: controller.getSuggestion, controller: codenameController),
           SuggestionW(
@@ -277,7 +277,7 @@ class AddReviewW extends StatelessWidget {
 }
 
 class StarW extends StatelessWidget {
-  StarW(this.value);
+  const StarW(this.value, {Key? key}) : super(key: key);
   final RxDouble value;
 
   @override
@@ -301,7 +301,7 @@ class StarW extends StatelessWidget {
 
 //! display a list of link
 class LinkW extends StatelessWidget {
-  const LinkW(this.links, this.editLink);
+  const LinkW(this.links, this.editLink, {Key? key}) : super(key: key);
   final RxList<dynamic> links;
   final bool editLink;
 
@@ -329,7 +329,7 @@ class LinkW extends StatelessWidget {
             (index) => GestureDetector(
               onTap: () => editLink ? links.removeAt(index) : launch(links[index]),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Icon(selectIcon(index), color: Colors.white),
               ),
             ),

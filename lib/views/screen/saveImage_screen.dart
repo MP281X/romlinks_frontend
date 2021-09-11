@@ -5,7 +5,7 @@ import 'package:crop_your_image/crop_your_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/filestorage_service.dart';
 import 'package:romlinks_frontend/views/custom_widget.dart';
 import 'package:romlinks_frontend/views/theme.dart';
 
@@ -68,7 +68,7 @@ class SaveImageController extends GetxController {
 
   @override
   void onInit() async {
-    controller = new CropController();
+    controller = CropController();
     image = await loadImage();
     update();
     super.onInit();
@@ -77,7 +77,7 @@ class SaveImageController extends GetxController {
 
 //! dialog for cropping and saving images
 class SaveImageDialog extends StatelessWidget {
-  const SaveImageDialog({this.romName = "", required this.category, this.androidVersion = 0, required this.index});
+  const SaveImageDialog({this.romName = "", required this.category, this.androidVersion = 0, required this.index, Key? key}) : super(key: key);
   final String romName;
   final PhotoCategory category;
   final double androidVersion;
@@ -104,24 +104,24 @@ class SaveImageDialog extends StatelessWidget {
                       child: AspectRatio(
                         aspectRatio: 1,
                         child: ConstrainedBox(
-                          constraints: BoxConstraints(minWidth: 300, minHeight: 300, maxHeight: 500, maxWidth: 500),
+                          constraints: const BoxConstraints(minWidth: 300, minHeight: 300, maxHeight: 500, maxWidth: 500),
                           child: Center(
                             child: (controller.image != null)
-                                ? new Crop(
+                                ? Crop(
                                     controller: controller.controller,
                                     image: controller.image!,
                                     aspectRatio: (category == PhotoCategory.screenshot) ? 9 / 19 : 1,
                                     baseColor: ThemeApp.primaryColor,
                                     onCropped: (croppedImg) async => controller.saveImage(croppedImg, index),
-                                    cornerDotBuilder: (size, cornerIndex) => DotControl(color: ThemeApp.accentColor),
+                                    cornerDotBuilder: (size, cornerIndex) => const DotControl(color: ThemeApp.accentColor),
                                   )
-                                : CircularProgressIndicator(),
+                                : const CircularProgressIndicator(),
                           ),
                         ),
                       ),
                     ),
                     SpaceW(big: (controller.loading)),
-                    (controller.loading) ? CircularProgressIndicator() : ButtonW("Save image", onTap: () => controller.cropImage())
+                    (controller.loading) ? const CircularProgressIndicator() : ButtonW("Save image", onTap: () => controller.cropImage())
                   ],
                 );
               },

@@ -15,12 +15,14 @@ import 'package:romlinks_frontend/views/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  runApp(const MyApp());
   Get.put<HomeScreenController>(HomeScreenController(), permanent: true);
   Get.put<UserController>(UserController(), permanent: true);
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -29,17 +31,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeApp.themeData,
       darkTheme: ThemeApp.themeData,
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: const HomeScreen(),
       getPages: [
         GetPage(name: "/logIn", page: () => LoginScreen()),
         GetPage(name: "/signUp", page: () => SignUpScreen()),
-        GetPage(name: "/auth", page: () => AuthScreen()),
+        GetPage(name: "/auth", page: () => const AuthScreen()),
         GetPage(name: "/profile", page: () => ProfileScreen()),
-        GetPage(name: "/uploaded", page: () => UploadedScreen()),
+        GetPage(name: "/uploaded", page: () => const UploadedScreen()),
         GetPage(name: "/addRom", page: () => AddRomScreen()),
         GetPage(name: "/addVersion/:romId", page: () => AddVersionScreen()),
-        GetPage(name: "/unverified", page: () => UnverifiedScreen()),
-        GetPage(name: "/savedRom", page: () => SavedRomScreen())
+        GetPage(name: "/unverified", page: () => const UnverifiedScreen()),
+        GetPage(name: "/savedRom", page: () => const SavedRomScreen())
       ],
     );
   }

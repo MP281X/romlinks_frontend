@@ -1,6 +1,8 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:romlinks_frontend/logic/services/fileStorage_service.dart';
+import 'package:romlinks_frontend/logic/services/filestorage_service.dart';
 import 'package:romlinks_frontend/logic/services/rom_service.dart';
 import 'package:romlinks_frontend/views/screen/rom_screen.dart';
 import 'package:romlinks_frontend/views/screen/saveImage_screen.dart';
@@ -39,24 +41,25 @@ class AddRomController extends GetxController {
       description: description,
       link: link,
     );
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     Get.offAllNamed("/");
   }
 
   // display a dialog with the preview of the rom
   void romPreview() {
-    if (romName != "" && androidVersion != 0.0 && description != "" && logo.value != "" && screenshot.length > 0)
+    if (romName != "" && androidVersion != 0.0 && description != "" && logo.value != "" && screenshot.isNotEmpty) {
       dialogW(RomPreviewW());
-    else
+    } else {
       snackbarW("Error", "Enter all the filed");
+    }
   }
 
   void setLogo() async {
-    if (romName.isEmpty)
+    if (romName.isEmpty) {
       snackbarW("Error", "Enter the rom name");
-    else if (androidVersion == 0)
+    } else if (androidVersion == 0) {
       snackbarW("Error", "Enter the android version");
-    else {
+    } else {
       logo.value = "";
       String res = await Get.dialog(SaveImageDialog(
         romName: romName.removeAllWhitespace.toLowerCase(),
@@ -69,14 +72,14 @@ class AddRomController extends GetxController {
   }
 
   void setScreenshot() async {
-    if (romName.isEmpty)
+    if (romName.isEmpty) {
       snackbarW("Error", "Enter the rom name");
-    else if (androidVersion == 0)
+    } else if (androidVersion == 0) {
       snackbarW("Error", "Enter the android version");
-    else if (screenshot.length > 5)
+    } else if (screenshot.length > 5) {
       snackbarW("Error", "You can upload only 6 screenshot");
-    else {
-      String res = await Get.dialog(new SaveImageDialog(
+    } else {
+      String res = await Get.dialog(SaveImageDialog(
         romName: romName.removeAllWhitespace.toLowerCase(),
         category: PhotoCategory.screenshot,
         androidVersion: androidVersion,
@@ -87,26 +90,27 @@ class AddRomController extends GetxController {
   }
 
   void editScreenshot(int index) async {
-    if (romName.isEmpty)
+    if (romName.isEmpty) {
       snackbarW("Error", "Enter the rom name");
-    else if (androidVersion == 0)
+    } else if (androidVersion == 0) {
       snackbarW("Error", "Enter the android version");
-    else if (screenshot.length > 5)
+    } else if (screenshot.length > 5) {
       snackbarW("Error", "You can upload only 6 screenshot");
-    else {
+    } else {
       String x = screenshot[index];
       screenshot[index] = "";
       imageCache!.clear();
-      String? res = await Get.dialog(new SaveImageDialog(
+      String? res = await Get.dialog(SaveImageDialog(
         romName: romName.removeAllWhitespace.toLowerCase(),
         category: PhotoCategory.screenshot,
         androidVersion: androidVersion,
         index: index,
       ));
-      if (res != null && res != "")
+      if (res != null && res != "") {
         screenshot[index] = res.substring(11);
-      else
+      } else {
         screenshot[index] = x;
+      }
     }
   }
 
@@ -119,14 +123,16 @@ class AddRomController extends GetxController {
 //! Screen for adding the rom
 class AddRomScreen extends StatelessWidget {
   final AddRomController controller = Get.put(AddRomController());
+
+  AddRomScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ScaffoldW(
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TextW("Add rom", big: true),
-          SpaceW(),
+          const TextW("Add rom", big: true),
+          const SpaceW(),
           LogoButtonW(),
           TextFieldW("Rom Name", onChanged: (x) => controller.romName = x),
           TextFieldW("Android Version", onChanged: (x) => controller.androidVersion = double.parse(x), number: true),
@@ -136,9 +142,9 @@ class AddRomScreen extends StatelessWidget {
               width: 230,
               child: TextFormField(
                 onChanged: (x) => controller.description = x,
-                scrollPhysics: BouncingScrollPhysics(),
+                scrollPhysics: const BouncingScrollPhysics(),
                 maxLines: 7,
-                decoration: InputDecoration(hintText: "Description"),
+                decoration: const InputDecoration(hintText: "Description"),
               ),
             ),
           ),
@@ -165,6 +171,8 @@ class AddRomScreen extends StatelessWidget {
 //!button for adding the logo
 class LogoButtonW extends StatelessWidget {
   final AddRomController controller = Get.find();
+
+  LogoButtonW({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -185,7 +193,7 @@ class LogoButtonW extends StatelessWidget {
                 onPressed: () => controller.setLogo(),
                 iconSize: 30,
                 splashRadius: 20,
-                icon: Icon(Icons.edit_rounded),
+                icon: const Icon(Icons.edit_rounded),
               ),
             )
           ],
@@ -198,6 +206,7 @@ class LogoButtonW extends StatelessWidget {
 //! display the rom data preview
 class RomPreviewW extends StatelessWidget {
   final AddRomController controller = Get.find();
+  RomPreviewW({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -208,9 +217,9 @@ class RomPreviewW extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TextW(controller.romName, big: true),
-          SpaceW(),
+          const SpaceW(),
           TextW("Android ${controller.androidVersion}", big: true),
-          SpaceW(big: true),
+          const SpaceW(big: true),
           Center(
             child: SizedBox(
               child: ImageW(category: PhotoCategory.logo, name: controller.logo.value),
@@ -218,14 +227,14 @@ class RomPreviewW extends StatelessWidget {
               width: 200,
             ),
           ),
-          SpaceW(big: true),
-          TextW("Description", big: true),
-          SpaceW(),
+          const SpaceW(big: true),
+          const TextW("Description", big: true),
+          const SpaceW(),
           TextW(controller.description),
-          SpaceW(big: true),
-          TextW("Screenshot", big: true),
+          const SpaceW(big: true),
+          const TextW("Screenshot", big: true),
           ScreenshotW(controller.screenshot, useHero: false),
-          SizedBox(height: 100)
+          const SizedBox(height: 100)
         ],
       ),
       height: 1000,
